@@ -22,10 +22,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install dependencies
+        working-directory: frontend
         run: npm ci
 
       - name: Run ESLint
+        working-directory: frontend
         run: npm run lint
