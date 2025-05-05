@@ -6,9 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "prepare": "cd .. && husky frontend/.husky"
-  },
+    "lint": "next lint"
+    },
   "dependencies": {
     "next": "15.3.1",
     "react": "^19.0.0",
