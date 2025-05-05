@@ -1,0 +1,158 @@
+.self-empathy-page {
+  background-color: transparent;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.self-empathy-page .div {
+  background-image: url(../assets/images/self-empathy-bg.png);
+  background-position: 50% 50%;
+  background-size: cover;
+  height: 780px;
+  position: relative;
+  width: 360px;
+}
+
+.self-empathy-page .ver {
+  height: 123px;
+  left: 0;
+  position: absolute;
+  top: 657px;
+  width: 360px;
+}
+
+.self-empathy-page .text-wrapper {
+  color: #000000;
+  font-family: "Pretendard";
+  font-size: 16px;
+  font-weight: 400;
+  left: 31px;
+  letter-spacing: 0;
+  line-height: 30px;
+  position: absolute;
+  text-align: center;
+  top: 299px;
+  width: 297px;
+}
+
+.self-empathy-page .element-1 {
+  height: 39px;
+  left: 300px;
+  position: absolute;
+  top: 74px;
+  width: 60px;
+}
+
+.self-empathy-page .element-2 {
+  height: 51px;
+  left: 262px;
+  position: absolute;
+  top: 120px;
+  width: 98px;
+}
+
+.self-empathy-page .element-3 {
+  height: 40px;
+  left: 29px;
+  position: absolute;
+  top: 89px;
+  width: 77px;
+}
+
+.text-line {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.line1 { animation-delay: 0.3s; }
+.line2 { animation-delay: 0.3s; }
+.line3 { animation-delay: 1.0s; }
+.line4 { animation-delay: 1.7s; }
+.line5 { animation-delay: 2.4s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bottom-button {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  opacity: 0;
+  animation: fadeInUpButton 0.8s ease-out forwards, floatButton 2s ease-in-out infinite 3s;
+  animation-delay: 3s;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.bottom-button img {
+  width: 336px;
+  height: 64px;
+  display: block;
+  transition: filter 0.15s ease;
+}
+
+.bottom-button:active {
+  transform: translate(-50%, 4px) scale(0.95);
+}
+
+.bottom-button:active img {
+  filter: brightness(0.85);
+}
+
+.bottom-button:active .button-text {
+  transform: translateY(4px);
+  opacity: 0.85;
+}
+
+.button-text {
+  color: #000000;
+  font-family: "Pretendard";
+  font-size: 16px;
+  font-weight: 400;
+  left: 100px;
+  letter-spacing: 0;
+  line-height: 30px;
+  position: absolute;
+  text-align: center;
+  top: 17px;
+  width: 157px;
+  pointer-events: none;
+  transition: all 0.15s ease;
+}
+
+@keyframes fadeInUpButton {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes floatButton {
+  0% {
+    transform: translate(-50%, 0);
+  }
+  50% {
+    transform: translate(-50%, -8px);
+  }
+  100% {
+    transform: translate(-50%, 0);
+  }
+}
