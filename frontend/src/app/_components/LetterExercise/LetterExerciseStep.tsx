@@ -46,6 +46,11 @@ export default function LetterExerciseStep({ steps }: LetterExerciseStepProps) {
 
   const currentStepComponent = steps[currentStep]?.component || null;
 
+  // Check if steps is empty or undefined
+  if (!steps || steps.length === 0) {
+    return <div className="text-white text-center">스텝이 정의되지 않았습니다.</div>;
+  }
+
   return (
     <div className="relative h-full w-full overflow-hidden">
       {/* Exiting Step Component Container */}
@@ -67,30 +72,28 @@ export default function LetterExerciseStep({ steps }: LetterExerciseStepProps) {
         className={`absolute inset-0 h-full w-full 
           ${isAnimating && direction === 'next' ? 'animate-slideInRight' : ''}
           ${isAnimating && direction === 'prev' ? 'animate-slideInLeft' : ''}
-          ${
-            !isAnimating ? 'opacity-100' : isAnimating ? 'opacity-100' : 'opacity-0'
-          } // 애니메이션 중에도 보이도록, 끝나면 확실히 보이도록
+          ${!isAnimating ? 'opacity-100' : isAnimating ? 'opacity-100' : 'opacity-0'} 
         `}
       >
         {currentStepComponent}
       </div>
 
       {/* Step indicator */}
-      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 flex space-x-1 z-10">
+      <div className="fixed top-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-50">
         {steps.map((step, index) => (
           <div
             key={step.id}
-            className={`h-1 w-4 rounded-full ${index === currentStep ? 'bg-white' : 'bg-white/30'}`}
+            className={`h-1 w-6 rounded-full ${index === currentStep ? 'bg-white' : 'bg-white/30'}`}
           ></div>
         ))}
       </div>
 
       {/* Navigation buttons */}
-      <div className="absolute bottom-12 w-full flex justify-between px-5 z-10">
-        {currentStep > 0 && (
+      <div className="fixed bottom-12 w-full flex justify-between px-8 z-50">
+        {currentStep > 0 ? (
           <button
             onClick={goToPrevStep}
-            className="p-2 rounded-full bg-white/20"
+            className="p-3 rounded-full bg-white/30 hover:bg-white/40 transition-colors"
             disabled={isAnimating}
           >
             <svg
@@ -108,12 +111,14 @@ export default function LetterExerciseStep({ steps }: LetterExerciseStepProps) {
               />
             </svg>
           </button>
+        ) : (
+          <div></div>
         )}
-        {/* 다음 버튼은 항상 보이도록 하고, 마지막 스텝에서는 다른 동작을 하거나 안 보이게 할 수 있습니다. 현재는 그대로 둡니다. */}
-        {(currentStep < steps.length - 1 || steps.length === 0) && (
+
+        {currentStep < steps.length - 1 && (
           <button
             onClick={goToNextStep}
-            className="ml-auto p-2 rounded-full bg-white/20"
+            className="p-3 rounded-full bg-white/30 hover:bg-white/40 transition-colors"
             disabled={isAnimating}
           >
             <svg
