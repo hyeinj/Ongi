@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/HomePage.css';
-import homepageMt from '../assets/images/homepage-mountain.png';
-import star1 from '../assets/images/star1.png';
-import star2 from '../assets/images/star2.png';
-import star3 from '../assets/images/star3.png';
-import postoffice from '../assets/images/postoffice.png';
-import line from '../assets/images/line.png';
-import self from '../assets/images/self.png';
-import growth from '../assets/images/growth.png';
-import routine from '../assets/images/routine.png';
-import relate from '../assets/images/relate.png';
+import '@/styles/HomePage.css';
+import homepageMt from '@/assets/images/homepage-mountain.png';
+import star1 from '@/assets/images/star1.png';
+import star2 from '@/assets/images/star2.png';
+import star3 from '@/assets/images/star3.png';
+import postoffice from '@/assets/images/postoffice.png';
+import line from '@/assets/images/line.png';
+import self from '@/assets/images/self.png';
+import growth from '@/assets/images/growth.png';
+import routine from '@/assets/images/routine.png';
+import relate from '@/assets/images/relate.png';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -39,21 +39,21 @@ const HomePage: React.FC = () => {
           <p>무지 님의 시간이 머무는 섬이에요.</p>
           <p>따뜻한 기록 하나, 띄워볼까요?</p>
         </div>
-        <img className="line" alt="Line" src={line} />
+        <img className="line" alt="Line" src={line.src} />
         <img 
           className="postoffice" 
           alt="우체국" 
-          src={postoffice} 
+          src={postoffice.src} 
           onClick={handlePostOfficeClick}
         />
-        <img className="element-1" alt="별똥별 1" src={star1} />
-        <img className="element-2" alt="별똥별 2" src={star2} />
-        <img className="element-3" alt="별똥별 3" src={star3} />
-        <div className="mountain" style={{ backgroundImage: `url(${homepageMt})` }} />
-        <img className="self" alt="자아섬" src={self} />
-        <img className="growth" alt="성장섬" src={growth} />
-        <img className="routine" alt="루틴섬" src={routine} />
-        <img className="relate" alt="관계섬" src={relate} />
+        <img className="element-1" alt="별똥별 1" src={star1.src} />
+        <img className="element-2" alt="별똥별 2" src={star2.src} />
+        <img className="element-3" alt="별똥별 3" src={star3.src} />
+        <div className="mountain" style={{ backgroundImage: `url(${homepageMt.src})` }} />
+        <img className="self" alt="자아섬" src={self.src} />
+        <img className="growth" alt="성장섬" src={growth.src} />
+        <img className="routine" alt="루틴섬" src={routine.src} />
+        <img className="relate" alt="관계섬" src={relate.src} />
         {/* 백앤드로 채워야하는 숫자 */}
         <div className="circle-ellipse circle-self">
           <span>{letterCounts.self}</span>

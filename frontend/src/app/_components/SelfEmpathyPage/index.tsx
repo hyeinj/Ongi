@@ -1,13 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/SelfEmpathyPage.css';
+import '@/styles/SelfEmpathyPage.css';
 
 // 이미지 import
-import star1 from '../assets/images/star1.png';
-import star2 from '../assets/images/star2.png';
-import star3 from '../assets/images/star3.png';
-import bottomMt from '../assets/images/self-empathy-mountain.png';
-import bottomButton from '../assets/icons/bottombutton.png';
+import star1 from '@/assets/images/star1.png';
+import star2 from '@/assets/images/star2.png';
+import star3 from '@/assets/images/star3.png';
+import bottomMt from '@/assets/images/self-empathy-mountain.png';
+import bottomButton from '@/assets/icons/bottombutton.png';
 
 const SelfEmpathyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -30,12 +30,12 @@ const SelfEmpathyPage: React.FC = () => {
           <p className="text-line line5">오늘의 나를 만나볼까요?</p>
         </div>
 
-        <img className="element-1" alt="별똥별 1" src={star1} />
-        <img className="element-2" alt="별똥별 2" src={star2} />
-        <img className="element-3" alt="별똥별 3" src={star3} />
+        <img className="element-1" alt="별똥별 1" src={star1.src} />
+        <img className="element-2" alt="별똥별 2" src={star2.src} />
+        <img className="element-3" alt="별똥별 3" src={star3.src} />
 
         <button className="bottom-button" onClick={handleNextStep}>
-          <img src={bottomButton} alt="다음으로" />
+          <img src={bottomButton.src} alt="다음으로" />
           <span className="button-text">내 마음 들여다보기</span>
         </button>
       </div>
