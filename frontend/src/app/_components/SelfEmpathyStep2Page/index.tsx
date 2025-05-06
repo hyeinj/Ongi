@@ -1,6 +1,8 @@
+"use client"
+
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../styles/SelfEmpathyStep2Page.css';
+import { useRouter } from 'next/navigation';
+import '@/styles/SelfEmpathyStep2Page.css';
 
 // 이미지 import
 import star1 from '@/assets/images/star1.png';
@@ -11,7 +13,7 @@ import arrow from '@/assets/icons/arrow.png';
 import selfProgress from '@/assets/icons/self-progress.png';
 
 const SelfEmpathyStep2Page: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   return (
     <div className="self-empathy-step2-page">
@@ -24,7 +26,7 @@ const SelfEmpathyStep2Page: React.FC = () => {
 
         <div className="content">
           <div className="header">
-            <button className="back-button" onClick={() => navigate('/self-empathy')}>
+            <button className="back-button" onClick={() => router.push('/self-empathy/1')}>
               <img src={arrow.src} alt="뒤로 가기" />
             </button>
             <img className="progress-bar" src={selfProgress.src} alt="진행 상태" />

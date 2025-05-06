@@ -1,5 +1,7 @@
+"use client"
+
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import '@/styles/SelfEmpathyPage.css';
 
 // 이미지 import
@@ -10,10 +12,10 @@ import bottomMt from '@/assets/images/self-empathy-mountain.png';
 import bottomButton from '@/assets/icons/bottombutton.png';
 
 const SelfEmpathyPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleNextStep = () => {
-    navigate('/self-empathy/step2');
+    router.push('/self-empathy/2');
   };
 
   return (

@@ -1,5 +1,7 @@
+"use client"
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import '@/styles/HomePage.css';
 import homepageMt from '@/assets/images/homepage-mountain.png';
 import star1 from '@/assets/images/star1.png';
@@ -13,7 +15,7 @@ import routine from '@/assets/images/routine.png';
 import relate from '@/assets/images/relate.png';
 
 const HomePage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   
   // 임시 데이터 - 나중에 백엔드에서 가져올 예정
@@ -28,7 +30,7 @@ const HomePage: React.FC = () => {
     setIsLoading(true);
     // 로딩 효과를 위해 약간의 지연 시간을 줍니다
     setTimeout(() => {
-      navigate('/self-empathy');
+      router.push('/self-empathy/1');
     }, 800);
   };
 
