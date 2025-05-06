@@ -1,7 +1,7 @@
+import HomePage from '@/app/_components/HomePage';
+
 export default function Home() {
   return (
-    <div>
-      <h1>따온</h1>
-    </div>
+    <HomePage />
   );
 }
