@@ -13,23 +13,22 @@ export default function LetterExerciseStep({ steps }: LetterExerciseStepProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState(''); // 'next' or 'prev'
+  const [exitingStepContent, setExitingStepContent] = useState<ReactNode | null>(null);
 
   const goToStep = (stepIndex: number) => {
     if (isAnimating) return;
 
     const newDirection = stepIndex > currentStep ? 'next' : 'prev';
     setDirection(newDirection);
+    setExitingStepContent(steps[currentStep].component); // 현재 내용을 퇴장할 내용으로 설정
     setIsAnimating(true);
+    setCurrentStep(stepIndex); // 다음 스텝으로 상태 변경
 
-    // 실제 currentStep 변경은 애니메이션 시작 *후*에 일어나야
-    // exit 애니메이션이 제대로 적용될 수 있음 (CSS transition group의 동작 방식과 유사)
-    // 여기서는 CSS keyframes를 사용하므로, direction을 먼저 설정하고 currentStep을 바로 변경
-    setCurrentStep(stepIndex);
-
-    // 애니메이션 지속 시간 후 isAnimating을 false로 설정
+    // 애니메이션 지속 시간 후 상태 초기화
     setTimeout(() => {
       setIsAnimating(false);
-      setDirection(''); // 애니메이션 완료 후 direction 초기화
+      setDirection('');
+      setExitingStepContent(null); // 퇴장한 내용 초기화
     }, 300); // 애니메이션 시간 (0.3초)
   };
 
@@ -45,29 +44,35 @@ export default function LetterExerciseStep({ steps }: LetterExerciseStepProps) {
     }
   };
 
+  const currentStepComponent = steps[currentStep]?.component || null;
+
   return (
     <div className="relative h-full w-full overflow-hidden">
+      {/* Exiting Step Component Container */}
+      {isAnimating && exitingStepContent && (
+        <div
+          key={`exiting-${currentStep}-${direction}`}
+          className={`absolute inset-0 h-full w-full 
+            ${direction === 'next' ? 'animate-slideOutLeft' : ''}
+            ${direction === 'prev' ? 'animate-slideOutRight' : ''}
+          `}
+        >
+          {exitingStepContent}
+        </div>
+      )}
+
+      {/* Current/Entering Step Component Container */}
       <div
-        className={`absolute inset-0 transition-transform duration-300 ease-in-out h-full w-full 
-          ${direction === 'next' && isAnimating ? 'animate-slideOutLeft' : ''}
-          ${direction === 'prev' && isAnimating ? 'animate-slideOutRight' : ''}
-        `}
-      >
-        {/* 이 부분은 이전 스텝의 컴포넌트를 렌더링하여 exit 애니메이션을 보여주기 위한 로직이 필요할 수 있습니다.
-            간단한 구현을 위해 현재 스텝만 렌더링합니다.
-            정교한 exit 애니메이션을 위해서는 이전 스텝의 상태를 잠시 유지하고 애니메이션 후 제거하는 방식이 필요합니다.
-         */}
-      </div>
-      <div
-        className={`absolute inset-0 transition-transform duration-300 ease-in-out h-full w-full 
-          ${direction === 'next' && isAnimating ? 'animate-slideInRight' : ''}
-          ${direction === 'prev' && isAnimating ? 'animate-slideInLeft' : ''}
+        key={`current-${currentStep}`}
+        className={`absolute inset-0 h-full w-full 
+          ${isAnimating && direction === 'next' ? 'animate-slideInRight' : ''}
+          ${isAnimating && direction === 'prev' ? 'animate-slideInLeft' : ''}
           ${
-            !isAnimating && direction === '' ? 'opacity-100' : 'opacity-100'
-          } // 초기 상태 및 애니메이션 후 상태
+            !isAnimating ? 'opacity-100' : isAnimating ? 'opacity-100' : 'opacity-0'
+          } // 애니메이션 중에도 보이도록, 끝나면 확실히 보이도록
         `}
       >
-        {steps[currentStep].component}
+        {currentStepComponent}
       </div>
 
       {/* Step indicator */}
@@ -104,7 +109,8 @@ export default function LetterExerciseStep({ steps }: LetterExerciseStepProps) {
             </svg>
           </button>
         )}
-        {currentStep < steps.length - 1 && (
+        {/* 다음 버튼은 항상 보이도록 하고, 마지막 스텝에서는 다른 동작을 하거나 안 보이게 할 수 있습니다. 현재는 그대로 둡니다. */}
+        {(currentStep < steps.length - 1 || steps.length === 0) && (
           <button
             onClick={goToNextStep}
             className="ml-auto p-2 rounded-full bg-white/20"
