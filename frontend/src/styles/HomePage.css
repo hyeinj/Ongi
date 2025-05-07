@@ -1,0 +1,274 @@
+.home-page {
+  background-color: transparent;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  font-family: 'Pretendard-Medium', sans-serif;
+}
+
+.home-page .div {
+  background-image: url(../assets/images/homepage-bg.png);
+  background-position: 50% 50%;
+  background-size: cover;
+  height: 780px;
+  position: relative;
+  width: 360px;
+}
+
+.home-page .mountain {
+  height: 123px;
+  left: 0;
+  position: absolute;
+  top: 657px;
+  width: 360px;
+}
+
+.home-page .process-button {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  background-color: #4dabf7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.home-page .element-1 {
+  height: 39px;
+  left: 300px;
+  position: absolute;
+  top: 74px;
+  width: 60px;
+  opacity: 0.5;
+  animation: float 4s ease-in-out infinite, twinkle 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+}
+
+.home-page .element-2 {
+  height: 51px;
+  left: 262px;
+  position: absolute;
+  top: 120px;
+  width: 98px;
+  opacity: 0.5;
+  animation: float 4s ease-in-out infinite 0.7s, twinkle 2s ease-in-out infinite 0.3s;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+}
+
+.home-page .element-3 {
+  height: 40px;
+  left: 29px;
+  position: absolute;
+  top: 89px;
+  width: 77px;
+  opacity: 0.5;
+  animation: float 4s ease-in-out infinite 1.4s, twinkle 2s ease-in-out infinite 0.7s;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+}
+
+.home-page .postoffice {
+  height: 285px;
+  left: 51px;
+  position: absolute;
+  top: 426px;
+  width: 251px;
+  z-index: 1;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.home-page .postoffice:active {
+  animation: islandClick 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes islandClick {
+  0% { 
+    transform: scale(1);
+  }
+  15% { 
+    transform: scale(1.08) translateY(-8px);
+  }
+  30% { 
+    transform: scale(1.05) translateY(-5px);
+  }
+  45% { 
+    transform: scale(1.07) translateY(-7px);
+  }
+  60% { 
+    transform: scale(1.04) translateY(-4px);
+  }
+  75% { 
+    transform: scale(1.06) translateY(-6px);
+  }
+  90% { 
+    transform: scale(1.03) translateY(-3px);
+  }
+  100% { 
+    transform: scale(1);
+  }
+}
+
+/* 물결 효과를 위한 가상 요소 */
+.home-page .postoffice::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 70%);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.home-page .postoffice:active::after {
+  animation: ripple 1.2s ease-out;
+}
+
+@keyframes ripple {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes twinkle {
+  0% { 
+    opacity: 0.5;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+  }
+  50% { 
+    opacity: 0.8;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+  }
+  100% { 
+    opacity: 0.5;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+  }
+}
+
+.home-page .text-wrapper {
+  color: #ffffff;
+  font-family: "Line Seed Sans KR";
+  font-size: 16px;
+  left: 73px;
+  letter-spacing: 0;
+  line-height: 0.7;
+  position: absolute;
+  text-align: center;
+  top: 82px;
+  width: 214px;
+  white-space: nowrap;
+}
+
+.home-page .line{
+  height: 2px;
+  left: 161px;
+  position: absolute;
+  top: 77px;
+  width: 28px;  
+}
+
+.home-page .self{
+  height: 115px;
+  left: 80px;
+  position: absolute;
+  top: 159px;
+  width: 92px;
+}
+
+.home-page .growth {
+  position: absolute;
+  width: 122px;
+  height: 133px;
+  top: 258px;
+  left: 23px;
+}
+
+.home-page .relate {
+  position: absolute;
+  width: 107px;
+  height: 124px;
+  top: 293px;
+  left: 214px;
+}
+
+.home-page .routine {
+  position: absolute;
+  width: 79px;
+  height: 98px;
+  top: 179px;
+  left: 228px;
+}
+
+.home-page .circle-ellipse {
+  position: absolute;
+  width: 27px;
+  height: 27px;
+  background-color: #E6AC24;
+  border: 2px solid #A28B60;
+  box-sizing: border-box;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-page .circle-ellipse span {
+  font-family: 'Line Seed Sans KR';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0;
+  text-align: center;
+  color: white;
+}
+
+.home-page .circle-self {
+  top: 208px;
+  left: 158px;
+}
+
+.home-page .circle-growth {
+  top: 314px;
+  left: 124px;
+}
+
+.home-page .circle-routine {
+  top: 222px;
+  left: 296px;
+}
+
+.home-page .circle-relate {
+  top: 338px;
+  left: 310px;
+}
+
+
