@@ -21,6 +21,10 @@
   position: absolute;
   top: 657px;
   width: 360px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
 }
 
 .self-empathy-page .text-wrapper {
@@ -30,7 +34,7 @@
   font-weight: 400;
   left: 31px;
   letter-spacing: 0;
-  line-height: 30px;
+  line-height: 2;
   position: absolute;
   text-align: center;
   top: 299px;
@@ -43,6 +47,7 @@
   position: absolute;
   top: 74px;
   width: 60px;
+  animation: float 4s ease-in-out infinite;
 }
 
 .self-empathy-page .element-2 {
@@ -51,6 +56,7 @@
   position: absolute;
   top: 120px;
   width: 98px;
+  animation: float 4s ease-in-out infinite 0.7s;
 }
 
 .self-empathy-page .element-3 {
@@ -59,19 +65,22 @@
   position: absolute;
   top: 89px;
   width: 77px;
+  animation: float 4s ease-in-out infinite 1.4s;
 }
 
-.text-line {
+.self-empathy-page .text-line {
   opacity: 0;
   transform: translateY(20px);
   animation: fadeInUp 0.8s ease-out forwards;
+  margin: 0;
+  padding: 0;
 }
 
-.line1 { animation-delay: 0.3s; }
-.line2 { animation-delay: 0.3s; }
-.line3 { animation-delay: 1.0s; }
-.line4 { animation-delay: 1.7s; }
-.line5 { animation-delay: 2.4s; }
+.self-empathy-page .line1 { animation-delay: 0.3s; }
+.self-empathy-page .line2 { animation-delay: 0.3s; }
+.self-empathy-page .line3 { animation-delay: 1.0s; }
+.self-empathy-page .line4 { animation-delay: 1.7s; }
+.self-empathy-page .line5 { animation-delay: 2.4s; }
 
 @keyframes fadeInUp {
   from {
@@ -84,7 +93,13 @@
   }
 }
 
-.bottom-button {
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+
+.self-empathy-page .bottom-button {
   position: absolute;
   bottom: 40px;
   left: 50%;
@@ -98,27 +113,28 @@
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 
-.bottom-button img {
+.self-empathy-page .bottom-button img {
   width: 336px;
   height: 64px;
   display: block;
   transition: filter 0.15s ease;
+  z-index: 2;
 }
 
-.bottom-button:active {
+.self-empathy-page .bottom-button:active {
   transform: translate(-50%, 4px) scale(0.95);
 }
 
-.bottom-button:active img {
+.self-empathy-page .bottom-button:active img {
   filter: brightness(0.85);
 }
 
-.bottom-button:active .button-text {
+.self-empathy-page .bottom-button:active .button-text {
   transform: translateY(4px);
   opacity: 0.85;
 }
 
-.button-text {
+.self-empathy-page .button-text {
   color: #000000;
   font-family: "Pretendard";
   font-size: 16px;

@@ -1,3 +1,5 @@
+"use client"
+
 import React from 'react';
 import { notFound } from 'next/navigation';
 
@@ -10,16 +12,16 @@ import SelfEmpathyPage from '@/app/_components/SelfEmpathyPage';
 import SelfEmpathyStep2Page from '@/app/_components/SelfEmpathyStep2Page';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     step: string;
-  };
+  }>;
 }
 
 export default function Page({ params }: PageProps) {
-  const step = params.step;
-
+  const resolvedParams = React.use(params);
+  
   // step에 따라 다른 컴포넌트 렌더링
-  switch (step) {
+  switch (resolvedParams.step) {
     case '1':
       return <SelfEmpathyPage />;
     case '2':
@@ -28,7 +30,3 @@ export default function Page({ params }: PageProps) {
       notFound(); // 유효하지 않은 step인 경우 404 페이지로 리다이렉트
   }
 }
-
-
-
-

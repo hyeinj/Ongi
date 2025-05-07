@@ -30,6 +30,7 @@
   top: 74px;
   width: 60px;
   opacity: 0.5;
+  animation: float 3s ease-in-out infinite;
 }
 
 .self-empathy-step2-page .element-2 {
@@ -39,6 +40,7 @@
   top: 120px;
   width: 98px;
   opacity: 0.5;
+  animation: float 3s ease-in-out infinite 0.5s;
 }
 
 .self-empathy-step2-page .element-3 {
@@ -48,6 +50,13 @@
   top: 89px;
   width: 77px;
   opacity: 0.5;
+  animation: float 3s ease-in-out infinite 1s;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
 }
 
 .self-empathy-step2-page .content {
@@ -63,17 +72,17 @@
   margin-bottom: 30px;
 }
 
-.self-empathy-step2-page .back-button {
+.back-button {
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
   position: absolute;
-  top: 24px;
+  top: 57px;
   left: 25px;
 }
 
-.self-empathy-step2-page .back-button img {
+.back-button img {
   width: 8.39px;
   height: 17px;
   border: 2px;
@@ -95,12 +104,11 @@
   gap: 10px;
 }
 
-
 .self-empathy-step2-page .progress-bar {
   position: absolute;
   width: 215px;
   height: 6px;
-  top: 30px;
+  top: 63px;
   left: 58px;
 }
 
@@ -120,6 +128,8 @@
   letter-spacing: 0;
   color: black;
   margin: 0;
+  opacity: 0;
+  animation: fadeInUp 1s ease-out forwards;
 }
 
 .self-empathy-step2-page .question-text .large-text {
@@ -130,22 +140,26 @@
   letter-spacing: 0;
   color: black;
   margin: 0;
+  opacity: 0;
+  animation: fadeInUp 1s ease-out forwards 0.7s;
 }
 
 .self-empathy-step2-page .answer-input {
   position: absolute;
-  width: 310px;
-  height: 200px;
-  top: 180px;
-  left: 25px;
-  background: transparent;
+  width: 290px;
+  height: 183px;
+  top: 181px;
+  left: 18px;
+  background: rgba(238, 238, 238, 0.4);
   border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   color: black;
   font-size: 16px;
   line-height: 24px;
-  padding: 10px 0;
+  padding: 16px;
   resize: none;
+  opacity: 0;
+  animation: fadeIn 1s ease-out forwards 1.4s;
+  transition: all 0.3s ease;
 }
 
 .self-empathy-step2-page .answer-input::placeholder {
@@ -154,5 +168,25 @@
 
 .self-empathy-step2-page .answer-input:focus {
   outline: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(238, 238, 238, 0.5);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 } 
