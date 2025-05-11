@@ -3,7 +3,7 @@ import letterImage from '@/assets/letter.png';
 
 export default function IntroStep() {
   return (
-    <div className="flex flex-col items-center justify-around h-full w-full text-center px-6 py-10 opacity-100">
+    <div className="flex flex-col items-center justify-around min-h-screen w-full text-center px-6 py-10 opacity-100">
       <div className="mt-16">
         <h1 className="text-white text-2xl font-semibold mb-6">
           익명의 손편지가 무지님을 찾아왔어요.
@@ -15,13 +15,14 @@ export default function IntroStep() {
         </div>
       </div>
 
-      <div className="w-full max-w-xs sm:max-w-sm md:max-w-md px-4 mb-10">
+      <div className="w-full max-w-xs sm:max-w-sm md:max-w-md px-4">
         <Image
           src={letterImage}
           alt="편지 봉투 이미지"
           width={500}
           height={350}
           layout="responsive"
+          objectFit="contain"
           priority
         />
       </div>
