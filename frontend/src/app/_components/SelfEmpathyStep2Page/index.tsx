@@ -18,7 +18,7 @@ const SelfEmpathyStep2Page: React.FC = () => {
 
   return (
     <div className="self-empathy-step2-page">
-      <div className="div">
+      <div className="background">
         <Image className="ver" src={bottomMt} alt="배경 이미지" />
         
         <Image className="element-1" alt="별똥별 1" src={star1} />

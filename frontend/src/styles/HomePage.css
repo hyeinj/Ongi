@@ -7,7 +7,7 @@
   font-family: 'Pretendard-Medium', sans-serif;
 }
 
-.home-page .div {
+.home-page .background {
   background-image: url(../assets/images/homepage-bg.png);
   background-position: 50% 50%;
   background-size: cover;

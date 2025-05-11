@@ -22,7 +22,7 @@ const SelfEmpathyPage: React.FC = () => {
 
   return (
     <div className="self-empathy-page">
-      <div className="div">
+      <div className="background">
         <Image className="ver" src={bottomMt} alt="배경 이미지" />
 
         <div className="text-wrapper">
