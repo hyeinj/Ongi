@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import backgroundImage from '@/assets/letterExerciseBackground.png';
+import backgroundImage from '@/assets/images/letterExerciseBackground.png';
 
 export default function LetterExerciseBackground({ children }: { children: React.ReactNode }) {
   return (

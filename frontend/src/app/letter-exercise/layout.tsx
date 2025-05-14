@@ -3,6 +3,9 @@
 import Header from '@/app/_components/Header';
 import { useStageIndicator } from '@/app/_store/stageIndicator';
 import { useEffect } from 'react';
+import LetterExerciseBackground from '../_components/LetterExerciseBackground';
+import { LetterProvider } from '../_store/LetterContext';
+
 export default function LetterExerciseLayout({ children }: { children: React.ReactNode }) {
   const { setCurrentStage } = useStageIndicator();
 
@@ -11,9 +14,11 @@ export default function LetterExerciseLayout({ children }: { children: React.Rea
   }, [setCurrentStage]);
 
   return (
-    <div>
-      <Header />
-      {children}
-    </div>
+    <LetterProvider>
+      <LetterExerciseBackground>
+        <Header />
+        {children}
+      </LetterExerciseBackground>
+    </LetterProvider>
   );
 }

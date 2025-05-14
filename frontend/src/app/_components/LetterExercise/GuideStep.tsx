@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import letterImage from '@/assets/letter.png'; // 기존 letter.png 파일 사용
+import letterImage from '@/assets/images/letter.png'; // 기존 letter.png 파일 사용
 
 export default function GuideStep() {
   return (
