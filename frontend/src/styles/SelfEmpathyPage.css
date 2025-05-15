@@ -37,7 +37,7 @@
   line-height: 2;
   position: absolute;
   text-align: center;
-  top: 299px;
+  top: 250px;
   width: 297px;
 }
 
@@ -81,6 +81,8 @@
 .self-empathy-page .line3 { animation-delay: 1.0s; }
 .self-empathy-page .line4 { animation-delay: 1.7s; }
 .self-empathy-page .line5 { animation-delay: 2.4s; }
+.self-empathy-page .line6 { animation-delay: 2.4s; }
+.self-empathy-page .line7 { animation-delay: 3.1s; }
 
 @keyframes fadeInUp {
   from {
