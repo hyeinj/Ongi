@@ -1,6 +1,6 @@
 interface SelfEmpathyQuestionProps {
   smallText: string;
-  largeText: string;
+  largeText: string | React.ReactNode;
   children: React.ReactNode;
   numbering: number;
 }

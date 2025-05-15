@@ -5,6 +5,8 @@ import SelfEmpathyPage from '@/app/_components/SelfEmpathyPage';
 import Step2 from '@/app/_components/SelfEmpathySteps/Step2';
 import Step3 from '@/app/_components/SelfEmpathySteps/Step3';
 import Step4 from '@/app/_components/SelfEmpathySteps/Step4';
+import Step5 from '@/app/_components/SelfEmpathySteps/Step5';
+import Step6 from '@/app/_components/SelfEmpathySteps/Step6';
 // 컴포넌트 import 
 export default function SelfEmpathyStepPage() {
   const params = useParams();
@@ -20,6 +22,10 @@ export default function SelfEmpathyStepPage() {
       return <Step3 />;
     case '4':
       return <Step4 />;
+    case '5':
+      return <Step5 />;
+    case '6':
+      return <Step6 />;
     default:
       return null;
   }
