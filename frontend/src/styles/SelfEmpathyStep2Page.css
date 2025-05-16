@@ -261,15 +261,13 @@
   border-radius: 20px;
   border: none;
   background: #EEEEEE;
-  opacity: 0.7;
   color: black;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .yesno-btn.selected {
-  background: #ffe066;
-  color: #bfa100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 } 
