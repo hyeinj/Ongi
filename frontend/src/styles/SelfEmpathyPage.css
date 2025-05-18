@@ -29,7 +29,6 @@
 
 .self-empathy-page .text-wrapper {
   color: #000000;
-  font-family: "Pretendard";
   font-size: 16px;
   font-weight: 400;
   left: 31px;
@@ -104,6 +103,7 @@
 .bottom-button {
   position: absolute;
   bottom: 40px;
+  width: 336px;
   left: 50%;
   transform: translateX(-50%);
   background: none;
@@ -138,15 +138,14 @@
 
 .button-text {
   color: #000000;
-  font-family: "Pretendard";
   font-size: 16px;
   font-weight: 400;
-  left: 100px;
   letter-spacing: 0;
   line-height: 30px;
   position: absolute;
   text-align: center;
   top: 17px;
+  left: 100px;
   width: 157px;
   pointer-events: none;
   transition: all 0.15s ease;

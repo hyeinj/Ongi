@@ -124,7 +124,6 @@
 }
 
 .self-empathy-step2-page .question-text .small-text {
-  font-family: 'Pretendard-Regular';
   font-weight: 400;
   font-size: 14px;
   line-height: 22px;
@@ -137,7 +136,6 @@
 }
 
 .self-empathy-step2-page .question-text .large-text {
-  font-family: 'Pretendard-Regular';
   font-weight: 400;
   font-size: 16px;
   line-height: 22px;
@@ -152,7 +150,7 @@
 
 .self-empathy-step2-page .answer-input.step2{
   position: relative;
-  width: 290px;
+  width: 320px;
   height: 87px;
   margin-top: 10px;
   border-radius: 20px;
@@ -170,8 +168,9 @@
 
 .self-empathy-step2-page .answer-input.step3{
   position: relative;
-  width: 290px;
+  display: flex;
   height: 200px;
+  width: 320px;
   margin-top: 10px;
   border-radius: 20px;
   background: rgba(238, 238, 238, 0.4);
@@ -188,7 +187,7 @@
 
 .self-empathy-step2-page .answer-input.step7{
   position: relative;
-  width: 290px;
+  width: 320px;
   height: 100px;
   margin-top: 10px;
   border-radius: 20px;
