@@ -6,9 +6,15 @@ import WritingStep from '@/app/_components/letterExercise/GuideStep';
 import FeedbackStep from '@/app/_components/letterExercise/FeedbackStep';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useLetterAnswer } from '@/infra/useLetterAnswer';
 
 // 스텝 컴포넌트들을 매핑합니다.
-const stepComponents: { [key: string]: React.ComponentType } = {
+const stepComponents: {
+  [key: string]: React.ComponentType<{
+    letterContent?: string;
+    onLetterChange?: (content: string) => void;
+  }>;
+} = {
   '1': ReadingStep,
   '2': WritingStep,
   '3': FeedbackStep,
@@ -22,6 +28,14 @@ export default function LetterExercisePage() {
   const params = useParams<{ step: string }>();
   const currentStepNumber = parseInt(params.step, 10);
   const StepComponent = stepComponents[params.step];
+
+  // letterId를 임의로 지정
+  const letterId = 'test-letter-1';
+  const { answer: letterContent, setAnswer: setLetterContent } = useLetterAnswer(letterId);
+
+  const handleLetterChange = (content: string) => {
+    setLetterContent(content);
+  };
 
   if (!StepComponent) {
     return (
@@ -38,11 +52,17 @@ export default function LetterExercisePage() {
   return (
     <div className="relative flex flex-col min-h-screen w-full">
       {/* 현재 스텝 컴포넌트 렌더링 */}
-      <StepComponent />
+      <StepComponent letterContent={letterContent} onLetterChange={handleLetterChange} />
 
       {/* 네비게이션 버튼 */}
       <div className="fixed bottom-12 w-full flex justify-between px-8 z-50">
-        {prevStep ? (
+        {currentStepNumber === 2 ? (
+          <Link href={prevStep as string}>
+            <div className="px-6 py-3 rounded-full bg-[#FAF2E2] active:bg-[#F4E8D1] shadow-lg">
+              <span className="text-black font-medium">편지 다시보기</span>
+            </div>
+          </Link>
+        ) : prevStep ? (
           <Link href={prevStep}>
             <div className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg">
               <svg
@@ -65,7 +85,13 @@ export default function LetterExercisePage() {
           <div></div> // 이전 버튼이 없을 때 공간 차지
         )}
 
-        {nextStep ? (
+        {currentStepNumber === 2 ? (
+          <Link href={nextStep as string}>
+            <div className="px-6 py-3 rounded-full bg-[#FAF2E2] active:bg-[#F4E8D1] shadow-lg">
+              <span className="text-black font-medium">전송하기</span>
+            </div>
+          </Link>
+        ) : nextStep ? (
           <Link href={nextStep}>
             <div className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg">
               <svg

@@ -76,15 +76,30 @@ export default function IntroStep() {
 }
 
 const LetterContent = () => {
+  const [fadeIn, setFadeIn] = useState(false);
+
+  useEffect(() => {
+    // 컴포넌트가 마운트된 직후 페이드인 시작
+    const timeout = setTimeout(() => {
+      setFadeIn(true);
+    }, 100);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
   return (
-    <div className="flex w-full h-full flex-1 justify-center items-center px-6">
+    <div
+      className={`transition-opacity duration-500 flex w-full h-full flex-1 justify-center items-center px-6 ${
+        fadeIn ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
       <Image
         src={letterExerciseLetterBg}
         alt="편지 배경 이미지"
         loading="eager"
         className="absolute bottom-15 left-0 w-full h-auto"
       />
-      <div className="flex flex-col items-center justify-start bg-[#F7F4E6] w-full h-[80vh] shadow-[#00000058] shadow-xl p-4 scroll-auto overflow-y-auto">
+      <div className="flex flex-col items-center justify-start bg-[#F7F4E6] w-full h-[80vh] shadow-[#00000058] shadow-xl p-4 scroll-auto overflow-y-auto ">
         <Image src={letterExerciseLetterTopIcon} alt="편지 위 아이콘" width={50} height={50} />
         <div className={`text-center ${garamFont.className} py-4 text-[#6A3C00] font-extrabold`}>
           자기 계발과 끝없는 업무 속에서,

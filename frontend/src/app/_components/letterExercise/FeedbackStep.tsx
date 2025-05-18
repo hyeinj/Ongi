@@ -11,7 +11,11 @@ export default function FeedbackStep() {
 
   return (
     <div className="flex flex-col h-full w-full py-10 px-6">
-      <h2 className="text-white text-xl mb-6">소중한 마디</h2>
+      <h2 className="text-white text-md mb-6">
+        잠시, 이 편지를 함께 바라볼까요?
+        <br />
+        무지님의 마음과 사연자의 마음이 닮아 있었어요.
+      </h2>
 
       <div className="bg-white/20 backdrop-blur-sm rounded-lg p-5 mb-6 flex-1">
         <div className="bg-white/70 rounded-lg p-4 mb-4">

@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" className="font-lineseed">
       <body>
         <StageProvider>{children}</StageProvider>
       </body>
