@@ -13,7 +13,7 @@ interface SelfEmpathyLayoutProps {
   onBack: () => void;
 }
 
-export default function SelfEmpathyLayout({ children, currentStep, onBack }: SelfEmpathyLayoutProps) {
+export default function SelfEmpathyLayout({ children, onBack }: SelfEmpathyLayoutProps) {
   return (
     <div className="self-empathy-step2-page">
       <div className="background">
