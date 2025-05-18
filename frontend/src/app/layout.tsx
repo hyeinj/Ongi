@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import './globals.css';
+import { StageProvider } from '../store/stageContext';
 
 export const metadata: Metadata = {
   title: '따온',
@@ -12,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body>
+        <StageProvider>{children}</StageProvider>
+      </body>
     </html>
   );
 }
