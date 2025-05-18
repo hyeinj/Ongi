@@ -10,6 +10,11 @@ module.exports = {
       fontFamily: {
         lineseed: ['LINESeedKR', 'Arial', 'sans-serif'],
       },
+      fontWeight: {
+        thin: '100',
+        normal: '400',
+        bold: '700',
+      },
     },
   },
   plugins: [],

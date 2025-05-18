@@ -9,6 +9,22 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'LINESeedKR';
+  src: url('../assets/fonts/LINESeedKR-Bd.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LINESeedKR';
+  src: url('../assets/fonts/LINESeedKR-Th.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

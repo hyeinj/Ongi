@@ -1,39 +1,48 @@
 import React from 'react';
 import Image from 'next/image';
-import letterImage from '@/assets/images/letter.png'; // 기존 letter.png 파일 사용
+import letterExerciseDotImage from '@/assets/images/letter-exercise-dot-img.png';
 
-export default function GuideStep() {
+interface GuideStepProps {
+  letterContent?: string;
+  onLetterChange?: (content: string) => void;
+}
+
+export default function GuideStep({ letterContent = '', onLetterChange }: GuideStepProps) {
+  const handleLetterChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (onLetterChange) {
+      onLetterChange(e.target.value);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full w-full py-10 px-6">
-      <h2 className="text-white text-xl mb-6">어떻게 편지를 쓰나요?</h2>
+      <h2 className="text-white text-md mb-6">당신의 마음을 담아, 적어볼까요?</h2>
 
-      <div className="bg-white/20 backdrop-blur-sm rounded-lg p-5 mb-8">
-        <ul className="space-y-3 text-white">
-          <li className="flex items-start">
-            <div className="mr-2 mt-1 text-yellow-200">➜</div>
-            <p>마음속에 있는 이야기를 솔직하게 표현하세요.</p>
+      <div className="  mb-8">
+        <ul className="space-y-1 text-white font-thin text-sm">
+          <li className="flex items-center gap-2">
+            <Image src={letterExerciseDotImage} alt="점" width={14} height={14} />
+            <p>상대방의 감정에 초점을 맞추어 보세요.</p>
           </li>
-          <li className="flex items-start">
-            <div className="mr-2 mt-1 text-yellow-200">➜</div>
-            <p>상대방에게 고마웠던 경험이나 사건을 떠올려보세요.</p>
+          <li className="flex items-center gap-2">
+            <Image src={letterExerciseDotImage} alt="점" width={14} height={14} />
+            <p>판단보다는 이해를 바탕으로 응답해 보세요.</p>
           </li>
-          <li className="flex items-start">
-            <div className="mr-2 mt-1 text-yellow-200">➜</div>
-            <p>서로에 대한 감정이나, 소망을 담아보세요.</p>
+          <li className="flex items-center gap-2">
+            <Image src={letterExerciseDotImage} alt="점" width={14} height={14} />
+            <p>자신의 경험을 나누되, 상대의 감정을 중심에 두세요.</p>
           </li>
         </ul>
       </div>
 
-      <div className="flex justify-center items-center flex-1">
-        <div className="text-center">
-          <Image
-            src={letterImage}
-            alt="편지 이미지"
-            width={80}
-            height={80}
-            className="mx-auto mb-4"
+      <div className="flex justify-center items-center flex-1 bg-white/20 backdrop-blur-sm rounded-lg p-5 overflow-hidden">
+        <div className="w-full h-full">
+          <textarea
+            className="w-full h-full min-h-[50vh] bg-transparent text-white placeholder-white/50 resize-none border-none outline-none font-thin overflow-y-auto break-keep"
+            placeholder="※ 가상의 인물에게 보내지는 편지이니, 마음 편히 당신의 이야기를 꺼내보셔도 좋아요."
+            value={letterContent}
+            onChange={handleLetterChange}
           />
-          <p className="text-white text-sm">편지 쓰기</p>
         </div>
       </div>
     </div>
