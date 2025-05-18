@@ -8,6 +8,8 @@ import Step4 from '@/app/_components/SelfEmpathySteps/Step4';
 import Step5 from '@/app/_components/SelfEmpathySteps/Step5';
 import Step6 from '@/app/_components/SelfEmpathySteps/Step6';
 import Step7 from '@/app/_components/SelfEmpathySteps/Step7';
+import Step8 from '@/app/_components/SelfEmpathySteps/Step8';
+import Step9 from '@/app/_components/SelfEmpathySteps/Step9';
 
 export default function SelfEmpathyStepPage() {
   const params = useParams();
@@ -29,6 +31,10 @@ export default function SelfEmpathyStepPage() {
       return <Step6 />;
     case '7':
       return <Step7 />;
+    case '8':
+      return <Step8 />;
+    case '9':
+      return <Step9 />;
     default:
       return null;
   }

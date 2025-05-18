@@ -101,7 +101,7 @@
   100% { transform: translateY(0px); }
 }
 
-.self-empathy-page .bottom-button {
+.bottom-button {
   position: absolute;
   bottom: 40px;
   left: 50%;
@@ -115,7 +115,7 @@
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 
-.self-empathy-page .bottom-button img {
+.bottom-button img {
   width: 336px;
   height: 64px;
   display: block;
@@ -123,20 +123,20 @@
   z-index: 2;
 }
 
-.self-empathy-page .bottom-button:active {
+.bottom-button:active {
   transform: translate(-50%, 4px) scale(0.95);
 }
 
-.self-empathy-page .bottom-button:active img {
+.bottom-button:active img {
   filter: brightness(0.85);
 }
 
-.self-empathy-page .bottom-button:active .button-text {
+.bottom-button:active .button-text {
   transform: translateY(4px);
   opacity: 0.85;
 }
 
-.self-empathy-page .button-text {
+.button-text {
   color: #000000;
   font-family: "Pretendard";
   font-size: 16px;
@@ -150,17 +150,6 @@
   width: 157px;
   pointer-events: none;
   transition: all 0.15s ease;
-}
-
-.self-empathy-page .send-button {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: none;
-  border: none;
-  padding: 0;
-  opacity: 0;
 }
 
 
@@ -185,4 +174,15 @@
   100% {
     transform: translate(-50%, 0);
   }
+}
+
+.final-button {
+  top: 684px;
+  animation-delay: 1.5s;
+  left: 50%;
+}
+
+.final-button-text {
+  left: 80px;
+  width: 180px;
 }

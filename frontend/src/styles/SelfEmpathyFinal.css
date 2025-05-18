@@ -1,0 +1,140 @@
+@keyframes bounceUp {
+  0%   { transform: translateY(0); }
+  15%  { transform: translateY(-32px); }
+  30%  { transform: translateY(0); }
+  50%  { transform: translateY(-18px); }
+  70%  { transform: translateY(0); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes fadeInLine {
+  from { opacity: 0; transform: translateY(10px);}
+  to   { opacity: 1; transform: translateY(0);}
+}
+
+@keyframes fadeInCard {
+  from { opacity: 0; transform: translateY(10px);}
+  to   { opacity: 1; transform: translateY(0);}
+}
+
+.loading-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    width: 100%;
+    background: transparent; /* 필요시 배경색 지정 */
+  }
+  
+  .loading-page img {
+    width: 116px;
+    height: 116px;
+    top: 308px;
+    object-fit: contain;
+    animation: bounceUp 2.4s infinite;
+  }
+  
+  .loading-text { 
+    font-size: 14px;
+    font-weight: 500;
+    color: #222;
+    text-align: center;
+  }
+
+.final-message {
+  position: absolute;
+  font-family: 'Pretendard-Regular';
+  top: 113px;
+  left: 25px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #222;
+  white-space: pre-line;
+}
+
+.final-line {
+  opacity: 0;
+  display: block;
+  line-height: 1.0;
+  animation: fadeInLine 0.8s forwards;
+}
+
+.final-line.line1 {
+  animation-delay: 0.2s;
+}
+
+.final-line.line2 {
+  animation-delay: 1.2s;
+}
+
+.final-card {
+  position: absolute;
+  top: 189px;
+  left: 18px;
+  width: 324px;
+  height: auto;
+  background: #fffbe8;
+  border-radius: 30px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  font-size: 14px;
+  color: #444;
+  font-weight: 500;
+  line-height: 1.7;
+  z-index: 3;
+}
+
+.final-card-text {
+  white-space: pre-line;
+  padding: 15px;
+  font-family: 'Pretendard-Regular';
+}
+
+.mail-box {
+    position: absolute;
+    top: 600px;
+    left: -15px;
+    width: 190px;
+    height: 200px;
+    z-index: 2;
+    transform: scaleX(-1);
+}
+
+.fade-in-card {
+  opacity: 0;
+  animation: fadeInCard 0.8s forwards;
+  animation-delay: 2.2s;
+}
+
+.final-bottom-ment {
+  position: absolute;
+  top: 510px;
+  left: 18px;
+  width: 324px;
+  font-size: 14px;
+  color: #222;
+  font-family: 'Pretendard-Regular';
+  text-align: center;
+  font-weight: 400;
+  line-height: 1.7;
+  z-index: 2;
+  opacity: 0;
+  animation: fadeInLine 0.8s forwards;
+  animation-delay: 3.2s;
+}
+
+.next-text {
+    display: block;
+    margin-top: 240px;   
+    width: 324px;
+    font-size: 14px;
+    color: #222;
+    font-family: 'Pretendard-Regular';
+    font-weight: 400;
+    line-height: 1.7;
+    white-space: pre-line;    /* \\n 줄바꿈 적용 */
+    text-align: center;
+    opacity: 0;
+    animation: fadeInLine 0.8s forwards;
+    animation-delay: 0.5s;   /* 필요시 조정 */
+  }
