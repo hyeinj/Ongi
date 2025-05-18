@@ -25,7 +25,7 @@ export default function Step7() {
         />
         <button 
           className="send-button"
-          onClick={() => router.push('/self-empathy/complete')}
+          onClick={() => router.push('/self-empathy/7')}
         >
           <Image src={sendButton} alt="완료" />
         </button>

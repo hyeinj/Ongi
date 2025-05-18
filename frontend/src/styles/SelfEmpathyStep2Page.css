@@ -247,6 +247,8 @@
   align-items: center;
   justify-content: center;
   transition: transform 0.3s ease;
+  opacity: 0;
+  animation: fadeIn 1s ease-out forwards 2s;
 }
 
 .self-empathy-step2-page .send-button img {
