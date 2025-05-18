@@ -12,6 +12,7 @@ export default function Step6() {
   const router = useRouter();
   const [answer, setAnswer] = useState<'yes' | 'no' | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedButton, setSelectedButton] = useState<string | null>(null);
 
   const handleNext = () => {
     if (answer === 'yes') {
@@ -21,9 +22,12 @@ export default function Step6() {
     }
   };
 
-  const handleConfirm = () => {
-    setShowConfirm(false);
-    router.push('/self-empathy/7');
+  const handleConfirm = (buttonType: string) => {
+    setSelectedButton(buttonType);
+    setTimeout(() => {
+      setShowConfirm(false);
+      router.push('/self-empathy/7');
+    }, 700);
   };
 
   return (
@@ -77,8 +81,18 @@ export default function Step6() {
                     앞뒤 상황을 생각해볼까요?
                   </div>
                   <div className="modal-btn-group">
-                    <button className="modal-btn" onClick={handleConfirm}>넘어갈래요</button>
-                    <button className="modal-btn" onClick={handleConfirm}>충분히 생각해 본 것 같아요</button>
+                    <button 
+                      className={`modal-btn${selectedButton === 'skip' ? ' active' : ''}`}
+                      onClick={() => handleConfirm('skip')}
+                    >
+                      넘어갈래요
+                    </button>
+                    <button 
+                      className={`modal-btn${selectedButton === 'think' ? ' active' : ''}`}
+                      onClick={() => handleConfirm('think')}
+                    >
+                      충분히 생각해 본 것 같아요
+                    </button>
                   </div>
                 </div>
               </div>

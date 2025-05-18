@@ -53,8 +53,14 @@
     font-size: 13px;
     font-weight: 500;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    transition: background 0.2s;
+    transition: all 0.2s ease;
     white-space: nowrap;
+}
+
+.confirm-modal .modal-btn.active {
+    background: #c2dfff;
+    color: white;
+    transform: scale(0.98);
 }
 
 .confirm-modal .modal-close {
