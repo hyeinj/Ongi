@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLetter } from '../../_store/LetterContext';
+import { useLetter } from '../../../store/LetterContext';
 
 export default function LetterWritingStep() {
   const { letter, setRecipient, setContent, setSender } = useLetter();

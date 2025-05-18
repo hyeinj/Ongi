@@ -1,10 +1,10 @@
 'use client';
 
 import Header from '@/app/_components/Header';
-import { useStageIndicator } from '@/app/_store/stageIndicator';
+import { useStageIndicator } from '@/store/stageContext';
 import { useEffect } from 'react';
 import LetterExerciseBackground from '../_components/LetterExerciseBackground';
-import { LetterProvider } from '../_store/LetterContext';
+import { LetterProvider } from '../../store/LetterContext';
 
 export default function LetterExerciseLayout({ children }: { children: React.ReactNode }) {
   const { setCurrentStage } = useStageIndicator();

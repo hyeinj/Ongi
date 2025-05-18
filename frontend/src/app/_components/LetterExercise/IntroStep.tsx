@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import letterImage from '@/assets/images/letter.png';
 import localFont from 'next/font/local';
-import { useLetter } from '@/app/_store/LetterContext';
+import { useLetter } from '@/store/LetterContext';
+import letterExerciseLetterBg from '@/assets/images/letter-exercise-letter-bg.png';
+import letterExerciseLetterTopIcon from '@/assets/images/letter-exercise-letter-top-icon.png';
 
 const garamFont = localFont({
   src: '../../../assets/fonts/gaRamYeonGgoc.ttf',
@@ -74,5 +76,37 @@ export default function IntroStep() {
 }
 
 const LetterContent = () => {
-  return <div>hihi</div>;
+  return (
+    <div className="flex w-full h-full flex-1 justify-center items-center px-6">
+      <Image
+        src={letterExerciseLetterBg}
+        alt="편지 배경 이미지"
+        loading="eager"
+        className="absolute bottom-15 left-0 w-full h-auto"
+      />
+      <div className="flex flex-col items-center justify-start bg-[#F7F4E6] w-full h-[80vh] shadow-[#00000058] shadow-xl p-4 scroll-auto overflow-y-auto">
+        <Image src={letterExerciseLetterTopIcon} alt="편지 위 아이콘" width={50} height={50} />
+        <div className={`text-center ${garamFont.className} py-4 text-[#6A3C00] font-extrabold`}>
+          자기 계발과 끝없는 업무 속에서,
+          <br /> 버텨내는 매일이 너무 힘겹게 느껴져요.
+        </div>
+        <div className={` mb-6 ${garamFont.className} leading-8`}>
+          무지님, 안녕하세요.
+          <br />
+          저는 요즘 정말 힘든 시간을 보내고 있습니다.
+          <br />
+          직장에서는 업무가 끊임없이 늘어나고,
+          <br />
+          퇴근 후에도 자기 계발을 위한 공부를 해야 하는데
+          <br />
+          시간이 턱없이 부족해 매일 스트레스로
+          <br />
+          가득한 나날을 보내고 있어요. <br />
+          <br />
+          이런 상황에서 어떻게 하면 좋을까요? <br />
+          무지님은 이런 제 마음을 헤아려주실 수 있을 것 같아요.
+        </div>
+      </div>
+    </div>
+  );
 };

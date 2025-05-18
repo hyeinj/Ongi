@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useStageIndicator } from '@/app/_store/stageIndicator';
+import { useStageIndicator } from '@/store/stageContext';
 
 export default function StageIndicator() {
   const { currentStage, totalStages } = useStageIndicator();

@@ -44,13 +44,13 @@ export default function LetterExercisePage() {
       <div className="fixed bottom-12 w-full flex justify-between px-8 z-50">
         {prevStep ? (
           <Link href={prevStep}>
-            <div className="p-3 rounded-full bg-white/30 hover:bg-white/40 transition-colors">
+            <div className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="white"
+                stroke="black"
               >
                 <path
                   strokeLinecap="round"
@@ -67,13 +67,13 @@ export default function LetterExercisePage() {
 
         {nextStep ? (
           <Link href={nextStep}>
-            <div className="p-3 rounded-full bg-white/30 hover:bg-white/40 transition-colors">
+            <div className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="white"
+                stroke="black"
               >
                 <path
                   strokeLinecap="round"
