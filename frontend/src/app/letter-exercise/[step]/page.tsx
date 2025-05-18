@@ -55,67 +55,69 @@ export default function LetterExercisePage() {
       <StepComponent letterContent={letterContent} onLetterChange={handleLetterChange} />
 
       {/* 네비게이션 버튼 */}
-      <div className="fixed bottom-12 w-full flex justify-between px-8 z-50">
-        {currentStepNumber === 2 ? (
-          <Link href={prevStep as string}>
-            <div className="px-6 py-3 rounded-full bg-[#FAF2E2] active:bg-[#F4E8D1] shadow-lg">
-              <span className="text-black font-medium">편지 다시보기</span>
-            </div>
-          </Link>
-        ) : prevStep ? (
-          <Link href={prevStep}>
-            <div className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="black"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </div>
-          </Link>
-        ) : (
-          <div></div> // 이전 버튼이 없을 때 공간 차지
-        )}
+      {currentStepNumber !== 3 && (
+        <div className="fixed bottom-12 w-full flex justify-between px-8 z-50">
+          {currentStepNumber === 2 ? (
+            <Link href={prevStep as string}>
+              <div className="px-6 py-3 rounded-full bg-[#FAF2E2] active:bg-[#F4E8D1] shadow-lg">
+                <span className="text-black font-medium">편지 다시보기</span>
+              </div>
+            </Link>
+          ) : prevStep ? (
+            <Link href={prevStep}>
+              <div className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="black"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </div>
+            </Link>
+          ) : (
+            <div></div> // 이전 버튼이 없을 때 공간 차지
+          )}
 
-        {currentStepNumber === 2 ? (
-          <Link href={nextStep as string}>
-            <div className="px-6 py-3 rounded-full bg-[#FAF2E2] active:bg-[#F4E8D1] shadow-lg">
-              <span className="text-black font-medium">전송하기</span>
-            </div>
-          </Link>
-        ) : nextStep ? (
-          <Link href={nextStep}>
-            <div className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="black"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
-          </Link>
-        ) : (
-          // 마지막 스텝에서는 다른 버튼 (예: 완료)을 표시하거나 아무것도 표시하지 않을 수 있습니다.
-          // 여기서는 일단 빈 div로 둡니다.
-          <div></div>
-        )}
-      </div>
+          {currentStepNumber === 2 ? (
+            <Link href={nextStep as string}>
+              <div className="px-6 py-3 rounded-full bg-[#FAF2E2] active:bg-[#F4E8D1] shadow-lg">
+                <span className="text-black font-medium">전송하기</span>
+              </div>
+            </Link>
+          ) : nextStep ? (
+            <Link href={nextStep}>
+              <div className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="black"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </Link>
+          ) : (
+            // 마지막 스텝에서는 다른 버튼 (예: 완료)을 표시하거나 아무것도 표시하지 않을 수 있습니다.
+            // 여기서는 일단 빈 div로 둡니다.
+            <div></div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
