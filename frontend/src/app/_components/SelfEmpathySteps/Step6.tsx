@@ -41,7 +41,7 @@ export default function Step6() {
             largeText={
                 <>
                   무지님이 답답함과 짜증, 초조함을 느꼈던 이유 중 가장 큰 이유는
-                  <b> "시간이 촉박했기 때문" </b>
+                  <b> &quot;시간이 촉박했기 때문&quot; </b>
                   이 맞을까요?
                 </>
               }
