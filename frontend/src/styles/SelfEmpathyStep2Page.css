@@ -6,7 +6,7 @@
   width: 100%;
 }
 
-.self-empathy-step2-page .div {
+.self-empathy-step2-page .background {
   background-image: url(../assets/images/self-empathy-bg-dark.png);
   background-position: 50% 50%;
   background-size: cover;
@@ -60,8 +60,9 @@
 }
 
 .self-empathy-step2-page .content {
-  position: relative;
+  position: absolute;
   z-index: 1;
+  margin-top: 0px;
   padding: 20px;
   color: white;
 }
@@ -69,7 +70,6 @@
 .self-empathy-step2-page .header {
   display: flex;
   align-items: center;
-  margin-bottom: 30px;
 }
 
 .back-button {
@@ -104,31 +104,35 @@
   gap: 10px;
 }
 
-.self-empathy-step2-page .progress-bar {
-  position: absolute;
-  width: 215px;
-  height: 6px;
-  top: 63px;
-  left: 58px;
+.self-empathy-step2-page .progress-row {
+  display: flex;
+  align-items: center;
+  margin-top: 37px;
+  margin-left: 38px;
+  margin-bottom: 16px;
 }
 
-.self-empathy-step2-page .question-text {
-  position: absolute;
-  width: 307px;
-  height: 60px;
-  top: 96px;
-  left: 25px;
+.self-empathy-step2-page .progress-bar {
+  width: 215px;
+  height: 6px;
+}
+
+.self-empathy-step2-page .progress-text {
+  font-size: 12px;
+  color: white;
+  margin-left: 12px;
 }
 
 .self-empathy-step2-page .question-text .small-text {
   font-family: 'Pretendard-Regular';
   font-weight: 400;
   font-size: 14px;
-  line-height: 30px;
+  line-height: 22px;
   letter-spacing: 0;
   color: black;
   margin: 0;
   opacity: 0;
+  white-space: pre-line;
   animation: fadeInUp 1s ease-out forwards;
 }
 
@@ -136,24 +140,62 @@
   font-family: 'Pretendard-Regular';
   font-weight: 400;
   font-size: 16px;
-  line-height: 30px;
+  line-height: 22px;
   letter-spacing: 0;
   color: black;
   margin: 0;
   opacity: 0;
   animation: fadeInUp 1s ease-out forwards 0.7s;
+  margin-top: 8px;
+  margin-bottom: 10px;
 }
 
-.self-empathy-step2-page .answer-input {
-  position: absolute;
+.self-empathy-step2-page .answer-input.step2{
+  position: relative;
   width: 290px;
-  height: 183px;
-  top: 181px;
-  left: 18px;
+  height: 87px;
+  margin-top: 10px;
+  border-radius: 20px;
   background: rgba(238, 238, 238, 0.4);
   border: none;
   color: black;
-  font-size: 16px;
+  font-size: 13px;
+  line-height: 24px;
+  padding: 16px;
+  resize: none;
+  opacity: 0;
+  animation: fadeIn 1s ease-out forwards 1.4s;
+  transition: all 0.3s ease;
+}
+
+.self-empathy-step2-page .answer-input.step3{
+  position: relative;
+  width: 290px;
+  height: 200px;
+  margin-top: 10px;
+  border-radius: 20px;
+  background: rgba(238, 238, 238, 0.4);
+  border: none;
+  color: black;
+  font-size: 13px;
+  line-height: 24px;
+  padding: 16px;
+  resize: none;
+  opacity: 0;
+  animation: fadeIn 1s ease-out forwards 1.4s;
+  transition: all 0.3s ease;
+}
+
+.self-empathy-step2-page .answer-input.step7{
+  position: relative;
+  width: 290px;
+  height: 100px;
+  margin-top: 10px;
+  border-radius: 20px;
+  background: rgba(238, 238, 238, 0.4);
+  border: none;
+  color: black;
+  font-size: 13px;
   line-height: 24px;
   padding: 16px;
   resize: none;
@@ -169,6 +211,50 @@
 .self-empathy-step2-page .answer-input:focus {
   outline: none;
   background: rgba(238, 238, 238, 0.5);
+}
+
+.self-empathy-step2-page .next-button {
+  position: absolute;
+  top: 677px;
+  left: 282px;
+  background: none;
+  border: none;
+  padding: 0;
+  width: 68px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.self-empathy-step2-page .next-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.self-empathy-step2-page .send-button {
+  position: absolute;
+  top: 683px;
+  left: 22px;
+  background: none;
+  border: none;
+  padding: 0;
+  width: 316px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  opacity: 0;
+  animation: fadeIn 1s ease-out forwards 2s;
+}
+
+.self-empathy-step2-page .send-button img {
+  width: 130%;
+  height: 130%;
+  object-fit: contain;
 }
 
 @keyframes fadeInUp {
@@ -189,4 +275,39 @@
   to {
     opacity: 1;
   }
+}
+
+.self-empathy-step2-page .question-text .question-number {
+  background: #f3f3f3;
+  background: none;
+  color: #222;
+  font-size: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+} 
+
+.yesno-btn-group {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin: 24px 0;
+  opacity: 0;
+  animation: fadeIn 1s ease-out forwards 1.4s;
+}
+
+.yesno-btn {
+  min-width: 150px;
+  padding: 12px 0;
+  border-radius: 20px;
+  border: none;
+  background: #EEEEEE;
+  color: black;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.yesno-btn.selected {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 } 

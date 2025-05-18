@@ -1,32 +1,41 @@
 "use client"
 
-import React from 'react';
-import { notFound } from 'next/navigation';
-
-// [step]으로 다이나믹 세그먼트
-// 그거 받아서 1 이면 _components/SelfEmpathyPage 폴더에 있는 파일 렌더링
-// 2 이면 _components/SelfEmpathyStep2Page 폴더에 있는 파일 렌더링
-
-// 컴포넌트 import 
+import { useParams } from 'next/navigation';
 import SelfEmpathyPage from '@/app/_components/SelfEmpathyPage';
-import SelfEmpathyStep2Page from '@/app/_components/SelfEmpathyStep2Page';
+import Step2 from '@/app/_components/SelfEmpathySteps/Step2';
+import Step3 from '@/app/_components/SelfEmpathySteps/Step3';
+import Step4 from '@/app/_components/SelfEmpathySteps/Step4';
+import Step5 from '@/app/_components/SelfEmpathySteps/Step5';
+import Step6 from '@/app/_components/SelfEmpathySteps/Step6';
+import Step7 from '@/app/_components/SelfEmpathySteps/Step7';
+import Step8 from '@/app/_components/SelfEmpathySteps/Step8';
+import Step9 from '@/app/_components/SelfEmpathySteps/Step9';
 
-interface PageProps {
-  params: Promise<{
-    step: string;
-  }>;
-}
+export default function SelfEmpathyStepPage() {
+  const params = useParams();
+  const step = params.step as string;
 
-export default function Page({ params }: PageProps) {
-  const resolvedParams = React.use(params);
-  
-  // step에 따라 다른 컴포넌트 렌더링
-  switch (resolvedParams.step) {
+  // step에 따라 다른 컴포넌트를 렌더링
+  switch (step) {
     case '1':
       return <SelfEmpathyPage />;
     case '2':
-      return <SelfEmpathyStep2Page />;
+      return <Step2 />;
+    case '3':
+      return <Step3 />;
+    case '4':
+      return <Step4 />;
+    case '5':
+      return <Step5 />;
+    case '6':
+      return <Step6 />;
+    case '7':
+      return <Step7 />;
+    case '8':
+      return <Step8 />;
+    case '9':
+      return <Step9 />;
     default:
-      notFound(); // 유효하지 않은 step인 경우 404 페이지로 리다이렉트
+      return null;
   }
 }

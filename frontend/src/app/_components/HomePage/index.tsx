@@ -32,7 +32,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="home-page">
-      <div className="div">
+      <div className="background">
         <div className="text-wrapper">
           <p>무지 님의 시간이 머무는 섬이에요.</p>
           <p>따뜻한 기록 하나, 띄워볼까요?</p>

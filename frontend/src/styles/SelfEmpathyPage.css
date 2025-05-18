@@ -6,7 +6,7 @@
   width: 100%;
 }
 
-.self-empathy-page .div {
+.self-empathy-page .background {
   background-image: url(../assets/images/self-empathy-bg.png);
   background-position: 50% 50%;
   background-size: cover;
@@ -37,7 +37,7 @@
   line-height: 2;
   position: absolute;
   text-align: center;
-  top: 299px;
+  top: 250px;
   width: 297px;
 }
 
@@ -81,6 +81,8 @@
 .self-empathy-page .line3 { animation-delay: 1.0s; }
 .self-empathy-page .line4 { animation-delay: 1.7s; }
 .self-empathy-page .line5 { animation-delay: 2.4s; }
+.self-empathy-page .line6 { animation-delay: 2.4s; }
+.self-empathy-page .line7 { animation-delay: 3.1s; }
 
 @keyframes fadeInUp {
   from {
@@ -99,7 +101,7 @@
   100% { transform: translateY(0px); }
 }
 
-.self-empathy-page .bottom-button {
+.bottom-button {
   position: absolute;
   bottom: 40px;
   left: 50%;
@@ -113,7 +115,7 @@
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 
-.self-empathy-page .bottom-button img {
+.bottom-button img {
   width: 336px;
   height: 64px;
   display: block;
@@ -121,20 +123,20 @@
   z-index: 2;
 }
 
-.self-empathy-page .bottom-button:active {
+.bottom-button:active {
   transform: translate(-50%, 4px) scale(0.95);
 }
 
-.self-empathy-page .bottom-button:active img {
+.bottom-button:active img {
   filter: brightness(0.85);
 }
 
-.self-empathy-page .bottom-button:active .button-text {
+.bottom-button:active .button-text {
   transform: translateY(4px);
   opacity: 0.85;
 }
 
-.self-empathy-page .button-text {
+.button-text {
   color: #000000;
   font-family: "Pretendard";
   font-size: 16px;
@@ -149,6 +151,7 @@
   pointer-events: none;
   transition: all 0.15s ease;
 }
+
 
 @keyframes fadeInUpButton {
   from {
@@ -171,4 +174,15 @@
   100% {
     transform: translate(-50%, 0);
   }
+}
+
+.final-button {
+  top: 684px;
+  animation-delay: 1.5s;
+  left: 50%;
+}
+
+.final-button-text {
+  left: 80px;
+  width: 180px;
 }
