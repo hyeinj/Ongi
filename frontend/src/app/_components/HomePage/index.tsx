@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
@@ -17,30 +17,31 @@ import relate from '@/assets/images/relate.png';
 
 const HomePage: React.FC = () => {
   const router = useRouter();
-  
+
   // 임시 데이터 - 나중에 백엔드에서 가져올 예정
   const letterCounts = {
     self: 3,
     growth: 5,
     routine: 2,
-    relate: 4
+    relate: 4,
   };
 
   const handlePostOfficeClick = () => {
-      router.replace('/self-empathy/1');
+    router.replace('/self-empathy/1');
   };
 
   return (
     <div className="home-page">
       <div className="background">
         <div className="text-wrapper">
+          <Image className="line" alt="Line" src={line} />
+
           <p>무지 님의 시간이 머무는 섬이에요.</p>
           <p>따뜻한 기록 하나, 띄워볼까요?</p>
         </div>
-        <Image className="line" alt="Line" src={line} />
-        <Image 
-          className="postoffice" 
-          alt="우체국" 
+        <Image
+          className="postoffice"
+          alt="우체국"
           src={postoffice}
           onClick={handlePostOfficeClick}
         />
@@ -70,4 +71,4 @@ const HomePage: React.FC = () => {
   );
 };
 
-export default HomePage; 
+export default HomePage;

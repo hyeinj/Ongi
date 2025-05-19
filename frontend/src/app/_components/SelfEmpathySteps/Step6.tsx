@@ -32,7 +32,8 @@ export default function Step6() {
 
   return (
         <SelfEmpathyLayout 
-          currentStep={6}
+          currentStep={5}
+          totalStep={6}
           onBack={() => router.push('/self-empathy/5')}
         >
           <SelfEmpathyQuestion
@@ -69,7 +70,6 @@ export default function Step6() {
               <Image src={nextArrow} alt="다음" />
             </button>
 
-            {/* 확인 모달 예시 */}
             {showConfirm && (
               <div className="confirm-modal">
                 <div className="modal-content">

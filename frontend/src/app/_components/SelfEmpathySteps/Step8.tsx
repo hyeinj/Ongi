@@ -20,7 +20,7 @@ export default function Step8() {
 
   if (isLoading) {
     return (
-      <SelfEmpathyLayout currentStep={8} onBack={() => router.push('/self-empathy/7')}>
+      <SelfEmpathyLayout onBack={() => router.push('/self-empathy/7')}>
         <div className="loading-page">
           <Image src={mailBird} alt="로딩"/>
           <div className="loading-text">오늘의 감정이 전달되고 있어요.</div>
@@ -30,7 +30,7 @@ export default function Step8() {
   }
 
   return (
-    <SelfEmpathyLayout currentStep={8} onBack={() => router.push('/self-empathy/7')}>
+    <SelfEmpathyLayout onBack={() => router.push('/self-empathy/7')}>
       <div className="final-message">
         <span className="final-line line1">잠시, 꺼내어 본 감정을 함께 들여다볼까요?</span>
         <br />

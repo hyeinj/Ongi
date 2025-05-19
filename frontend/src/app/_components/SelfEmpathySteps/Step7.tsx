@@ -11,7 +11,8 @@ export default function Step7() {
 
   return (
     <SelfEmpathyLayout 
-      currentStep={7}
+      currentStep={6}
+      totalStep={6}
       onBack={() => router.push('/self-empathy/6')}
     >
       <SelfEmpathyQuestion
