@@ -32,7 +32,6 @@
   color: white;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
   transition: background-color 0.2s;
   position: absolute;
   top: 50%;

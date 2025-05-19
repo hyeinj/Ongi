@@ -4,51 +4,56 @@
   flex-direction: row;
   justify-content: center;
   width: 100%;
+  min-height: 100vh;
 }
 
 .self-empathy-step2-page .background {
   background-image: url(../assets/images/self-empathy-bg-dark.png);
   background-position: 50% 50%;
   background-size: cover;
-  height: 780px;
+  height: 100vh;
   position: relative;
-  width: 360px;
+  width: 100%;
+  max-width: 500px;
 }
 
 .self-empathy-step2-page .ver {
-  height: 123px;
+  height: 15vh;
   left: 0;
   position: absolute;
-  top: 657px;
-  width: 360px;
+  bottom: 0;
+  width: 100%;
 }
 
 .self-empathy-step2-page .element-1 {
-  height: 39px;
-  left: 300px;
+  height: 5vh;
+  right: 5vw;
   position: absolute;
-  top: 74px;
-  width: 60px;
+  top: 10vh;
+  width: auto;
+  max-width: 60px;
   opacity: 0.5;
   animation: float 3s ease-in-out infinite;
 }
 
 .self-empathy-step2-page .element-2 {
-  height: 51px;
-  left: 262px;
+  height: 6vh;
+  right: 10vw;
   position: absolute;
-  top: 120px;
-  width: 98px;
+  top: 15vh;
+  width: auto;
+  max-width: 98px;
   opacity: 0.5;
   animation: float 3s ease-in-out infinite 0.5s;
 }
 
 .self-empathy-step2-page .element-3 {
-  height: 40px;
-  left: 29px;
+  height: 5vh;
+  left: 5vw;
   position: absolute;
-  top: 89px;
-  width: 77px;
+  top: 12vh;
+  width: auto;
+  max-width: 77px;
   opacity: 0.5;
   animation: float 3s ease-in-out infinite 1s;
 }
@@ -59,27 +64,32 @@
   100% { transform: translateY(0px); }
 }
 
+.self-empathy-step2-page .header {
+  display: flex;
+  width: 100%;
+  max-width: auto;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
 .self-empathy-step2-page .content {
   position: absolute;
   z-index: 1;
-  margin-top: 0px;
+  width: 100%;
+  height: 100%;
   padding: 20px;
-  color: white;
-}
-
-.self-empathy-step2-page .header {
-  display: flex;
-  align-items: center;
+  box-sizing: border-box;
+  overflow-y: hidden;
 }
 
 .back-button {
   background: none;
   border: none;
-  cursor: pointer;
   padding: 0;
   position: absolute;
-  top: 57px;
-  left: 25px;
+  top: 4vh;
+  left: 2vw;
 }
 
 .back-button img {
@@ -91,116 +101,146 @@
 
 .self-empathy-step2-page h1 {
   margin: 0 auto;
-  font-size: 20px;
+  font-size: clamp(16px, 5vw, 20px);
+  max-width: auto;
+  text-align: center;
 }
 
 .self-empathy-step2-page .emotion-tags h3 {
-  margin-bottom: 15px;
+  margin-bottom: 2vh;
+  font-size: clamp(14px, 4vw, 16px);
 }
 
 .self-empathy-step2-page .tags-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 1vh;
 }
 
 .self-empathy-step2-page .progress-row {
   display: flex;
   align-items: center;
-  margin-top: 37px;
-  margin-left: 38px;
-  margin-bottom: 16px;
+  margin-top: 4vh;
+  margin-bottom: 2vh;
 }
 
 .self-empathy-step2-page .progress-bar {
-  width: 215px;
+  position: absolute;
+  width: 60vw;
+  max-width: auto;
   height: 6px;
+  left: 10vw;
+  top: 4.5vh;
 }
 
 .self-empathy-step2-page .progress-text {
+  position: absolute;
   font-size: 12px;
   color: white;
-  margin-left: 12px;
+  right: 0vw;
+  top: 4vh;
+}
+
+.self-empathy-step2-page .question-text {
+  position: absolute;
+  top: 12vh;
+  left: 5vw;
+  width: 90%;
+  max-width: auto;
+}
+
+.self-empathy-step2-page .question-text .question-number {
+  color: #222;
+  font-size: 20px;
+  margin: 0 0 0.8vh;
+  text-align: left;
 }
 
 .self-empathy-step2-page .question-text .small-text {
-  font-weight: 400;
   font-size: 14px;
-  line-height: 22px;
-  letter-spacing: 0;
+  line-height: 1.5;
   color: black;
   margin: 0;
   opacity: 0;
   white-space: pre-line;
   animation: fadeInUp 1s ease-out forwards;
+  text-align: left;
 }
 
 .self-empathy-step2-page .question-text .large-text {
-  font-weight: 400;
   font-size: 16px;
-  line-height: 22px;
-  letter-spacing: 0;
+  line-height: 1.5;
   color: black;
-  margin: 0;
+  margin: 1.2vh 0 2vh;
   opacity: 0;
   animation: fadeInUp 1s ease-out forwards 0.7s;
-  margin-top: 8px;
-  margin-bottom: 10px;
+  text-align: left;
 }
 
-.self-empathy-step2-page .answer-input.step2{
+.self-empathy-step2-page .answer-input.step2 {
   position: relative;
-  width: 320px;
-  height: 87px;
-  margin-top: 10px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-width: auto;
+  height: 11vh;
+  min-height: 87px;
   border-radius: 20px;
   background: rgba(238, 238, 238, 0.4);
   border: none;
   color: black;
-  font-size: 13px;
-  line-height: 24px;
-  padding: 16px;
+  font-size: clamp(12px, 3.5vw, 13px);
+  line-height: 1.5;
+  padding: 2vh;
   resize: none;
   opacity: 0;
   animation: fadeIn 1s ease-out forwards 1.4s;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
-.self-empathy-step2-page .answer-input.step3{
+.self-empathy-step2-page .answer-input.step3 {
   position: relative;
-  display: flex;
-  height: 200px;
-  width: 320px;
-  margin-top: 10px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-width: auto;
+  height: 20vh;
+  min-height: 87px;
   border-radius: 20px;
   background: rgba(238, 238, 238, 0.4);
   border: none;
   color: black;
-  font-size: 13px;
-  line-height: 24px;
-  padding: 16px;
+  font-size: clamp(12px, 3.5vw, 13px);
+  line-height: 1.5;
+  padding: 2vh;
   resize: none;
   opacity: 0;
   animation: fadeIn 1s ease-out forwards 1.4s;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
-.self-empathy-step2-page .answer-input.step7{
+.self-empathy-step2-page .answer-input.step7 {
   position: relative;
-  width: 320px;
-  height: 100px;
-  margin-top: 10px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-width: auto;
+  height: 15vh;
+  min-height: 100px;
   border-radius: 20px;
   background: rgba(238, 238, 238, 0.4);
   border: none;
   color: black;
-  font-size: 13px;
-  line-height: 24px;
-  padding: 16px;
+  font-size: clamp(12px, 3.5vw, 13px);
+  line-height: 1.5;
+  padding: 2vh;
   resize: none;
   opacity: 0;
   animation: fadeIn 1s ease-out forwards 1.4s;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .self-empathy-step2-page .answer-input::placeholder {
@@ -213,18 +253,21 @@
 }
 
 .self-empathy-step2-page .next-button {
-  position: absolute;
-  top: 677px;
-  left: 282px;
+  position: fixed;
+  bottom: 5vh;
+  right: 5vw;
   background: none;
   border: none;
   padding: 0;
-  width: 68px;
-  height: 68px;
+  width: 15vw;
+  max-width: 68px;
+  height: 15vw;
+  max-height: 68px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: transform 0.3s ease;
+  z-index: 10;
 }
 
 .self-empathy-step2-page .next-button img {
@@ -233,26 +276,30 @@
   object-fit: contain;
 }
 
+.self-empathy-step2-page .next-button:active {
+  transform: scale(0.95);
+}
+
 .self-empathy-step2-page .send-button {
-  position: absolute;
-  top: 683px;
-  left: 22px;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
   background: none;
   border: none;
   padding: 0;
-  width: 316px;
-  height: 44px;
+  width: 90%;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: transform 0.3s ease;
   opacity: 0;
   animation: fadeIn 1s ease-out forwards 2s;
+  margin-top: 47.5vh;
 }
 
 .self-empathy-step2-page .send-button img {
-  width: 130%;
-  height: 130%;
+  width: 150%;
+  height: 150%;
   object-fit: contain;
 }
 
@@ -276,37 +323,116 @@
   }
 }
 
-.self-empathy-step2-page .question-text .question-number {
-  background: #f3f3f3;
-  background: none;
-  color: #222;
-  font-size: 20px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-} 
-
 .yesno-btn-group {
   display: flex;
-  gap: 16px;
+  gap: 2vw;
   justify-content: center;
-  margin: 24px 0;
   opacity: 0;
   animation: fadeIn 1s ease-out forwards 1.4s;
+  width: 90%;
+  max-width: auto;
+  position: absolute;
+  top: 19vh;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .yesno-btn {
-  min-width: 150px;
-  padding: 12px 0;
-  border-radius: 20px;
+  min-width: 40vw;
+  max-width: 70px;
+  padding: 1.5vh 0;
+  border-radius: 30px;
   border: none;
   background: #EEEEEE;
   color: black;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .yesno-btn.selected {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+@media screen and (max-width: 360px) {
+  .self-empathy-step2-page .background {
+    width: 100%;
+  }
+  
+  .self-empathy-step2-page .ver {
+    width: 100%;
+  }
+  
+  .self-empathy-step2-page .question-text {
+    top: 12vh;
+  }
+  
+  .self-empathy-step2-page .question-text .large-text {
+    margin: 1.2vh 0 2vh;
+  }
+  
+  .self-empathy-step2-page .answer-input.step2 {
+    top: calc(12vh + 85px);
+    height: auto;
+    min-height: 80px;
+  }
+  
+  .self-empathy-step2-page .answer-input.step3 {
+    top: calc(12vh + 85px);
+    height: auto;
+    min-height: 180px;
+  }
+  
+  .self-empathy-step2-page .answer-input.step7 {
+    top: calc(12vh + 85px);
+    height: auto;
+    min-height: 90px;
+  }
+  
+  .self-empathy-step2-page .next-button {
+    bottom: 3vh;
+    right: 3vw;
+  }
+  
+  .yesno-btn-group {
+    top: calc(12vh + 85px + 2vh);
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .self-empathy-step2-page .background {
+    max-width: 500px;
+  }
+  
+  .self-empathy-step2-page .content {
+    padding: 20px;
+  }
+  
+  .self-empathy-step2-page h1 {
+    font-size: 20px;
+  }
+  
+  .self-empathy-step2-page .question-text {
+    top: 15vh;
+  }
+  
+  .self-empathy-step2-page .question-text .large-text {
+    margin: 1.2vh 0 3.5vh;
+  }
+  
+  .self-empathy-step2-page .answer-input.step2 {
+    top: calc(15vh + 115px);
+  }
+  
+  .self-empathy-step2-page .answer-input.step3 {
+    top: calc(15vh + 115px);
+  }
+  
+  .self-empathy-step2-page .answer-input.step7 {
+    top: calc(15vh + 115px);
+  }
+  
+  .yesno-btn-group {
+    top: calc(15vh + 115px + 2vh);
+  }
 } 

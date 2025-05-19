@@ -30,7 +30,7 @@ export default function SelfEmpathyLayout({ children, onBack }: SelfEmpathyLayou
             </button>
             <div className="progress-row">
               <Image className="progress-bar" src={selfProgress} alt="진행 상태" />
-              <span className="progress-text">1 자기공감</span>
+              <span className="progress-text">1&nbsp;&nbsp;&nbsp;자기공감</span>
             </div>
           </div>
           {children}

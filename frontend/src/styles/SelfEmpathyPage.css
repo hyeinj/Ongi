@@ -4,23 +4,25 @@
   flex-direction: row;
   justify-content: center;
   width: 100%;
+  min-height: 100vh;
 }
 
 .self-empathy-page .background {
   background-image: url(../assets/images/self-empathy-bg.png);
   background-position: 50% 50%;
   background-size: cover;
-  height: 780px;
+  height: 100vh;
   position: relative;
-  width: 360px;
+  width: 100%;
+  max-width: 500px;
 }
 
 .self-empathy-page .ver {
-  height: 123px;
+  height: 15vh;
   left: 0;
   position: absolute;
-  top: 657px;
-  width: 360px;
+  bottom: 0;
+  width: 100%;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -29,41 +31,46 @@
 
 .self-empathy-page .text-wrapper {
   color: #000000;
-  font-size: 16px;
+  font-size: clamp(14px, 4vw, 16px);
   font-weight: 400;
-  left: 31px;
+  left: 50%;
+  transform: translateX(-50%);
   letter-spacing: 0;
   line-height: 2;
   position: absolute;
   text-align: center;
-  top: 250px;
-  width: 297px;
+  top: 30vh;
+  width: 80%;
+  max-width: 297px;
 }
 
 .self-empathy-page .element-1 {
-  height: 39px;
-  left: 300px;
+  height: 5vh;
+  right: 5vw;
   position: absolute;
-  top: 74px;
-  width: 60px;
+  top: 10vh;
+  width: auto;
+  max-width: 60px;
   animation: float 4s ease-in-out infinite;
 }
 
 .self-empathy-page .element-2 {
-  height: 51px;
-  left: 262px;
+  height: 6vh;
+  right: 10vw;
   position: absolute;
-  top: 120px;
-  width: 98px;
+  top: 15vh;
+  width: auto;
+  max-width: 98px;
   animation: float 4s ease-in-out infinite 0.7s;
 }
 
 .self-empathy-page .element-3 {
-  height: 40px;
-  left: 29px;
+  height: 5vh;
+  left: 5vw;
   position: absolute;
-  top: 89px;
-  width: 77px;
+  top: 12vh;
+  width: auto;
+  max-width: 77px;
   animation: float 4s ease-in-out infinite 1.4s;
 }
 
@@ -102,8 +109,9 @@
 
 .bottom-button {
   position: absolute;
-  bottom: 40px;
-  width: 336px;
+  bottom: 5vh;
+  width: 80%;
+  max-width: 336px;
   left: 50%;
   transform: translateX(-50%);
   background: none;
@@ -112,19 +120,20 @@
   opacity: 0;
   animation: fadeInUpButton 0.8s ease-out forwards, floatButton 2s ease-in-out infinite 3s;
   animation-delay: 3s;
-  transition: transform 0.15s ease, filter 0.15s ease;
+  transition: all 0.15s ease;
 }
 
 .bottom-button img {
-  width: 336px;
-  height: 64px;
+  width: 100%;
+  height: auto;
+  max-height: 64px;
   display: block;
   transition: filter 0.15s ease;
   z-index: 2;
 }
 
 .bottom-button:active {
-  transform: translate(-50%, 4px) scale(0.95);
+  transform: translate(-50%, 4px);
 }
 
 .bottom-button:active img {
@@ -132,7 +141,6 @@
 }
 
 .bottom-button:active .button-text {
-  transform: translateY(4px);
   opacity: 0.85;
 }
 
@@ -144,13 +152,14 @@
   line-height: 30px;
   position: absolute;
   text-align: center;
-  top: 17px;
-  left: 100px;
-  width: 157px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: auto;
   pointer-events: none;
-  transition: all 0.15s ease;
+  transition: opacity 0.15s ease;
 }
-
 
 @keyframes fadeInUpButton {
   from {
@@ -184,4 +193,28 @@
 .final-button-text {
   left: 80px;
   width: 180px;
+}
+
+@media screen and (max-width: 360px) {
+  .self-empathy-page .text-wrapper {
+    top: 25vh;
+  }
+  
+  .bottom-button {
+    bottom: 3vh;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .self-empathy-page .background {
+    max-width: 500px;
+  }
+  
+  .self-empathy-page .text-wrapper {
+    font-size: 16px;
+  }
+  
+  .button-text {
+    font-size: 16px;
+  }
 }

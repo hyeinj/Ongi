@@ -22,15 +22,15 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 60vh;
+    height: 80vh;
     width: 100%;
-    background: transparent; /* 필요시 배경색 지정 */
+    background: transparent;
   }
   
   .loading-page img {
-    width: 116px;
-    height: 116px;
-    top: 308px;
+    width: 30vw;
+    max-width: 116px;
+    height: auto;
     object-fit: contain;
     animation: bounceUp 2.4s infinite;
   }
@@ -43,13 +43,14 @@
   }
 
 .final-message {
-  position: absolute;
-  top: 113px;
-  left: 25px;
   font-size: 16px;
   font-weight: 400;
   color: #222;
   white-space: pre-line;
+  line-height: 1.2;
+  width: 90%;
+  max-width: auto;
+  margin-top: 6vh;
 }
 
 .final-line {
@@ -68,10 +69,9 @@
 }
 
 .final-card {
-  position: absolute;
-  top: 189px;
-  left: 18px;
-  width: 324px;
+  position: relative;
+  margin: 24px auto 0 auto;
+  max-width: auto;
   height: auto;
   background: #fffbe8;
   border-radius: 30px;
@@ -85,18 +85,18 @@
 
 .final-card-text {
   white-space: pre-line;
-  padding: 15px;
-  font-family: 'Pretendard-Regular';
+  padding: 3vh 4vw;
 }
 
 .mail-box {
-    position: absolute;
-    top: 600px;
-    left: -15px;
-    width: 190px;
-    height: 200px;
-    z-index: 2;
-    transform: scaleX(-1);
+  position: absolute;
+  top: 80%;
+  left: -5%;
+  width: 50%;
+  max-width: 250px;
+  height: auto;
+  z-index: 2;
+  transform: scaleX(-1);
 }
 
 .fade-in-card {
@@ -107,12 +107,13 @@
 
 .final-bottom-ment {
   position: absolute;
-  top: 510px;
-  left: 18px;
-  width: 324px;
+  top: 66vh;
+  transform: translateX(-50%);
+  width: auto;
+  max-width: 360px;
+  left: 23%;
   font-size: 14px;
   color: #222;
-  font-family: 'Pretendard-Regular';
   text-align: center;
   font-weight: 400;
   line-height: 1.7;
@@ -124,16 +125,71 @@
 
 .next-text {
     display: block;
-    margin-top: 240px;   
-    width: 324px;
-    font-size: 14px;
+    margin-top: 30vh;   
+    max-width: auto;
+    font-size: 16px;
     color: #222;
-    font-family: 'Pretendard-Regular';
     font-weight: 400;
     line-height: 1.7;
-    white-space: pre-line;    /* \\n 줄바꿈 적용 */
+    white-space: pre-line; 
     text-align: center;
     opacity: 0;
     animation: fadeInLine 0.8s forwards;
-    animation-delay: 0.5s;   /* 필요시 조정 */
+    animation-delay: 0.5s;
   }
+
+@media screen and (max-width: 360px) {
+    .final-message {
+        top: 13vh;
+    }
+    
+    .final-card {
+        top: 23vh;
+        left: 4vw;
+        right: 4vw;
+    }
+    
+    .final-card-text {
+        padding: 3vh 3vw;
+    }
+    
+    .mail-box {
+        top: 70vh;
+    }
+    
+    .final-bottom-ment {
+        top: 60vh;
+    }
+    
+    .next-text {
+        margin-top: 28vh;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .final-message {
+        top: 17vh;
+    }
+    
+    .final-card {
+        top: 27vh;
+        left: 6vw;
+        right: 6vw;
+    }
+    
+    .final-card-text {
+        padding: 5vh 5vw;
+    }
+    
+    .mail-box {
+        top: 80vh;
+    }
+    
+    .final-bottom-ment {
+        top: 70vh;
+    }
+    
+    .next-text {
+        margin-top: 32vh;
+    }
+}

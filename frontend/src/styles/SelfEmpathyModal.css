@@ -1,14 +1,15 @@
 .confirm-modal {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 218%;
+    width: 100vw;
+    height: 100vh;
     z-index: 1000;
     background: rgba(20, 20, 20, 0.7);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+    padding-top: 39vh;
 }
   
 .confirm-modal .modal-content {
@@ -71,4 +72,16 @@
     border: none;
     font-size: 22px;
     color: #bbb;
+}
+
+@media screen and (max-width: 360px) {
+    .confirm-modal {
+        padding-top: 37vh;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .confirm-modal {
+        padding-top: 41vh;
+    }
 }

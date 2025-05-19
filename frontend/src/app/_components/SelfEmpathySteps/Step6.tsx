@@ -69,7 +69,6 @@ export default function Step6() {
               <Image src={nextArrow} alt="다음" />
             </button>
 
-            {/* 확인 모달 예시 */}
             {showConfirm && (
               <div className="confirm-modal">
                 <div className="modal-content">
