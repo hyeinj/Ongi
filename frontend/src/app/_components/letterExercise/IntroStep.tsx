@@ -4,7 +4,7 @@ import letterImage from '@/assets/images/letter.png';
 import localFont from 'next/font/local';
 import { useLetter } from '@/store/LetterContext';
 import letterExerciseLetterBg from '@/assets/images/letter-exercise-letter-bg.png';
-import letterExerciseLetterTopIcon from '@/assets/images/letter-exercise-letter-top-icon.png';
+import letterExerciseLetterTopIcon from '@/assets/images/postbox-icon.png';
 
 const garamFont = localFont({
   src: '../../../assets/fonts/gaRamYeonGgoc.ttf',
