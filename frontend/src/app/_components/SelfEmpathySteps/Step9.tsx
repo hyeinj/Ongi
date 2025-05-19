@@ -11,7 +11,7 @@ export default function Step9() {
   const router = useRouter();
 
 return (
-    <SelfEmpathyLayout currentStep={9} onBack={() => router.push('/self-empathy/8')}>
+    <SelfEmpathyLayout onBack={() => router.push('/self-empathy/8')}>
         <span className="next-text">무지님의 소중한 오늘을 살펴보았어요.<br /><br />이제 무지님과 닮은 마음에<br /> 조심스런 답장을 건네러 가볼까요?</span>
         <button className="bottom-button final-button"onClick={() => router.push('/letter-exercise/1')}> 
           <Image src={bottomButton} alt="다음으로" />

@@ -9,11 +9,12 @@ import '@/styles/SelfEmpathyStep2Page.css';
 
 interface SelfEmpathyLayoutProps {
   children: React.ReactNode;
-  currentStep: number;
+  currentStep?: number;
+  totalStep?: number;
   onBack: () => void;
 }
 
-export default function SelfEmpathyLayout({ children, onBack }: SelfEmpathyLayoutProps) {
+export default function SelfEmpathyLayout({ children, currentStep, totalStep, onBack }: SelfEmpathyLayoutProps) {
   return (
     <div className="self-empathy-step2-page">
       <div className="background">
@@ -29,8 +30,18 @@ export default function SelfEmpathyLayout({ children, onBack }: SelfEmpathyLayou
               <Image src={arrow} alt="뒤로 가기" />
             </button>
             <div className="progress-row">
-              <Image className="progress-bar" src={selfProgress} alt="진행 상태" />
-              <span className="progress-text">1&nbsp;&nbsp;&nbsp;자기공감</span>
+              {typeof totalStep === 'number' && typeof currentStep === 'number' && (
+                <div className="progress-bar-wrapper">
+                  <Image className="progress-bar" src={selfProgress} alt="진행 상태" />
+                  <div
+                    className="progress-bar-fill"
+                    style={{ width: `${(currentStep / totalStep) * 100}%` }}
+                  />
+                </div>
+              )}
+              <span className="progress-text">
+                1&nbsp;&nbsp;&nbsp;자기공감
+              </span>
             </div>
           </div>
           {children}
