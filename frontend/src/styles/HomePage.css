@@ -92,28 +92,28 @@
 
 @keyframes islandClick {
   0% {
-    transform: scale(1);
+    transform: scale(1) translateX(-50%);
   }
   15% {
-    transform: scale(1.08) translateY(-8px);
+    transform: scale(1.08) translateY(-8px) translateX(-50%);
   }
   30% {
-    transform: scale(1.05) translateY(-5px);
+    transform: scale(1.05) translateY(-5px) translateX(-50%);
   }
   45% {
-    transform: scale(1.07) translateY(-7px);
+    transform: scale(1.07) translateY(-7px) translateX(-50%);
   }
   60% {
-    transform: scale(1.04) translateY(-4px);
+    transform: scale(1.04) translateY(-4px) translateX(-50%);
   }
   75% {
-    transform: scale(1.06) translateY(-6px);
+    transform: scale(1.06) translateY(-6px) translateX(-50%);
   }
   90% {
-    transform: scale(1.03) translateY(-3px);
+    transform: scale(1.03) translateY(-3px) translateX(-50%);
   }
   100% {
-    transform: scale(1);
+    transform: scale(1) translateX(-50%);
   }
 }
 
