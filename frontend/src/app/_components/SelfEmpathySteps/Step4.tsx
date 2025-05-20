@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { useState } from 'react';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
@@ -31,6 +31,8 @@ const EMOTION_LIST = {
 
 export default function Step4() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const question = searchParams.get('question') || '질문을 불러올 수 없습니다.';
   const [selectedEmotion, setSelectedEmotion] = useState<'positive' | 'neutral' | 'negative'>('positive');
   const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
 
@@ -44,7 +46,7 @@ export default function Step4() {
     );
   };
 
-  const handleNext = () => { //감정 잘 선택된거 확인 완료!
+  const handleNext = () => {
     console.log('선택된 감정:', selectedFeelings);
     router.push('/self-empathy/5');
   };
@@ -57,7 +59,7 @@ export default function Step4() {
     >
       <SelfEmpathyQuestion
         numbering={3}
-        smallText={`정리되지 않은 옷더미를 마주하는 상황이 참 번거로우셨겠어요. \n 그럼 우리 한 발짝 물러나서 감정을 살펴볼게요.`}
+        smallText={question}
         largeText="그때의 상황을 떠올렸을 때, 무지님이 느꼈던 감정을 모두 골라주세요"
       >
         <div className="emotion-icons-row">
@@ -87,6 +89,7 @@ export default function Step4() {
         <button 
           className="next-button"
           onClick={handleNext}
+          disabled={selectedFeelings.length === 0}
         >
           <Image src={nextArrow} alt="다음" />
         </button>

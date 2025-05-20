@@ -1,3 +1,5 @@
+'use client';
+
 interface SelfEmpathyQuestionProps {
   smallText?: string;
   largeText: string | React.ReactNode;
