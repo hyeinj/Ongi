@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
+import StepContainer from './StepContainer';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import { useSelfEmpathy } from '@/store/SelfEmpathyContext';
 
@@ -30,22 +31,24 @@ export default function Step2() {
 
   return (
     <SelfEmpathyLayout currentStep={1} totalStep={6} onBack={() => router.push('/self-empathy/1')}>
-      <SelfEmpathyQuestion numbering={1} smallText={smallText} largeText={largeText}>
-        <textarea
-          className="answer-input step2"
-          placeholder="한 단어 혹은 한 문장으로 표현해보세요"
-          value={userAnswer}
-          onChange={handleTextAreaChange}
-          disabled={isLoading}
-        />
-        <button
-          className="next-button"
-          onClick={handleNextClick}
-          disabled={isLoading || !userAnswer.trim()}
-        >
-          <Image src={nextArrow} alt="다음" />
-        </button>
-      </SelfEmpathyQuestion>
+      <StepContainer>
+        <SelfEmpathyQuestion numbering={1} smallText={smallText} largeText={largeText}>
+          <textarea
+            className="answer-input step2"
+            placeholder="한 단어 혹은 한 문장으로 표현해보세요"
+            value={userAnswer}
+            onChange={handleTextAreaChange}
+            disabled={isLoading}
+          />
+          <button
+            className="next-button"
+            onClick={handleNextClick}
+            disabled={isLoading || !userAnswer.trim()}
+          >
+            <Image src={nextArrow} alt="다음" />
+          </button>
+        </SelfEmpathyQuestion>
+      </StepContainer>
     </SelfEmpathyLayout>
   );
 }

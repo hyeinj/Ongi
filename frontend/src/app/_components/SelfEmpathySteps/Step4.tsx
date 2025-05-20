@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
+import StepContainer from './StepContainer';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import positiveIcon from '@/assets/icons/positive.png';
 import neutralIcon from '@/assets/icons/neutral.png';
@@ -187,45 +188,47 @@ export default function Step4() {
 
   return (
     <SelfEmpathyLayout currentStep={3} totalStep={6} onBack={() => router.push('/self-empathy/3')}>
-      <SelfEmpathyQuestion numbering={3} smallText={smallText} largeText={largeText}>
-        <div className="emotion-icons-row">
-          {EMOTIONS.map((item) => (
-            <button
-              key={item.key}
-              className={`emotion-icon-btn ${item.key}${
-                selectedEmotion === item.key ? ' selected' : ''
-              }`}
-              onClick={() => setSelectedEmotion(item.key as 'positive' | 'neutral' | 'negative')}
-              type="button"
-              disabled={isLoading}
-            >
-              <Image src={item.icon} alt={item.key} width={48} height={48} />
-            </button>
-          ))}
-        </div>
-        <div className="feeling-list">
-          {feelings.map((feeling) => (
-            <button
-              key={feeling}
-              className={`feeling-btn${
-                selectedFeelings.includes(feeling) ? ' selected ' + selectedEmotion : ''
-              }`}
-              onClick={() => toggleFeeling(feeling)}
-              type="button"
-              disabled={isLoading}
-            >
-              {feeling}
-            </button>
-          ))}
-        </div>
-        <button
-          className="next-button"
-          onClick={handleNext}
-          disabled={isLoading || selectedFeelings.length === 0}
-        >
-          <Image src={nextArrow} alt="다음" />
-        </button>
-      </SelfEmpathyQuestion>
+      <StepContainer>
+        <SelfEmpathyQuestion numbering={3} smallText={smallText} largeText={largeText}>
+          <div className="emotion-icons-row">
+            {EMOTIONS.map((item) => (
+              <button
+                key={item.key}
+                className={`emotion-icon-btn ${item.key}${
+                  selectedEmotion === item.key ? ' selected' : ''
+                }`}
+                onClick={() => setSelectedEmotion(item.key as 'positive' | 'neutral' | 'negative')}
+                type="button"
+                disabled={isLoading}
+              >
+                <Image src={item.icon} alt={item.key} width={48} height={48} />
+              </button>
+            ))}
+          </div>
+          <div className="feeling-list">
+            {feelings.map((feeling) => (
+              <button
+                key={feeling}
+                className={`feeling-btn${
+                  selectedFeelings.includes(feeling) ? ' selected ' + selectedEmotion : ''
+                }`}
+                onClick={() => toggleFeeling(feeling)}
+                type="button"
+                disabled={isLoading}
+              >
+                {feeling}
+              </button>
+            ))}
+          </div>
+          <button
+            className="next-button"
+            onClick={handleNext}
+            disabled={isLoading || selectedFeelings.length === 0}
+          >
+            <Image src={nextArrow} alt="다음" />
+          </button>
+        </SelfEmpathyQuestion>
+      </StepContainer>
     </SelfEmpathyLayout>
   );
 }
