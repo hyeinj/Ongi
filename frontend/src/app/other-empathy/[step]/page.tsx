@@ -3,6 +3,7 @@
 import React from 'react';
 import IntroStep from '@/app/_components/otherEmpathy/IntroStep';
 import LetterStep from '@/app/_components/otherEmpathy/LetterStep';
+import SumUpStep from '@/app/_components/otherEmpathy/SumUpStep';
 import { useParams } from 'next/navigation';
 
 // 스텝 컴포넌트들을 매핑합니다.
@@ -11,6 +12,7 @@ const stepComponents: {
 } = {
   '1': IntroStep,
   '2': LetterStep,
+  '3': SumUpStep,
 
   // 필요에 따라 더 많은 스텝을 추가할 수 있습니다.
 };

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import postboxIcon from '@/assets/images/postbox-icon.png';
 import { useLetterHighlights } from '@/infra/useLetterHighlights';
 import localFont from 'next/font/local';
@@ -70,6 +71,7 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
   const [fadeIn, setFadeIn] = useState(false);
   const [contentChanging, setContentChanging] = useState(false);
   const [letterTitle, setLetterTitle] = useState<LetterTitle>(letterTitles.worry);
+  const [hasViewedAnswer, setHasViewedAnswer] = useState(false);
 
   const { handleTextSelection, renderHighlightedText } = useLetterHighlights({
     letterType: activeTab,
@@ -82,6 +84,10 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
 
     setContentChanging(true);
     setFadeIn(false);
+
+    if (type === 'answer') {
+      setHasViewedAnswer(true);
+    }
 
     setTimeout(() => {
       setActiveTab(type);
@@ -136,7 +142,7 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
           </div>
         </div>
 
-        <div className="relative bg-[#F7F4E6] w-full mx-auto p-6 z-20 h-[80vh] transition-opacity duration-300 ease-in-out overflow-y-auto">
+        <div className="relative z-20 bg-[#F7F4E6] w-full mx-auto p-6 h-[80vh] transition-opacity duration-300 ease-in-out overflow-y-auto break-keep">
           <div className="flex flex-col items-center mb-5">
             <Image src={postboxIcon} alt="편지함 아이콘" width={50} height={50} priority />
             <h3 className="text-center mt-3 font-medium text-lg text-amber-800">
@@ -158,6 +164,32 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
             ))}
           </div>
         </div>
+
+        {hasViewedAnswer && (
+          <div className="absolute bottom-8 right-8 z-40">
+            <Link href="/other-empathy/3">
+              <div
+                className=" p-4.5 rounded-full bg-[#FFEDB5] active:bg-[#fee9a1] cursor-pointer"
+                style={{ boxShadow: '0 0 10px 1px rgba(0, 0, 0, 0.3)' }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="black"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -53,7 +53,7 @@ export default function LetterStep() {
         className={`flex flex-col items-center ${showLetterContent ? 'opacity-0' : 'opacity-100'}`}
       >
         <div
-          className={`absolute top-1/4 w-90 h-90 transition-all duration-1000 ease-in-out ${
+          className={`absolute top-1/4 w-100 h-100 transition-all duration-1000 ease-in-out ${
             scaleUp ? 'scale-110' : 'scale-100'
           }`}
         >
