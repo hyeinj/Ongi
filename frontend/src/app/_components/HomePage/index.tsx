@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import '@/styles/HomePage.css';
@@ -14,21 +14,41 @@ import self from '@/assets/images/self.png';
 import growth from '@/assets/images/growth.png';
 import routine from '@/assets/images/routine.png';
 import relate from '@/assets/images/relate.png';
+import { useUserCheck, getAllIslandCounts, IslandCounts } from '@/infra';
 
 const HomePage: React.FC = () => {
   const router = useRouter();
+  const { isFirstVisit, isLoading } = useUserCheck();
+  const [islandCounts, setIslandCounts] = useState<IslandCounts>({
+    self: 0,
+    growth: 0,
+    routine: 0,
+    relate: 0,
+  });
 
-  // 임시 데이터 - 나중에 백엔드에서 가져올 예정
-  const letterCounts = {
-    self: 3,
-    growth: 5,
-    routine: 2,
-    relate: 4,
-  };
+  useEffect(() => {
+    if (!isLoading) {
+      // 첫 방문자인 경우 환영 메시지 또는 온보딩 화면으로 리다이렉트할 수 있습니다
+      if (isFirstVisit) {
+        console.log('처음 방문하셨습니다! 환영합니다!');
+        // 온보딩 페이지가 있다면 리다이렉트
+        // router.push('/onboarding');
+      }
+
+      // 섬 데이터 가져오기
+      const counts = getAllIslandCounts();
+      setIslandCounts(counts);
+    }
+  }, [isLoading, isFirstVisit, router]);
 
   const handlePostOfficeClick = () => {
     router.replace('/self-empathy/1');
   };
+
+  // 로딩 중인 경우 로딩 화면 표시
+  if (isLoading) {
+    return <div className="loading">로딩 중...</div>;
+  }
 
   return (
     <div className="home-page">
@@ -53,18 +73,19 @@ const HomePage: React.FC = () => {
         <Image className="growth" alt="성장섬" src={growth} />
         <Image className="routine" alt="루틴섬" src={routine} />
         <Image className="relate" alt="관계섬" src={relate} />
-        {/* 백앤드로 채워야하는 숫자 */}
+
+        {/* 섬별 기록 수 표시 */}
         <div className="circle-ellipse circle-self">
-          <span>{letterCounts.self}</span>
+          <span>{islandCounts.self}</span>
         </div>
         <div className="circle-ellipse circle-growth">
-          <span>{letterCounts.growth}</span>
+          <span>{islandCounts.growth}</span>
         </div>
         <div className="circle-ellipse circle-routine">
-          <span>{letterCounts.routine}</span>
+          <span>{islandCounts.routine}</span>
         </div>
         <div className="circle-ellipse circle-relate">
-          <span>{letterCounts.relate}</span>
+          <span>{islandCounts.relate}</span>
         </div>
       </div>
     </div>

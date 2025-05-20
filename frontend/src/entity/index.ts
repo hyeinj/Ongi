@@ -5,3 +5,4 @@ export * from './RealLetters';
 export * from './Islands';
 export * from './Letter';
 export * from './Stage';
+export * from './LocalStorageKeys';

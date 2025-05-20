@@ -1,5 +1,4 @@
-import { Category } from './User';
-
+export type Category = 'self' | 'growth' | 'routine' | 'relationship';
 export type EmotionType = 'joy' | 'sadness' | 'anger' | 'anxiety' | 'peace';
 
 export interface EmotionEntry {

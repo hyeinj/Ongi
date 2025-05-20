@@ -281,3 +281,29 @@
   top: 43.33%; /* 338/780*100 */
   left: 86.11%; /* 310/360*100 */
 }
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: #0e0e3f;
+  color: white;
+  font-size: 18px;
+  font-family: 'Line Seed Sans KR', sans-serif;
+  position: relative;
+}
+
+.loading::after {
+  content: '';
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  position: absolute;
+  top: calc(50% - 20px);
+  left: calc(50% - 20px);
+  animation: spin 1s linear infinite;
+}
