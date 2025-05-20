@@ -5,6 +5,8 @@ import { useStageIndicator } from '@/store/stageContext';
 import { useEffect } from 'react';
 import otherEmpathyBackground from '@/assets/images/other-empathy-bg.png';
 import BackgroundImage from '../_components/ImageBackground';
+import imgNightTree from '@/assets/images/img-night-tree-bg.png';
+import Image from 'next/image';
 export default function LetterExerciseLayout({ children }: { children: React.ReactNode }) {
   const { setCurrentStage } = useStageIndicator();
 
@@ -18,6 +20,7 @@ export default function LetterExerciseLayout({ children }: { children: React.Rea
         <Header />
         {children}
       </div>
+      <Image src={imgNightTree} alt="배경 이미지" className="absolute bottom-0 left-0 -z-10" />
     </BackgroundImage>
   );
 }

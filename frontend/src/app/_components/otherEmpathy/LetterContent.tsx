@@ -72,6 +72,8 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
   const [contentChanging, setContentChanging] = useState(false);
   const [letterTitle, setLetterTitle] = useState<LetterTitle>(letterTitles.worry);
   const [hasViewedAnswer, setHasViewedAnswer] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipShowing, setTooltipShowing] = useState(false);
 
   const { handleTextSelection, renderHighlightedText } = useLetterHighlights({
     letterType: activeTab,
@@ -101,6 +103,33 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
   useEffect(() => {
     if (isVisible) {
       setFadeIn(true);
+
+      // 3초 후에 말풍선 표시
+      const tooltipTimer = setTimeout(() => {
+        setShowTooltip(true);
+
+        // 툴팁 요소가 DOM에 추가된 후 약간의 지연을 두고 페이드인 시작
+        setTimeout(() => {
+          setTooltipShowing(true);
+        }, 10);
+
+        // 말풍선이 나타난 후 10초 후에 사라지게 함
+        const hideTooltipTimer = setTimeout(() => {
+          // 페이드아웃 애니메이션 시작
+          setTooltipShowing(false);
+
+          // 애니메이션 완료 후 실제로 요소 제거
+          const removeTooltipTimer = setTimeout(() => {
+            setShowTooltip(false);
+          }, 500); // 애니메이션 지속 시간과 일치하게 설정
+
+          return () => clearTimeout(removeTooltipTimer);
+        }, 10000);
+
+        return () => clearTimeout(hideTooltipTimer);
+      }, 3000);
+
+      return () => clearTimeout(tooltipTimer);
     } else {
       setFadeIn(false);
     }
@@ -143,8 +172,26 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
         </div>
 
         <div className="relative z-20 bg-[#F7F4E6] w-full mx-auto p-6 h-[80vh] transition-opacity duration-300 ease-in-out overflow-y-auto break-keep">
-          <div className="flex flex-col items-center mb-5">
+          <div className="flex flex-col items-center mb-5 relative">
             <Image src={postboxIcon} alt="편지함 아이콘" width={50} height={50} priority />
+
+            {/* 말풍선 툴팁 */}
+            {showTooltip && (
+              <div
+                className={`absolute -right-4 top-10 bg-amber-100 p-3 rounded-lg shadow-md max-w-[200px] z-50 transition-opacity duration-500 ease-in-out ${
+                  tooltipShowing ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
+                <div
+                  className="absolute top-2 -left-2 w-0 h-0 
+                  border-t-[8px] border-t-transparent 
+                  border-b-[8px] border-b-transparent 
+                  border-r-[8px] border-r-amber-100"
+                ></div>
+                <p className="text-sm text-amber-800 font-medium">원하는 문장을 터치해 보아요</p>
+              </div>
+            )}
+
             <h3 className="text-center mt-3 font-medium text-lg text-amber-800">
               {letterTitle.title}
             </h3>
