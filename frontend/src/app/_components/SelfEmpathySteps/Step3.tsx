@@ -5,33 +5,47 @@ import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
 import nextArrow from '@/assets/icons/next-arrow.png';
+import { useSelfEmpathy } from '@/store/SelfEmpathyContext';
 
 export default function Step3() {
   const router = useRouter();
+  const { smallText, largeText, userAnswer, setUserAnswer, generateNextQuestion, isLoading } =
+    useSelfEmpathy();
+
+  // 텍스트 영역 변경 핸들러
+  const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setUserAnswer(e.target.value);
+  };
+
+  // 다음 버튼 클릭 핸들러
+  const handleNextClick = async () => {
+    if (!userAnswer.trim()) {
+      alert('답변을 입력해주세요.');
+      return;
+    }
+
+    await generateNextQuestion();
+    router.push('/self-empathy/4');
+  };
 
   return (
-    <SelfEmpathyLayout 
-      currentStep={2}
-      totalStep={6}
-      onBack={() => router.push('/self-empathy/2')}
-    >
-      <SelfEmpathyQuestion
-        numbering={2}
-        smallText={`솔직하게 나눠주셔서 감사해요
-아침에 옷을 고르는 일에 귀찮음을 느끼셨군요.`}
-        largeText="그럼 조금 더 자세하게, 그 순간 어떤 상황이었는지 들려주실 수 있을까요?"
-      >
-          <textarea 
-            className="answer-input step3"
-            placeholder="답변을 입력해주세요"
-          />
-        <button 
-            className="next-button"
-            onClick={() => router.push('/self-empathy/4')}
-          >
-            <Image src={nextArrow} alt="다음" />
-          </button>
+    <SelfEmpathyLayout currentStep={2} totalStep={6} onBack={() => router.push('/self-empathy/2')}>
+      <SelfEmpathyQuestion numbering={2} smallText={smallText} largeText={largeText}>
+        <textarea
+          className="answer-input step3"
+          placeholder="답변을 입력해주세요"
+          value={userAnswer}
+          onChange={handleTextAreaChange}
+          disabled={isLoading}
+        />
+        <button
+          className="next-button"
+          onClick={handleNextClick}
+          disabled={isLoading || !userAnswer.trim()}
+        >
+          <Image src={nextArrow} alt="다음" />
+        </button>
       </SelfEmpathyQuestion>
     </SelfEmpathyLayout>
   );
-} 
+}
