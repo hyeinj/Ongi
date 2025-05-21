@@ -18,7 +18,7 @@
 }
 
 .home-page .mountain {
-  height: 123px;
+  height: auto;
   left: 0;
   bottom: 0;
   position: absolute;
@@ -202,7 +202,7 @@
 }
 
 .home-page .line {
-  height: 2px;
+  height: auto;
   width: 28px;
   margin-bottom: 10px;
 }

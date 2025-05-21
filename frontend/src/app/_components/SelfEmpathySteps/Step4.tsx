@@ -159,6 +159,7 @@ const EMOTION_LIST = {
 export default function Step4() {
   const router = useRouter();
   const { smallText, largeText, setUserAnswer, generateNextQuestion, isLoading } = useSelfEmpathy();
+  console.log(smallText, largeText);
   const [selectedEmotion, setSelectedEmotion] = useState<'positive' | 'neutral' | 'negative'>(
     'positive'
   );

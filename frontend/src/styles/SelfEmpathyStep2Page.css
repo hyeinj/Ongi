@@ -59,9 +59,15 @@
 }
 
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 .self-empathy-step2-page .header {
@@ -209,7 +215,7 @@
   background: rgba(238, 238, 238, 0.4);
   border: none;
   color: black;
-  font-size: clamp(12px, 3.5vw, 13px);
+  font-size: 16px;
   line-height: 1.5;
   padding: 2vh;
   resize: none;
@@ -231,7 +237,7 @@
   background: rgba(238, 238, 238, 0.4);
   border: none;
   color: black;
-  font-size: clamp(12px, 3.5vw, 13px);
+  font-size: 16px;
   line-height: 1.5;
   padding: 2vh;
   resize: none;
@@ -253,7 +259,7 @@
   background: rgba(238, 238, 238, 0.4);
   border: none;
   color: black;
-  font-size: clamp(12px, 3.5vw, 13px);
+  font-size: 16px;
   line-height: 1.5;
   padding: 2vh;
   resize: none;
@@ -363,7 +369,7 @@
   padding: 1.5vh 0;
   border-radius: 30px;
   border: none;
-  background: #EEEEEE;
+  background: #eeeeee;
   color: black;
   font-size: 14px;
   font-weight: 500;
@@ -378,42 +384,30 @@
   .self-empathy-step2-page .background {
     width: 100%;
   }
-  
+
   .self-empathy-step2-page .ver {
     width: 100%;
   }
-  
+
   .self-empathy-step2-page .question-text {
     top: 12vh;
   }
-  
+
   .self-empathy-step2-page .question-text .large-text {
     margin: 1.2vh 0 2vh;
   }
-  
-  .self-empathy-step2-page .answer-input.step2 {
-    top: calc(12vh + 85px);
-    height: auto;
-    min-height: 80px;
-  }
-  
-  .self-empathy-step2-page .answer-input.step3 {
-    top: calc(12vh + 85px);
-    height: auto;
-    min-height: 180px;
-  }
-  
+
+  .self-empathy-step2-page .answer-input.step2,
+  .self-empathy-step2-page .answer-input.step3,
   .self-empathy-step2-page .answer-input.step7 {
-    top: calc(12vh + 85px);
-    height: auto;
-    min-height: 90px;
+    font-size: 16px;
   }
-  
+
   .self-empathy-step2-page .next-button {
     bottom: 3vh;
     right: 3vw;
   }
-  
+
   .yesno-btn-group {
     top: calc(12vh + 85px + 2vh);
   }
@@ -423,36 +417,36 @@
   .self-empathy-step2-page .background {
     max-width: 500px;
   }
-  
+
   .self-empathy-step2-page .content {
     padding: 20px;
   }
-  
+
   .self-empathy-step2-page h1 {
     font-size: 20px;
   }
-  
+
   .self-empathy-step2-page .question-text {
     top: 15vh;
   }
-  
+
   .self-empathy-step2-page .question-text .large-text {
     margin: 1.2vh 0 3.5vh;
   }
-  
+
   .self-empathy-step2-page .answer-input.step2 {
     top: calc(15vh + 115px);
   }
-  
+
   .self-empathy-step2-page .answer-input.step3 {
     top: calc(15vh + 115px);
   }
-  
+
   .self-empathy-step2-page .answer-input.step7 {
     top: calc(15vh + 115px);
   }
-  
+
   .yesno-btn-group {
     top: calc(15vh + 115px + 2vh);
   }
-} 
+}

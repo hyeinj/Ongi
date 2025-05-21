@@ -10,27 +10,22 @@ interface StepContainerProps {
   onlyInitialLoading?: boolean;
 }
 
-export default function StepContainer({
-  children,
-  onlyInitialLoading = false,
-}: StepContainerProps) {
-  const { smallText, largeText, isLoading } = useSelfEmpathy();
-  const [showSkeleton, setShowSkeleton] = useState(true);
+export default function StepContainer({ children }: StepContainerProps) {
+  const { isLoading } = useSelfEmpathy();
+  const [shouldShowSkeleton, setShouldShowSkeleton] = useState(isLoading);
 
-  // smallText와 largeText가 로드되면 스켈레톤 UI를 숨깁니다
   useEffect(() => {
-    if (smallText && largeText) {
+    if (isLoading) {
+      setShouldShowSkeleton(true);
+    } else {
+      // isLoading이 false가 되면 0.3초 후에 스켈레톤을 숨깁니다
       const timer = setTimeout(() => {
-        setShowSkeleton(false);
-      }, 100);
+        setShouldShowSkeleton(false);
+      }, 300);
 
       return () => clearTimeout(timer);
     }
-  }, [smallText, largeText]);
-
-  // onlyInitialLoading이 true인 경우 초기 로딩에만 스켈레톤을 보여주고
-  // 이후 로딩 상태에서는 스켈레톤 대신 기존 UI를 표시합니다
-  const shouldShowSkeleton = onlyInitialLoading ? showSkeleton : showSkeleton || isLoading;
+  }, [isLoading]);
 
   return shouldShowSkeleton ? <SkeletonQuestion /> : <>{children}</>;
 }

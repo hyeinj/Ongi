@@ -54,7 +54,14 @@ const HomePage: React.FC = () => {
     <div className="home-page">
       <div className="background">
         <div className="text-wrapper">
-          <Image className="line" alt="Line" src={line} />
+          <Image
+            className="line"
+            alt="Line"
+            src={line}
+            width={28}
+            height={2}
+            style={{ height: 'auto', width: '28px' }}
+          />
 
           <p>무지 님의 시간이 머무는 섬이에요.</p>
           <p>따뜻한 기록 하나, 띄워볼까요?</p>
@@ -64,6 +71,7 @@ const HomePage: React.FC = () => {
           alt="우체국"
           src={postoffice}
           onClick={handlePostOfficeClick}
+          priority
         />
         <Image className="element-1" alt="별똥별 1" src={star1} />
         <Image className="element-2" alt="별똥별 2" src={star2} />

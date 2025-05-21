@@ -12,59 +12,61 @@ import { useSelfEmpathy } from '@/store/SelfEmpathyContext';
 
 export default function Step6() {
   const router = useRouter();
-  const { smallText, largeText, userAnswer, setUserAnswer, generateNextQuestion, isLoading } =
-    useSelfEmpathy();
+  const { generateNextQuestion, isLoading, setUserAnswer, smallText, largeText } = useSelfEmpathy();
+  const [answer, setAnswer] = useState<'yes' | 'no' | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedButton, setSelectedButton] = useState<string | null>(null);
 
-  // 텍스트 영역 변경 핸들러
-  const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setUserAnswer(e.target.value);
-  };
-
-  // 다음 버튼 클릭 핸들러
-  const handleNextClick = async () => {
-    if (!userAnswer.trim()) {
-      alert('답변을 입력해주세요.');
-      return;
+  const handleNext = () => {
+    if (answer === 'yes') {
+      generateNextQuestion();
+      router.push('/self-empathy/7');
+    } else if (answer === 'no') {
+      // 'no'를 선택한 경우 모달 표시
+      setShowConfirm(true);
     }
-
-    await generateNextQuestion();
-    router.push('/self-empathy/7');
   };
 
   const handleConfirm = async (buttonType: string) => {
     setSelectedButton(buttonType);
 
     // 모달에서의 선택도 답변에 추가
-    const currentAnswer = userAnswer;
-    const modalAnswer = buttonType === 'skip' ? '넘어갈래요.' : '충분히 생각해 본 것 같아요.';
-    setUserAnswer(`${currentAnswer} ${modalAnswer}`);
 
     // 다음 질문 생성
     await generateNextQuestion();
-
-    setTimeout(() => {
-      setShowConfirm(false);
-      router.push('/self-empathy/7');
-    }, 700);
+    setShowConfirm(false);
+    router.push('/self-empathy/7');
   };
 
   return (
     <SelfEmpathyLayout currentStep={5} totalStep={6} onBack={() => router.push('/self-empathy/5')}>
       <StepContainer>
         <SelfEmpathyQuestion numbering={5} smallText={smallText} largeText={largeText}>
-          <textarea
-            className="answer-input"
-            placeholder="답변을 입력해주세요"
-            value={userAnswer}
-            onChange={handleTextAreaChange}
-            disabled={isLoading}
-          />
+          <div className="yesno-btn-group">
+            <button
+              className={`yesno-btn${answer === 'yes' ? ' selected' : ''}`}
+              onClick={() => {
+                setAnswer('yes');
+                setUserAnswer('네 맞아요!');
+              }}
+              type="button"
+            >
+              네 맞아요!
+            </button>
+            <button
+              className={`yesno-btn${answer === 'no' ? ' selected' : ''}`}
+              onClick={() => {
+                setAnswer('no');
+              }}
+              type="button"
+            >
+              다른 이유인 것 같아요.
+            </button>
+          </div>
           <button
             className="next-button"
-            onClick={handleNextClick}
-            disabled={isLoading || !userAnswer.trim()}
+            onClick={handleNext}
+            disabled={isLoading || answer === null}
           >
             <Image src={nextArrow} alt="다음" />
           </button>
@@ -88,14 +90,21 @@ export default function Step6() {
             <div className="modal-btn-group">
               <button
                 className={`modal-btn${selectedButton === 'skip' ? ' active' : ''}`}
-                onClick={() => handleConfirm('skip')}
+                onClick={() => {
+                  handleConfirm('skip');
+                  setUserAnswer('다른 이유인 것 같아요. 넘어갈래요');
+                }}
                 disabled={isLoading}
               >
                 넘어갈래요
               </button>
               <button
                 className={`modal-btn${selectedButton === 'think' ? ' active' : ''}`}
-                onClick={() => handleConfirm('think')}
+                onClick={() => {
+                  setUserAnswer('다른 이유인 것 같아요. 충분히 생각해 본 것 같아요');
+
+                  handleConfirm('think');
+                }}
                 disabled={isLoading}
               >
                 충분히 생각해 본 것 같아요
