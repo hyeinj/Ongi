@@ -1,8 +1,8 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
 import nextArrow from '@/assets/icons/next-arrow.png';
@@ -31,22 +31,100 @@ const EMOTION_LIST = {
 
 export default function Step4() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // URL 파라미터의 질문 또는 localStorage에 저장된 질문을 사용
+  const urlQuestion = searchParams.get('question');
+  const [question, setQuestion] = useState(urlQuestion || localStorage.getItem('step4Question') || '질문을 불러올 수 없습니다.');
+  
   const [selectedEmotion, setSelectedEmotion] = useState<'positive' | 'neutral' | 'negative'>('positive');
   const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
+
+  useEffect(() => {
+    // 로컬 스토리지에서 이전에 저장된 데이터 불러오기
+    const savedEmotionType = localStorage.getItem('step4EmotionType');
+    const savedFeelings = localStorage.getItem('step4Feelings');
+    
+    if (savedEmotionType) {
+      setSelectedEmotion(savedEmotionType as 'positive' | 'neutral' | 'negative');
+    }
+    
+    if (savedFeelings) {
+      setSelectedFeelings(JSON.parse(savedFeelings));
+    }
+
+    // URL 파라미터로 전달된 질문이 있다면 localStorage에 저장
+    if (urlQuestion) {
+      localStorage.setItem('step4Question', urlQuestion);
+      setQuestion(urlQuestion);
+    }
+  }, [urlQuestion]);
 
   const feelings = EMOTION_LIST[selectedEmotion];
 
   const toggleFeeling = (feeling: string) => {
-    setSelectedFeelings((prev) =>
-      prev.includes(feeling)
+    setSelectedFeelings((prev) => {
+      const newFeelings = prev.includes(feeling)
         ? prev.filter((f) => f !== feeling)
-        : [...prev, feeling]
-    );
+        : [...prev, feeling];
+      
+      // 로컬 스토리지에 저장
+      localStorage.setItem('step4Feelings', JSON.stringify(newFeelings));
+      return newFeelings;
+    });
   };
 
-  const handleNext = () => { //감정 잘 선택된거 확인 완료!
-    console.log('선택된 감정:', selectedFeelings);
-    router.push('/self-empathy/5');
+  const handleNext = async () => {
+    try {
+      // 1. 필요한 데이터 수집
+      const step2Answer = localStorage.getItem('step2Answer');
+      const step3Answer = localStorage.getItem('step3Answer');
+      
+      if (!step2Answer || !step3Answer) {
+        alert('이전 단계의 답변이 없습니다.');
+        return;
+      }
+
+      // 2. 백엔드로 전송할 데이터 준비
+      const requestData = {
+        step2Answer,
+        step3Answer,
+        step4Answer: '', // step4는 감정 선택만 있으므로 빈 문자열
+        step4Feelings: selectedFeelings.join(', ') // 선택된 감정들을 문자열로 변환
+      };
+
+      // 3. 백엔드 API 호출
+      const response = await fetch('http://localhost:8080/api/step4-question', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+      });
+
+      if (!response.ok) {
+        throw new Error('서버 응답 오류');
+      }
+
+      // 4. 응답 처리
+      const data = await response.json();
+      
+      if (!data.question) {
+        throw new Error('생성된 질문이 없습니다.');
+      }
+
+      // 5. 현재 상태 저장
+      localStorage.setItem('step4EmotionType', selectedEmotion);
+      localStorage.setItem('step4Feelings', JSON.stringify(selectedFeelings));
+      localStorage.setItem('step5Question', data.question);
+
+      // 6. 다음 페이지로 이동 (생성된 질문과 함께)
+      router.push(`/self-empathy/5?question=${encodeURIComponent(data.question)}`);
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert('질문 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
   };
 
   return (
@@ -57,7 +135,7 @@ export default function Step4() {
     >
       <SelfEmpathyQuestion
         numbering={3}
-        smallText={`정리되지 않은 옷더미를 마주하는 상황이 참 번거로우셨겠어요. \n 그럼 우리 한 발짝 물러나서 감정을 살펴볼게요.`}
+        smallText={question}
         largeText="그때의 상황을 떠올렸을 때, 무지님이 느꼈던 감정을 모두 골라주세요"
       >
         <div className="emotion-icons-row">
@@ -87,6 +165,7 @@ export default function Step4() {
         <button 
           className="next-button"
           onClick={handleNext}
+          disabled={selectedFeelings.length === 0}
         >
           <Image src={nextArrow} alt="다음" />
         </button>

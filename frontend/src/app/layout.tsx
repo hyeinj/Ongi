@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="ko" className="font-lineseed">
       <body>
-        <StageProvider>{children}</StageProvider>
+          <StageProvider>{children}</StageProvider>
       </body>
     </html>
   );
