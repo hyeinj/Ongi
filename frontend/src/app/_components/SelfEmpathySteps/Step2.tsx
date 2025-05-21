@@ -5,12 +5,20 @@ import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
 import nextArrow from '@/assets/icons/next-arrow.png';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Step2() {
   const router = useRouter();
   const [firstanswer, setFirstAnswer] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // 이전에 저장된 답변이 있다면 불러오기
+    const savedAnswer = localStorage.getItem('step2Answer');
+    if (savedAnswer) {
+      setFirstAnswer(savedAnswer);
+    }
+  }, []);
 
   const handleNext = async () => {
     if (!firstanswer.trim()) return;
@@ -29,6 +37,10 @@ export default function Step2() {
       });
 
       const data = await response.json();
+      
+      // 생성된 질문을 localStorage에 저장
+      localStorage.setItem('step3Question', data.question);
+      
       router.push(`/self-empathy/3?question=${encodeURIComponent(data.question)}`);
     } catch (error) {
       console.error('Error:', error);
