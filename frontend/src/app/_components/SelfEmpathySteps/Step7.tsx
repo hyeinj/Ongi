@@ -25,8 +25,14 @@ export default function Step7() {
       return;
     }
 
-    await generateEmpathy();
-    router.push('/self-empathy/8');
+    try {
+      await generateEmpathy();
+      // 다음 페이지로 이동
+      router.push('/self-empathy/8');
+    } catch (error) {
+      console.error('최종 결과 생성 중 오류:', error);
+      alert('다음 단계로 넘어가는 중 오류가 발생했습니다.');
+    }
   };
 
   return (

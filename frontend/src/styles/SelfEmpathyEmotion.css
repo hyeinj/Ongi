@@ -52,7 +52,7 @@
   display: grid;
   grid-template-columns: repeat(3, 90px);
   gap: 5px 10px;
-  background: rgba(255,255,255,0.5);
+  background: rgba(255, 255, 255, 0.5);
   border-radius: 24px;
   padding: 10px 0px 10px 0px;
   margin: 0 auto;
@@ -64,9 +64,9 @@
   transform: translateX(-50%);
   max-height: 390px;
   margin-top: 10px;
-  overflow-y: scroll;
+  overflow-y: auto;
+  scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: auto;
 }
 
 .feeling-btn {
@@ -79,7 +79,7 @@
   font-size: 13px;
   font-weight: 400;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -98,11 +98,33 @@
   color: #3578c6;
 }
 
+/* 스크롤바 스타일링 */
+.feeling-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.feeling-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.feeling-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+/* 모바일 대응을 위한 추가 스타일 */
+@media (max-height: 700px) {
+  .feeling-list {
+    max-height: 300px;
+  }
+}
+
 @media screen and (max-width: 360px) {
   .emotion-icons-row {
     top: 28vh;
   }
-  
+
   .feeling-list {
     top: 36vh;
   }
@@ -112,7 +134,7 @@
   .emotion-icons-row {
     top: 32vh;
   }
-  
+
   .feeling-list {
     top: 40vh;
   }

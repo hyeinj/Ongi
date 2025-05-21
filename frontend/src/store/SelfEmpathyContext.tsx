@@ -48,10 +48,10 @@ interface SelfEmpathyActions {
   generateInitialQuestion: () => Promise<void>;
 
   // 다음 질문 생성
-  generateNextQuestion: () => Promise<void>;
+  generateNextQuestion: () => Promise<{ success: boolean; error?: unknown } | void>;
 
   // 최종 공감 메시지 생성
-  generateEmpathy: () => Promise<void>;
+  generateEmpathy: () => Promise<{ success: boolean; error?: unknown } | void>;
 
   // 컨텍스트 초기화
   resetContext: () => void;
@@ -127,37 +127,50 @@ export function SelfEmpathyProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      // 먼저 로딩 상태로 변경
       setState((prev) => ({ ...prev, isLoading: true }));
+
+      // smallText와 largeText를 합쳐서 완전한 질문 구성
+      const fullQuestion = `${state.smallText} ${state.largeText}`.trim();
 
       // 현재 질문과 사용자 답변을 대화 기록에 추가
       const currentQA: Conversation = {
-        question: state.largeText,
+        question: fullQuestion,
         answer: state.userAnswer,
       };
 
       // 로컬 스토리지에 질문-답변 저장
       addEmotionEntry({
-        question: state.largeText,
+        question: fullQuestion,
         answer: state.userAnswer,
       });
 
       // 새로운 대화 기록
       const updatedConversations = [...state.conversations, currentQA];
 
+      // 먼저 userAnswer를 초기화하여 다음 화면으로 넘어갔을 때 이전 답변이 보이지 않도록 함
+      setState((prev) => ({
+        ...prev,
+        userAnswer: '',
+      }));
+
       // GPT를 사용하여 다음 질문 생성
       const { smallText, largeText } = await generateFollowUpQuestion(updatedConversations);
 
+      // 나머지 상태 업데이트
       setState((prev) => ({
         ...prev,
         smallText,
         largeText,
-        userAnswer: '', // 사용자 답변 초기화
         conversations: updatedConversations,
         isLoading: false,
       }));
+
+      return { success: true };
     } catch (error) {
       console.error('다음 질문 생성 중 오류:', error);
       setState((prev) => ({ ...prev, isLoading: false }));
+      return { success: false, error };
     }
   };
 
@@ -171,20 +184,29 @@ export function SelfEmpathyProvider({ children }: { children: ReactNode }) {
 
       setState((prev) => ({ ...prev, isLoading: true }));
 
+      // smallText와 largeText를 합쳐서 완전한 질문 구성
+      const fullQuestion = `${state.smallText} ${state.largeText}`.trim();
+
       // 마지막 질문과 사용자 답변을 대화 기록에 추가
       const currentQA: Conversation = {
-        question: state.largeText,
+        question: fullQuestion,
         answer: state.userAnswer,
       };
 
       // 로컬 스토리지에 질문-답변 저장
       addEmotionEntry({
-        question: state.largeText,
+        question: fullQuestion,
         answer: state.userAnswer,
       });
 
       // 새로운 대화 기록
       const updatedConversations = [...state.conversations, currentQA];
+
+      // 먼저 userAnswer를 초기화하여 다음 화면으로 넘어갔을 때 이전 답변이 보이지 않도록 함
+      setState((prev) => ({
+        ...prev,
+        userAnswer: '',
+      }));
 
       // GPT를 사용하여 최종 공감 메시지 생성
       const { empathyMessage, category, emotion } = await generateFinalEmpathy(
@@ -211,9 +233,12 @@ export function SelfEmpathyProvider({ children }: { children: ReactNode }) {
         conversations: updatedConversations,
         isLoading: false,
       }));
+
+      return { success: true };
     } catch (error) {
       console.error('공감 메시지 생성 중 오류:', error);
       setState((prev) => ({ ...prev, isLoading: false }));
+      return { success: false, error };
     }
   };
 

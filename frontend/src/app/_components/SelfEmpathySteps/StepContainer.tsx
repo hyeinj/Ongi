@@ -20,7 +20,11 @@ export default function StepContainer({
   // smallText와 largeText가 로드되면 스켈레톤 UI를 숨깁니다
   useEffect(() => {
     if (smallText && largeText) {
-      setShowSkeleton(false);
+      const timer = setTimeout(() => {
+        setShowSkeleton(false);
+      }, 100);
+
+      return () => clearTimeout(timer);
     }
   }, [smallText, largeText]);
 

@@ -167,9 +167,17 @@ export default function Step4() {
   const feelings = EMOTION_LIST[selectedEmotion];
 
   const toggleFeeling = (feeling: string) => {
-    setSelectedFeelings((prev) =>
-      prev.includes(feeling) ? prev.filter((f) => f !== feeling) : [...prev, feeling]
-    );
+    // 선택된 감정 목록 업데이트
+    const newSelectedFeelings = selectedFeelings.includes(feeling)
+      ? selectedFeelings.filter((f) => f !== feeling)
+      : [...selectedFeelings, feeling];
+
+    // 상태 업데이트
+    setSelectedFeelings(newSelectedFeelings);
+
+    // 선택된 감정들을 문자열로 변환하여 답변으로 즉시 저장
+    const feelingsText = newSelectedFeelings.join(', ');
+    setUserAnswer(feelingsText);
   };
 
   const handleNext = async () => {
@@ -178,12 +186,16 @@ export default function Step4() {
       return;
     }
 
-    // 선택된 감정들을 문자열로 변환하여 답변으로 저장
-    const feelingsText = selectedFeelings.join(', ');
-    setUserAnswer(feelingsText);
-
-    await generateNextQuestion();
-    router.push('/self-empathy/5');
+    try {
+      await generateNextQuestion();
+      // 현재 페이지를 떠나기 전에 선택된 감정들 초기화
+      setUserAnswer('');
+      // 다음 페이지로 이동
+      router.push('/self-empathy/5');
+    } catch (error) {
+      console.error('다음 질문 생성 중 오류:', error);
+      alert('다음 단계로 넘어가는 중 오류가 발생했습니다.');
+    }
   };
 
   return (
