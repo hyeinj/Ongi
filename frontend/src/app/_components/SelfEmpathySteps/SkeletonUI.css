@@ -1,0 +1,126 @@
+.skeleton-container {
+  width: 100%;
+  padding: 20px;
+}
+
+/* 스켈레톤 기본 애니메이션 */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* 스켈레톤 기본 스타일 */
+.skeleton-numbering,
+.skeleton-small-text,
+.skeleton-large-text,
+.skeleton-input,
+.skeleton-button,
+.skeleton-line,
+.skeleton-loading-icon,
+.skeleton-loading-text {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* 질문 페이지 스켈레톤 */
+.skeleton-question {
+  margin-bottom: 40px;
+}
+
+.skeleton-numbering {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+}
+
+.skeleton-small-text {
+  margin-top: 50px;
+  width: 180px;
+  height: 18px;
+  margin-bottom: 16px;
+}
+
+.skeleton-large-text {
+  width: 100%;
+  height: 24px;
+  margin-bottom: 12px;
+}
+
+.skeleton-large-text.short {
+  width: 70%;
+}
+
+.skeleton-input {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 30px;
+  border-radius: 12px;
+}
+
+.skeleton-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+/* 카드 페이지 스켈레톤 */
+.skeleton-message {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.skeleton-line {
+  height: 20px;
+  margin-bottom: 12px;
+}
+
+.skeleton-line.short {
+  width: 60%;
+  margin: 0 auto 12px auto;
+}
+
+.skeleton-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 30px;
+  margin: 30px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.skeleton-card-content {
+  margin-bottom: 20px;
+}
+
+.skeleton-bottom-text {
+  text-align: center;
+  margin-top: 30px;
+}
+
+/* 로딩 페이지 스켈레톤 */
+.skeleton-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+}
+
+.skeleton-loading-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+}
+
+.skeleton-loading-text {
+  width: 200px;
+  height: 20px;
+}

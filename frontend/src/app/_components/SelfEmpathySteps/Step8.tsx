@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
-import mailBird from '@/assets/images/mail-bird.png';
+import SkeletonUI from './SkeletonUI';
 import mailBox from '@/assets/images/mailbox.png';
 import '@/styles/SelfEmpathyFinal.css';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import { useEmotion } from '../../../presentation/hooks/useEmotion';
+import { useDelayedLoading } from '../../../presentation/hooks/useDelayedLoading';
 
 export default function Step8() {
   const router = useRouter();
@@ -16,6 +17,9 @@ export default function Step8() {
 
   // 클린 아키텍처를 통한 감정 데이터 관리
   const { error, analyzeAndSaveEmotionAndCategory } = useEmotion();
+
+  // 로딩 완료 후 지연 처리
+  const shouldShowSkeleton = useDelayedLoading(isLoading);
 
   useEffect(() => {
     const performAnalysis = async () => {
@@ -54,13 +58,10 @@ export default function Step8() {
     );
   }
 
-  if (isLoading) {
+  if (shouldShowSkeleton) {
     return (
       <SelfEmpathyLayout onBack={() => router.push('/self-empathy/7')}>
-        <div className="loading-page">
-          <Image src={mailBird} alt="로딩" />
-          <div className="loading-text">오늘의 감정이 전달되고 있어요.</div>
-        </div>
+        <SkeletonUI type="card" />
       </SelfEmpathyLayout>
     );
   }

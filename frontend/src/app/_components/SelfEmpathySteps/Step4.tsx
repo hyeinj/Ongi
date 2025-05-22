@@ -5,12 +5,14 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
+import SkeletonUI from './SkeletonUI';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import positiveIcon from '@/assets/icons/positive.png';
 import neutralIcon from '@/assets/icons/neutral.png';
 import negativeIcon from '@/assets/icons/negative.png';
 import '@/styles/SelfEmpathyEmotion.css';
 import { useEmotion } from '../../../presentation/hooks/useEmotion';
+import { useDelayedLoading } from '../../../presentation/hooks/useDelayedLoading';
 
 const EMOTIONS = [
   { key: 'positive', icon: positiveIcon },
@@ -171,6 +173,9 @@ export default function Step4() {
   // 클린 아키텍처를 통한 감정 데이터 관리
   const { isLoading, error, saveStep4FeelingsAndGenerateStep5, emotionData } = useEmotion();
 
+  // 로딩 완료 후 지연 처리
+  const shouldShowSkeleton = useDelayedLoading(isLoading);
+
   useEffect(() => {
     // 이전에 저장된 감정 데이터 불러오기
     if (emotionData?.entries.step4) {
@@ -240,6 +245,19 @@ export default function Step4() {
           오류가 발생했습니다: {error}
           <button onClick={() => window.location.reload()}>다시 시도</button>
         </div>
+      </SelfEmpathyLayout>
+    );
+  }
+
+  // 로딩 상태 또는 지연 시간 동안 스켈레톤 UI 표시
+  if (shouldShowSkeleton) {
+    return (
+      <SelfEmpathyLayout
+        currentStep={3}
+        totalStep={6}
+        onBack={() => router.push('/self-empathy/3')}
+      >
+        <SkeletonUI type="question" />
       </SelfEmpathyLayout>
     );
   }

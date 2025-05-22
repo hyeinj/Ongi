@@ -4,9 +4,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
+import SkeletonUI from './SkeletonUI';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import { useState, useEffect } from 'react';
 import { useEmotion } from '../../../presentation/hooks/useEmotion';
+import { useDelayedLoading } from '../../../presentation/hooks/useDelayedLoading';
 
 export default function Step5() {
   const router = useRouter();
@@ -19,6 +21,9 @@ export default function Step5() {
 
   // 클린 아키텍처를 통한 감정 데이터 관리
   const { isLoading, error, saveStageAnswer, getStageAnswer } = useEmotion();
+
+  // 로딩 완료 후 지연 처리
+  const shouldShowSkeleton = useDelayedLoading(isLoading);
 
   useEffect(() => {
     // 이전에 저장된 답변이 있다면 불러오기
@@ -62,6 +67,19 @@ export default function Step5() {
           오류가 발생했습니다: {error}
           <button onClick={() => window.location.reload()}>다시 시도</button>
         </div>
+      </SelfEmpathyLayout>
+    );
+  }
+
+  // 로딩 상태 또는 지연 시간 동안 스켈레톤 UI 표시
+  if (shouldShowSkeleton) {
+    return (
+      <SelfEmpathyLayout
+        currentStep={4}
+        totalStep={6}
+        onBack={() => router.push('/self-empathy/4')}
+      >
+        <SkeletonUI type="question" />
       </SelfEmpathyLayout>
     );
   }

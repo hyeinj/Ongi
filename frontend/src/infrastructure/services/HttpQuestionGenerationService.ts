@@ -1,8 +1,16 @@
 import { QuestionGenerationService } from '../../domain/services/QuestionGenerationService';
 import { HttpApiAdapter } from '../adapters/api/HttpApiAdapter';
+import { Category, EmotionType } from '../../domain/entities/Emotion';
 
 interface QuestionResponse {
   question: string;
+}
+
+interface EmotionAnalysisResponse {
+  category: Category;
+  emotion: EmotionType;
+  success: boolean;
+  error?: string;
 }
 
 export class HttpQuestionGenerationService implements QuestionGenerationService {
@@ -46,5 +54,28 @@ export class HttpQuestionGenerationService implements QuestionGenerationService 
       feelings: feelings?.join(', '),
     });
     return response.question;
+  }
+
+  async analyzeEmotionAndCategory(allAnswers: { [stage: string]: string }): Promise<{
+    category: Category;
+    emotion: EmotionType;
+    success: boolean;
+    error?: string;
+  }> {
+    try {
+      const response = await this.httpAdapter.post<EmotionAnalysisResponse>('/analyze-emotion', {
+        allAnswers,
+      });
+      return response;
+    } catch (error) {
+      console.error('감정 분석 실패:', error);
+      // 실패 시 기본값 반환
+      return {
+        category: 'self' as Category,
+        emotion: 'peace' as EmotionType,
+        success: false,
+        error: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.',
+      };
+    }
   }
 }
