@@ -1,3 +1,12 @@
+import { Category, EmotionType } from '../entities/Emotion';
+
+interface EmotionAnalysisResult {
+  category: Category;
+  emotion: EmotionType;
+  success: boolean;
+  error?: string;
+}
+
 export interface QuestionGenerationService {
   /**
    * Step2 답변을 기반으로 Step3 질문 생성
@@ -25,4 +34,11 @@ export interface QuestionGenerationService {
     previousAnswers: { [stage: string]: string },
     feelings?: string[]
   ): Promise<string>;
+
+  /**
+   * 모든 답변을 분석하여 사용자의 오늘 기분을 가장 잘 나타내는 category와 emotion을 결정
+   */
+  analyzeEmotionAndCategory(allAnswers: {
+    [stage: string]: string;
+  }): Promise<EmotionAnalysisResult>;
 }

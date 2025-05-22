@@ -24,6 +24,21 @@ export class EmotionFacade {
   }
 
   /**
+   * 모든 감정 데이터 조회
+   */
+  async getAllEmotionData(): Promise<Record<string, DailyEmotion>> {
+    return await this.container.getEmotionDataUseCase.getAll();
+  }
+
+  /**
+   * 특정 날짜의 감정 데이터 삭제
+   */
+  async deleteEmotionData(date?: string): Promise<void> {
+    const targetDate = date || this.getCurrentDate();
+    await this.container.getEmotionDataUseCase.deleteByDate(targetDate);
+  }
+
+  /**
    * Step2 답변 저장 및 Step3 질문 생성
    */
   async saveStep2AndGenerateStep3(answer: string): Promise<string> {
@@ -120,6 +135,34 @@ export class EmotionFacade {
     const targetDate = date || this.getCurrentDate();
     const emotionData = await this.getEmotionData(targetDate);
     return emotionData?.entries[stage]?.answer || null;
+  }
+
+  /**
+   * 모든 답변을 분석하여 오늘의 기분을 결정하고 저장
+   */
+  async analyzeAndSaveEmotionAndCategory(
+    date?: string
+  ): Promise<{ category: Category; emotion: EmotionType; success: boolean }> {
+    const targetDate = date || this.getCurrentDate();
+
+    try {
+      // 모든 답변을 분석하여 category와 emotion 결정
+      const analysisResult = await this.container.generateQuestionUseCase.analyzeEmotionAndCategory(
+        targetDate
+      );
+
+      // 분석 결과를 저장
+      await this.updateCategoryAndEmotion(analysisResult.category, analysisResult.emotion);
+
+      return {
+        category: analysisResult.category,
+        emotion: analysisResult.emotion,
+        success: analysisResult.success,
+      };
+    } catch (error) {
+      console.error('감정 분석 및 저장 실패:', error);
+      throw error;
+    }
   }
 
   /**

@@ -4,7 +4,16 @@ import {
   generateStep4Question,
   generateStep5Question,
   generateNextQuestion,
+  analyzeEmotionAndCategory,
 } from '../../app/actions/questionActions';
+import { Category, EmotionType } from '../../domain/entities/Emotion';
+
+interface EmotionAnalysisResult {
+  category: Category;
+  emotion: EmotionType;
+  success: boolean;
+  error?: string;
+}
 
 export class ServerActionQuestionGenerationService implements QuestionGenerationService {
   async generateStep3Question(step2Answer: string): Promise<string> {
@@ -52,5 +61,17 @@ export class ServerActionQuestionGenerationService implements QuestionGeneration
     }
 
     return response.question;
+  }
+
+  async analyzeEmotionAndCategory(allAnswers: {
+    [stage: string]: string;
+  }): Promise<EmotionAnalysisResult> {
+    const response = await analyzeEmotionAndCategory(allAnswers);
+
+    if (!response.success) {
+      console.warn('감정 분석 실패, 기본값 사용:', response.error);
+    }
+
+    return response;
   }
 }

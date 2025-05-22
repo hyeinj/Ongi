@@ -19,6 +19,11 @@ interface UseEmotionReturn {
   saveStageAnswer: (stage: string, question: string, answer: string) => Promise<void>;
   updateCategoryAndEmotion: (category: Category, emotion: EmotionType) => Promise<void>;
   getStageAnswer: (stage: string) => Promise<string | null>;
+  getAllEmotionData: () => Promise<Record<string, DailyEmotion> | null>;
+  deleteEmotionData: (date?: string) => Promise<void>;
+  analyzeAndSaveEmotionAndCategory: (
+    date?: string
+  ) => Promise<{ category: Category; emotion: EmotionType; success: boolean } | null>;
   refreshEmotionData: () => Promise<void>;
   migrateFromLegacyStorage: () => Promise<void>;
 }
@@ -154,6 +159,51 @@ export function useEmotion(): UseEmotionReturn {
     [emotionFacade, handleError]
   );
 
+  const getAllEmotionData = useCallback(async (): Promise<Record<string, DailyEmotion> | null> => {
+    try {
+      return await emotionFacade.getAllEmotionData();
+    } catch (err) {
+      handleError(err);
+      return null;
+    }
+  }, [emotionFacade, handleError]);
+
+  const deleteEmotionData = useCallback(
+    async (date?: string): Promise<void> => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        await emotionFacade.deleteEmotionData(date);
+        await refreshEmotionData();
+      } catch (err) {
+        handleError(err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [emotionFacade, refreshEmotionData, handleError]
+  );
+
+  const analyzeAndSaveEmotionAndCategory = useCallback(
+    async (
+      date?: string
+    ): Promise<{ category: Category; emotion: EmotionType; success: boolean } | null> => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const result = await emotionFacade.analyzeAndSaveEmotionAndCategory(date);
+        await refreshEmotionData();
+        return result;
+      } catch (err) {
+        handleError(err);
+        return null;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [emotionFacade, refreshEmotionData, handleError]
+  );
+
   const migrateFromLegacyStorage = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true);
@@ -182,6 +232,9 @@ export function useEmotion(): UseEmotionReturn {
     saveStageAnswer,
     updateCategoryAndEmotion,
     getStageAnswer,
+    getAllEmotionData,
+    deleteEmotionData,
+    analyzeAndSaveEmotionAndCategory,
     refreshEmotionData,
     migrateFromLegacyStorage,
   };

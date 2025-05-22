@@ -6,97 +6,89 @@ import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import { useState, useEffect } from 'react';
+import { useEmotion } from '../../../presentation/hooks/useEmotion';
 
 export default function Step3() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [step3Answer, setStep3Answer] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [step2Answer, setStep2Answer] = useState('');
+  const [answer, setAnswer] = useState('');
 
-  // URL 파라미터의 질문 또는 localStorage에 저장된 질문을 사용
+  // URL 파라미터의 질문
   const urlQuestion = searchParams.get('question');
-  const [question, setQuestion] = useState(urlQuestion || localStorage.getItem('step3Question') || '질문을 불러올 수 없습니다.');
+  const [question, setQuestion] = useState(urlQuestion || '질문을 불러올 수 없습니다.');
+
+  // 클린 아키텍처를 통한 감정 데이터 관리
+  const { isLoading, error, saveStep3AndGenerateStep4, getStageAnswer } = useEmotion();
 
   useEffect(() => {
-    // 컴포넌트가 마운트될 때 로컬 스토리지에서 데이터 불러오기
-    const storedStep2Answer = localStorage.getItem('step2Answer');
-    const storedStep3Answer = localStorage.getItem('step3Answer');
-    
-    if (storedStep2Answer) {
-      setStep2Answer(storedStep2Answer);
-    }
-    
-    if (storedStep3Answer) {
-      setStep3Answer(storedStep3Answer);
-    }
+    // 이전에 저장된 답변이 있다면 불러오기
+    const loadPreviousAnswer = async () => {
+      const savedAnswer = await getStageAnswer('step3');
+      if (savedAnswer) {
+        setAnswer(savedAnswer);
+      }
+    };
 
-    // URL 파라미터로 전달된 질문이 있다면 localStorage에 저장
+    loadPreviousAnswer();
+
+    // URL 파라미터로 전달된 질문이 있다면 설정
     if (urlQuestion) {
-      localStorage.setItem('step3Question', urlQuestion);
       setQuestion(urlQuestion);
     }
-  }, [urlQuestion]);
+  }, [urlQuestion, getStageAnswer]);
 
   const handleNext = async () => {
-    if (!step3Answer.trim()) return;
-    
-    setIsLoading(true);
+    if (!answer.trim()) return;
+
     try {
-      // 답변을 로컬 스토리지에 저장
-      localStorage.setItem('step3Answer', step3Answer);
+      // 도메인 레이어를 통한 비즈니스 로직 처리
+      const nextQuestion = await saveStep3AndGenerateStep4(question, answer);
 
-      const response = await fetch('http://localhost:8080/api/step3-question', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          step3Answer,
-          step2Answer 
-        }),
-      });
-
-      const data = await response.json();
-      
-      // 생성된 질문을 localStorage에 저장
-      localStorage.setItem('step4Question', data.question);
-      
-      router.push(`/self-empathy/4?question=${encodeURIComponent(data.question)}`);
-    } catch (error) {
-      console.error('Error:', error);
+      if (nextQuestion) {
+        router.push(`/self-empathy/4?question=${encodeURIComponent(nextQuestion)}`);
+      } else {
+        throw new Error('질문 생성에 실패했습니다.');
+      }
+    } catch (err) {
+      console.error('Step3 처리 실패:', err);
       alert('오류가 발생했습니다. 다시 시도해주세요.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
+  // 에러 상태 처리
+  if (error) {
+    return (
+      <SelfEmpathyLayout
+        currentStep={2}
+        totalStep={6}
+        onBack={() => router.push('/self-empathy/2')}
+      >
+        <div className="error-message">
+          오류가 발생했습니다: {error}
+          <button onClick={() => window.location.reload()}>다시 시도</button>
+        </div>
+      </SelfEmpathyLayout>
+    );
+  }
+
   return (
-    <SelfEmpathyLayout 
-      currentStep={2}
-      totalStep={6}
-      onBack={() => router.push('/self-empathy/2')}
-    >
+    <SelfEmpathyLayout currentStep={2} totalStep={6} onBack={() => router.push('/self-empathy/2')}>
       <SelfEmpathyQuestion
         numbering={2}
         smallText={question}
         largeText="그럼 조금 더 자세하게, 그 순간 어떤 상황이었는지 들려주실 수 있을까요?"
       >
-        <textarea 
+        <textarea
           className="answer-input step3"
           placeholder="답변을 입력해주세요"
-          value={step3Answer}
-          onChange={(e) => setStep3Answer(e.target.value)}
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
           disabled={isLoading}
         />
-        <button 
-          className="next-button"
-          onClick={handleNext}
-          disabled={isLoading || !step3Answer.trim()}
-        >
-          <Image src={nextArrow} alt="다음" />
+        <button className="next-button" onClick={handleNext} disabled={isLoading || !answer.trim()}>
+          {isLoading ? <span>질문 생성 중...</span> : <Image src={nextArrow} alt="다음" />}
         </button>
       </SelfEmpathyQuestion>
     </SelfEmpathyLayout>
   );
-} 
+}

@@ -1,5 +1,13 @@
 import { QuestionGenerationService } from '../../domain/services/QuestionGenerationService';
 import { EmotionRepository } from '../../domain/repositories/EmotionRepository';
+import { Category, EmotionType } from '../../domain/entities/Emotion';
+
+interface EmotionAnalysisResult {
+  category: Category;
+  emotion: EmotionType;
+  success: boolean;
+  error?: string;
+}
 
 export class GenerateQuestionUseCase {
   constructor(
@@ -39,5 +47,19 @@ export class GenerateQuestionUseCase {
     }
 
     return await this.questionService.generateNextQuestion(previousAnswers, feelings);
+  }
+
+  async analyzeEmotionAndCategory(date: string): Promise<EmotionAnalysisResult> {
+    const dailyEmotion = await this.emotionRepository.getByDate(date);
+    if (!dailyEmotion) {
+      throw new Error('해당 날짜의 감정 데이터를 찾을 수 없습니다.');
+    }
+
+    const allAnswers: { [stage: string]: string } = {};
+    for (const [stage, entry] of Object.entries(dailyEmotion.entries)) {
+      allAnswers[stage] = entry.answer;
+    }
+
+    return await this.questionService.analyzeEmotionAndCategory(allAnswers);
   }
 }
