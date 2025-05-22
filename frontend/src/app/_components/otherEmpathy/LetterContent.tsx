@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import postboxIcon from '@/assets/images/postbox-icon.png';
-import { useLetterHighlights } from '@/infra/useLetterHighlights';
+import { useLetterHighlights } from '@/presentation/hooks/useLetterHighlights';
 import localFont from 'next/font/local';
 
 const garamFont = localFont({

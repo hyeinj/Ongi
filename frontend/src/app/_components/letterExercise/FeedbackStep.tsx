@@ -34,6 +34,7 @@ export default function FeedbackStep() {
       setDataLoaded(true);
     };
     loadLetterData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentDate, dataLoaded]); // 함수를 의존성에서 제거
 
   const handleChevronClick = () => {
@@ -113,7 +114,7 @@ export default function FeedbackStep() {
         </div>
         {!isOpen && (
           <button onClick={handleChevronClick}>
-            <ChevronDown className="text-white cursor-pointer" />
+            <ChevronDown className="text-white cursor-pointer absolute top-[70vh] left-1/2 -translate-x-1/2" />
           </button>
         )}
 
@@ -173,7 +174,7 @@ export default function FeedbackStep() {
               계속 이어가볼까요?
             </p>
           </div>
-          <Link href="/">
+          <Link href="/other-empathy/1">
             <button className="bg-white rounded-full px-20 py-3 shadow-md">완료</button>
           </Link>
         </div>
