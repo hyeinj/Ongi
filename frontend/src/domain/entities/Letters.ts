@@ -1,4 +1,4 @@
-export interface DailyLetter {
+export interface Letter {
   mockLetter: string;
   userResponse: string;
   aiFeedback: string;
@@ -7,5 +7,5 @@ export interface DailyLetter {
 }
 
 export interface Letters {
-  [date: string]: DailyLetter;
+  [date: string]: Letter;
 }
