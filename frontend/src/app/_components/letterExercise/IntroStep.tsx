@@ -1,19 +1,58 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import letterImage from '@/assets/images/letter.png';
 import localFont from 'next/font/local';
-import { useLetter } from '@/store/LetterContext';
 import letterExerciseLetterBg from '@/assets/images/letter-exercise-letter-bg.png';
 import letterExerciseLetterTopIcon from '@/assets/images/postbox-icon.png';
+import { useLetter } from '@/presentation/hooks/useLetter';
+import { useSearchParams } from 'next/navigation';
 
 const garamFont = localFont({
   src: '../../../assets/fonts/gaRamYeonGgoc.ttf',
 });
 
 export default function IntroStep() {
-  const { introStepShown, setIntroStepShown } = useLetter();
+  const searchParams = useSearchParams();
+  const { generateMockLetter, getLetterData } = useLetter();
+  const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [mockLetter, setMockLetter] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [showContent, setShowContent] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
+
+  // 쿼리 파라미터에서 introStepShown 확인
+  const introStepShown = searchParams.get('introStepShown') === 'true';
+
+  // 편지 데이터 로드 및 생성 (한 번만 실행)
+  useEffect(() => {
+    if (dataLoaded) return;
+
+    const loadOrGenerateLetter = async () => {
+      setIsLoading(true);
+
+      // 먼저 기존 편지 확인
+      const existingLetter = await getLetterData(currentDate);
+      if (existingLetter && existingLetter.mockLetter) {
+        setMockLetter(existingLetter.mockLetter);
+      } else {
+        // 없으면 새로 생성
+        const result = await generateMockLetter(currentDate);
+        if (result) {
+          setMockLetter(result.mockLetter);
+        }
+      }
+
+      setIsLoading(false);
+      setDataLoaded(true);
+    };
+
+    loadOrGenerateLetter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDate, dataLoaded]); // 함수들을 의존성에서 제거
 
   useEffect(() => {
     if (!introStepShown) {
@@ -25,7 +64,6 @@ export default function IntroStep() {
       // 페이드아웃 후 컴포넌트 숨기기
       const hideTimeout = setTimeout(() => {
         setShowContent(false);
-        setIntroStepShown(true);
       }, 2500); // 페이드아웃 애니메이션 시간 0.5초 포함
 
       return () => {
@@ -36,11 +74,35 @@ export default function IntroStep() {
       // 이미 보여진 경우 바로 숨김
       setShowContent(false);
     }
-  }, [introStepShown, setIntroStepShown]);
+  }, [introStepShown]);
 
   if (!showContent) {
-    // 인트로 단계가 끝나면 아무것도 렌더링하지 않음
-    return <LetterContent />;
+    // 인트로 단계가 끝나면 편지 내용 표시
+    return (
+      <>
+        <LetterContent mockLetter={mockLetter} isLoading={isLoading} />
+        <div className="fixed bottom-12 w-full flex justify-end px-8 z-50">
+          <Link href="/letter-exercise/2">
+            <div className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="black"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </div>
+          </Link>
+        </div>
+      </>
+    );
   }
 
   return (
@@ -75,7 +137,7 @@ export default function IntroStep() {
   );
 }
 
-const LetterContent = () => {
+const LetterContent = ({ mockLetter, isLoading }: { mockLetter?: string; isLoading?: boolean }) => {
   const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
@@ -101,26 +163,25 @@ const LetterContent = () => {
       />
       <div className="flex flex-col items-center justify-start bg-[#F7F4E6] w-full h-[80vh] shadow-[#00000058] shadow-xl p-4 scroll-auto overflow-y-auto ">
         <Image src={letterExerciseLetterTopIcon} alt="편지 위 아이콘" width={50} height={50} />
-        <div className={`text-center ${garamFont.className} py-4 text-[#6A3C00] font-extrabold`}>
-          자기 계발과 끝없는 업무 속에서,
-          <br /> 버텨내는 매일이 너무 힘겹게 느껴져요.
-        </div>
-        <div className={` mb-6 ${garamFont.className} leading-8`}>
-          무지님, 안녕하세요.
-          <br />
-          저는 요즘 정말 힘든 시간을 보내고 있습니다.
-          <br />
-          직장에서는 업무가 끊임없이 늘어나고,
-          <br />
-          퇴근 후에도 자기 계발을 위한 공부를 해야 하는데
-          <br />
-          시간이 턱없이 부족해 매일 스트레스로
-          <br />
-          가득한 나날을 보내고 있어요. <br />
-          <br />
-          이런 상황에서 어떻게 하면 좋을까요? <br />
-          무지님은 이런 제 마음을 헤아려주실 수 있을 것 같아요.
-        </div>
+
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center h-full">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#6A3C00] mb-4"></div>
+            <p className={`text-[#6A3C00] ${garamFont.className}`}>편지를 받아오고 있어요...</p>
+          </div>
+        ) : mockLetter ? (
+          <div
+            className={`mb-6 ${garamFont.className} leading-8 text-[#6A3C00] whitespace-pre-wrap overflow-y-auto scrollbar-hide`}
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
+          >
+            <div className=" h-[100vh]">{mockLetter}</div>
+          </div>
+        ) : (
+          ''
+        )}
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ import backgroundImage from '@/assets/images/letterExerciseBackground.png';
 export default function LetterExerciseLayout({ children }: { children: React.ReactNode }) {
   return (
     <LetterExerciseBackground backgroundImage={backgroundImage}>
-      <Header />
+      <Header stage={2} />
       {children}
     </LetterExerciseBackground>
   );

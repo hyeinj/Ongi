@@ -1,28 +1,40 @@
 import React, { useState, useRef, useEffect } from 'react';
 import letterExercisePostBox from '@/assets/images/letter-exercise-post-box.png';
 import Image from 'next/image';
+import Link from 'next/link';
 import ChevronDown from '../icons/ChevronDown';
 import localFont from 'next/font/local';
 import letterExerciseBig from '@/assets/images/letter-exercise-bird.png';
+import { useLetter } from '@/presentation/hooks/useLetter';
 
 const garamFont = localFont({
   src: '../../../assets/fonts/gaRamYeonGgoc.ttf',
 });
 
 export default function FeedbackStep() {
+  const { getLetterData } = useLetter();
+  const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [feedback, setFeedback] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const extraRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // 컴포넌트 마운트 시 로딩 상태 처리
+  // 편지 데이터 로드 (한 번만 실행)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2500); // 2.5초 후 로딩 완료
+    if (dataLoaded) return;
 
-    return () => clearTimeout(timer);
-  }, []);
+    const loadLetterData = async () => {
+      const existingLetter = await getLetterData(currentDate);
+      if (existingLetter) {
+        setFeedback(existingLetter.aiFeedback || '');
+      }
+      setIsLoading(false);
+      setDataLoaded(true);
+    };
+    loadLetterData();
+  }, [currentDate, dataLoaded]); // 함수를 의존성에서 제거
 
   const handleChevronClick = () => {
     setIsOpen(true);
@@ -72,24 +84,32 @@ export default function FeedbackStep() {
         </h2>
 
         <div className="pt-4 mb-6 flex-1">
-          <div className="bg-[#FFFBEC]/80 rounded-2xl p-4 mb-4">
-            <p className="text-gray-800 text-sm leading-7">
-              &ldquo;무지님이 자기공감에서 &ldquo;시간에 쫓겨서 짜증이 났다&rdquo;고 말해주셨죠.
-              사연자도 해야 할 일을 버텨내며 스스로를 계속 몰아세우고 있었는지 몰라요. 그 짜증과
-              지침의 바닥엔, 두 분 모두 너무 열심히 버텨왔다는 흔적이 있었을지도요.&rdquo;
-            </p>
-          </div>
+          {feedback ? (
+            <div className="bg-[#FFFBEC]/80 rounded-2xl p-4 mb-4">
+              <p className="text-gray-800 text-sm leading-7 whitespace-pre-wrap">{feedback}</p>
+            </div>
+          ) : (
+            <>
+              <div className="bg-[#FFFBEC]/80 rounded-2xl p-4 mb-4">
+                <p className="text-gray-800 text-sm leading-7">
+                  &ldquo;무지님이 자기공감에서 &ldquo;시간에 쫓겨서 짜증이 났다&rdquo;고 말해주셨죠.
+                  사연자도 해야 할 일을 버텨내며 스스로를 계속 몰아세우고 있었는지 몰라요. 그 짜증과
+                  지침의 바닥엔, 두 분 모두 너무 열심히 버텨왔다는 흔적이 있었을지도요.&rdquo;
+                </p>
+              </div>
 
-          <div className="bg-[#FFFBEC]/80 rounded-2xl p-4 mb-4">
-            <p className={`${garamFont.className} text-[#6A3C00] text-lg mb-2 text-center`}>
-              &ldquo;조금 쉬어도 괜찮아요.&rdquo;
-            </p>
-            <p className="text-gray-800 text-sm leading-7">
-              &ldquo;무지님이 자기공감에서 &ldquo;시간에 쫓겨서 짜증이 났다&rdquo;고 말해주셨죠.
-              사연자도 해야 할 일을 버텨내며 스스로를 계속 몰아세우고 있었는지 몰라요. 그 짜증과
-              지침의 바닥엔, 두 분 모두 너무 열심히 버텨왔다는 흔적이 있었을지도요.&rdquo;
-            </p>
-          </div>
+              <div className="bg-[#FFFBEC]/80 rounded-2xl p-4 mb-4">
+                <p className={`${garamFont.className} text-[#6A3C00] text-lg mb-2 text-center`}>
+                  &ldquo;조금 쉬어도 괜찮아요.&rdquo;
+                </p>
+                <p className="text-gray-800 text-sm leading-7">
+                  &ldquo;무지님이 자기공감에서 &ldquo;시간에 쫓겨서 짜증이 났다&rdquo;고 말해주셨죠.
+                  사연자도 해야 할 일을 버텨내며 스스로를 계속 몰아세우고 있었는지 몰라요. 그 짜증과
+                  지침의 바닥엔, 두 분 모두 너무 열심히 버텨왔다는 흔적이 있었을지도요.&rdquo;
+                </p>
+              </div>
+            </>
+          )}
         </div>
         {!isOpen && (
           <button onClick={handleChevronClick}>
@@ -153,7 +173,9 @@ export default function FeedbackStep() {
               계속 이어가볼까요?
             </p>
           </div>
-          <button className="bg-white rounded-full px-20 py-3 shadow-md">네, 좋아요</button>
+          <Link href="/">
+            <button className="bg-white rounded-full px-20 py-3 shadow-md">완료</button>
+          </Link>
         </div>
 
         <Image

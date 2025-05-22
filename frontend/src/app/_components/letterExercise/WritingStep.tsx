@@ -1,16 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import letterExerciseDotImage from '@/assets/images/letter-exercise-dot-img.png';
+import { useLetter } from '@/presentation/hooks/useLetter';
+import paperPlane from '@/assets/icons/paper-plane.png';
 
-interface WritingStepProps {
-  letterContent?: string;
-  onLetterChange?: (content: string) => void;
-}
+export default function WritingStep() {
+  const { saveUserResponse, generateFeedback, getLetterData } = useLetter();
+  const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [letterContent, setLetterContent] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const router = useRouter();
 
-export default function WritingStep({ letterContent = '', onLetterChange }: WritingStepProps) {
+  // 기존 답장 데이터 로드 (한 번만 실행)
+  useEffect(() => {
+    if (dataLoaded) return;
+
+    const loadLetterData = async () => {
+      const existingLetter = await getLetterData(currentDate);
+      if (existingLetter) {
+        setLetterContent(existingLetter.userResponse || '');
+      }
+      setDataLoaded(true);
+    };
+    loadLetterData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDate, dataLoaded]); // 함수를 의존성에서 제거
+
   const handleLetterChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (onLetterChange) {
-      onLetterChange(e.target.value);
+    setLetterContent(e.target.value);
+  };
+
+  const handleSendLetter = async () => {
+    if (letterContent.trim()) {
+      setIsLoading(true);
+      await saveUserResponse(currentDate, letterContent);
+      await generateFeedback(currentDate);
+      setIsLoading(false);
+      router.push('/letter-exercise/3');
     }
   };
 
@@ -43,6 +72,34 @@ export default function WritingStep({ letterContent = '', onLetterChange }: Writ
             value={letterContent}
             onChange={handleLetterChange}
           />
+        </div>
+      </div>
+
+      {/* 네비게이션 버튼 */}
+      <div className="fixed bottom-12 left-0 w-full z-50 flex justify-center">
+        <div className="flex w-full px-4 gap-2">
+          <Link href="/letter-exercise/1?introStepShown=true">
+            <div className="px-6 py-3 rounded-full bg-[#FAF2E2] active:bg-[#F4E8D1] shadow-lg">
+              <span className="text-black font-medium">편지 다시보기</span>
+            </div>
+          </Link>
+
+          <button
+            onClick={handleSendLetter}
+            disabled={!letterContent.trim() || isLoading}
+            className="flex-1 px-6 py-3 rounded-full bg-[#EEEEEE] active:bg-[#F4E8D1] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span className="text-black font-medium">
+              {isLoading ? (
+                '전송 중...'
+              ) : (
+                <div className="flex items-center justify-center gap-1">
+                  <Image src={paperPlane} alt="전송" width={30} height={30} />
+                  <span className="text-black font-medium">전송하기</span>
+                </div>
+              )}
+            </span>
+          </button>
         </div>
       </div>
     </div>

@@ -1,14 +1,22 @@
 import { EmotionRepository } from '../../domain/repositories/EmotionRepository';
+import { LetterRepository } from '../../domain/repositories/LetterRepository';
 import { QuestionGenerationService } from '../../domain/services/QuestionGenerationService';
+import { LetterGenerationService } from '../../domain/services/LetterGenerationService';
 import { SaveEmotionEntryUseCase } from '../../application/usecases/SaveEmotionEntryUseCase';
 import { GenerateQuestionUseCase } from '../../application/usecases/GenerateQuestionUseCase';
 import { GetEmotionDataUseCase } from '../../application/usecases/GetEmotionDataUseCase';
+import { GenerateLetterUseCase } from '../../application/usecases/GenerateLetterUseCase';
+import { SaveLetterResponseUseCase } from '../../application/usecases/SaveLetterResponseUseCase';
+import { GenerateFeedbackUseCase } from '../../application/usecases/GenerateFeedbackUseCase';
+import { GetLetterDataUseCase } from '../../application/usecases/GetLetterDataUseCase';
 
 import { LocalStorageAdapter } from '../adapters/storage/LocalStorageAdapter';
 import { HttpApiAdapter } from '../adapters/api/HttpApiAdapter';
 import { LocalStorageEmotionRepository } from '../repositories/LocalStorageEmotionRepository';
+import { LocalStorageLetterRepository } from '../repositories/LocalStorageLetterRepository';
 import { HttpQuestionGenerationService } from '../services/HttpQuestionGenerationService';
 import { ServerActionQuestionGenerationService } from '../services/ServerActionQuestionGenerationService';
+import { ServerActionLetterGenerationService } from '../services/ServerActionLetterGenerationService';
 
 export type QuestionServiceType = 'http' | 'server-action';
 
@@ -17,10 +25,16 @@ export class DIContainer {
   private _localStorageAdapter?: LocalStorageAdapter;
   private _httpApiAdapter?: HttpApiAdapter;
   private _emotionRepository?: EmotionRepository;
+  private _letterRepository?: LetterRepository;
   private _questionGenerationService?: QuestionGenerationService;
+  private _letterGenerationService?: LetterGenerationService;
   private _saveEmotionEntryUseCase?: SaveEmotionEntryUseCase;
   private _generateQuestionUseCase?: GenerateQuestionUseCase;
   private _getEmotionDataUseCase?: GetEmotionDataUseCase;
+  private _generateLetterUseCase?: GenerateLetterUseCase;
+  private _saveLetterResponseUseCase?: SaveLetterResponseUseCase;
+  private _generateFeedbackUseCase?: GenerateFeedbackUseCase;
+  private _getLetterDataUseCase?: GetLetterDataUseCase;
   private _questionServiceType: QuestionServiceType;
 
   private constructor() {
@@ -59,6 +73,13 @@ export class DIContainer {
     return this._emotionRepository;
   }
 
+  get letterRepository(): LetterRepository {
+    if (!this._letterRepository) {
+      this._letterRepository = new LocalStorageLetterRepository(this.localStorageAdapter);
+    }
+    return this._letterRepository;
+  }
+
   // Services
   get questionGenerationService(): QuestionGenerationService {
     if (!this._questionGenerationService) {
@@ -69,6 +90,13 @@ export class DIContainer {
       }
     }
     return this._questionGenerationService;
+  }
+
+  get letterGenerationService(): LetterGenerationService {
+    if (!this._letterGenerationService) {
+      this._letterGenerationService = new ServerActionLetterGenerationService();
+    }
+    return this._letterGenerationService;
   }
 
   // Use Cases
@@ -94,6 +122,42 @@ export class DIContainer {
       this._getEmotionDataUseCase = new GetEmotionDataUseCase(this.emotionRepository);
     }
     return this._getEmotionDataUseCase;
+  }
+
+  get generateLetterUseCase(): GenerateLetterUseCase {
+    if (!this._generateLetterUseCase) {
+      this._generateLetterUseCase = new GenerateLetterUseCase(
+        this.letterGenerationService,
+        this.letterRepository,
+        this.emotionRepository
+      );
+    }
+    return this._generateLetterUseCase;
+  }
+
+  get saveLetterResponseUseCase(): SaveLetterResponseUseCase {
+    if (!this._saveLetterResponseUseCase) {
+      this._saveLetterResponseUseCase = new SaveLetterResponseUseCase(this.letterRepository);
+    }
+    return this._saveLetterResponseUseCase;
+  }
+
+  get generateFeedbackUseCase(): GenerateFeedbackUseCase {
+    if (!this._generateFeedbackUseCase) {
+      this._generateFeedbackUseCase = new GenerateFeedbackUseCase(
+        this.letterGenerationService,
+        this.letterRepository,
+        this.emotionRepository
+      );
+    }
+    return this._generateFeedbackUseCase;
+  }
+
+  get getLetterDataUseCase(): GetLetterDataUseCase {
+    if (!this._getLetterDataUseCase) {
+      this._getLetterDataUseCase = new GetLetterDataUseCase(this.letterRepository);
+    }
+    return this._getLetterDataUseCase;
   }
 
   // 설정 메서드들
@@ -122,10 +186,16 @@ export class DIContainer {
     this._localStorageAdapter = undefined;
     this._httpApiAdapter = undefined;
     this._emotionRepository = undefined;
+    this._letterRepository = undefined;
     this._questionGenerationService = undefined;
+    this._letterGenerationService = undefined;
     this._saveEmotionEntryUseCase = undefined;
     this._generateQuestionUseCase = undefined;
     this._getEmotionDataUseCase = undefined;
+    this._generateLetterUseCase = undefined;
+    this._saveLetterResponseUseCase = undefined;
+    this._generateFeedbackUseCase = undefined;
+    this._getLetterDataUseCase = undefined;
     this._questionServiceType = 'server-action'; // 기본값으로 초기화
   }
 }

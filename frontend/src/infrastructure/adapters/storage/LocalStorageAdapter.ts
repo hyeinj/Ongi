@@ -41,6 +41,7 @@ export class LocalStorageAdapter {
 
   // 새로운 구조: 하나의 emotion 키 아래에 날짜별 데이터 저장
   private static readonly EMOTION_STORAGE_KEY = 'emotion';
+  private static readonly LETTER_STORAGE_KEY = 'letters';
 
   getEmotionData(): Record<string, unknown> {
     return this.get<Record<string, unknown>>(LocalStorageAdapter.EMOTION_STORAGE_KEY) || {};
@@ -65,6 +66,32 @@ export class LocalStorageAdapter {
     const allData = this.getEmotionData();
     delete allData[date];
     this.setEmotionData(allData);
+  }
+
+  // 편지 관련 메서드들
+  getLetterData(): Record<string, unknown> {
+    return this.get<Record<string, unknown>>(LocalStorageAdapter.LETTER_STORAGE_KEY) || {};
+  }
+
+  setLetterData(data: Record<string, unknown>): void {
+    this.set(LocalStorageAdapter.LETTER_STORAGE_KEY, data);
+  }
+
+  getLetterByDate<T>(date: string): T | null {
+    const allData = this.getLetterData();
+    return (allData[date] as T) || null;
+  }
+
+  setLetterByDate<T>(date: string, data: T): void {
+    const allData = this.getLetterData();
+    allData[date] = data;
+    this.setLetterData(allData);
+  }
+
+  removeLetterByDate(date: string): void {
+    const allData = this.getLetterData();
+    delete allData[date];
+    this.setLetterData(allData);
   }
 
   // 기존 데이터 마이그레이션을 위한 메서드
