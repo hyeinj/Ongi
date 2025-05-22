@@ -1,3 +1,3 @@
-import { EmotionType } from './Emotion';
+import { Category } from './Emotion';
 
-export type Islands = Record<EmotionType, string[]>;
+export type Islands = Record<Category, string[]>;
