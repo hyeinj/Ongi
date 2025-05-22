@@ -7,7 +7,7 @@ import letterImage from '@/assets/images/letter.png';
 import localFont from 'next/font/local';
 import letterExerciseLetterBg from '@/assets/images/letter-exercise-letter-bg.png';
 import letterExerciseLetterTopIcon from '@/assets/images/postbox-icon.png';
-import { useLetter } from '@/presentation/hooks/useLetter';
+// import { useLetter } from '@/presentation/hooks/useLetter';
 import { useSearchParams } from 'next/navigation';
 
 const garamFont = localFont({
@@ -16,11 +16,12 @@ const garamFont = localFont({
 
 export default function IntroStep() {
   const searchParams = useSearchParams();
-  const { generateMockLetter, getLetterData } = useLetter();
-  const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
-  const [mockLetter, setMockLetter] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [dataLoaded, setDataLoaded] = useState(false);
+  // ALERT: 클로즈베타 버전에서는 모의 편지 생성 기능 제거
+  // const { generateMockLetter, getLetterData } = useLetter();
+  // const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
+  // const [mockLetter, setMockLetter] = useState('');
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [dataLoaded, setDataLoaded] = useState(false);
   const [showContent, setShowContent] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
 
@@ -28,31 +29,32 @@ export default function IntroStep() {
   const introStepShown = searchParams.get('introStepShown') === 'true';
 
   // 편지 데이터 로드 및 생성 (한 번만 실행)
-  useEffect(() => {
-    if (dataLoaded) return;
+  // ALERT: 클로즈베타 버전에서는 모의 편지 생성 기능 제거
+  // useEffect(() => {
+  //   if (dataLoaded) return;
 
-    const loadOrGenerateLetter = async () => {
-      setIsLoading(true);
+  //   const loadOrGenerateLetter = async () => {
+  //     setIsLoading(true);
 
-      // 먼저 기존 편지 확인
-      const existingLetter = await getLetterData(currentDate);
-      if (existingLetter && existingLetter.mockLetter) {
-        setMockLetter(existingLetter.mockLetter);
-      } else {
-        // 없으면 새로 생성
-        const result = await generateMockLetter(currentDate);
-        if (result) {
-          setMockLetter(result.mockLetter);
-        }
-      }
+  //     // 먼저 기존 편지 확인
+  //     const existingLetter = await getLetterData(currentDate);
+  //     if (existingLetter && existingLetter.mockLetter) {
+  //       setMockLetter(existingLetter.mockLetter);
+  //     } else {
+  //       // 없으면 새로 생성
+  //       const result = await generateMockLetter(currentDate);
+  //       if (result) {
+  //         setMockLetter(result.mockLetter);
+  //       }
+  //     }
 
-      setIsLoading(false);
-      setDataLoaded(true);
-    };
+  //     setIsLoading(false);
+  //     setDataLoaded(true);
+  //   };
 
-    loadOrGenerateLetter();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentDate, dataLoaded]); // 함수들을 의존성에서 제거
+  //   loadOrGenerateLetter();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [currentDate, dataLoaded]); // 함수들을 의존성에서 제거
 
   useEffect(() => {
     if (!introStepShown) {
@@ -78,9 +80,10 @@ export default function IntroStep() {
 
   if (!showContent) {
     // 인트로 단계가 끝나면 편지 내용 표시
+    // ALERT: 클로즈베타 버전에서는 모의 편지 생성 기능 제거 - LetterContent에서 mockletter isLoading 임시 제거
     return (
       <>
-        <LetterContent mockLetter={mockLetter} isLoading={isLoading} />
+        <LetterContent />
         <div className="fixed bottom-12 w-full flex justify-end px-8 z-50">
           <Link href="/letter-exercise/2">
             <div className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg">
@@ -180,7 +183,22 @@ const LetterContent = ({ mockLetter, isLoading }: { mockLetter?: string; isLoadi
             <div className=" h-[100vh]">{mockLetter}</div>
           </div>
         ) : (
-          ''
+          <div className={` mb-6 ${garamFont.className} leading-8`}>
+            무지님, 안녕하세요.
+            <br />
+            저는 요즘 정말 힘든 시간을 보내고 있습니다.
+            <br />
+            직장에서는 업무가 끊임없이 늘어나고,
+            <br />
+            퇴근 후에도 자기 계발을 위한 공부를 해야 하는데
+            <br />
+            시간이 턱없이 부족해 매일 스트레스로
+            <br />
+            가득한 나날을 보내고 있어요. <br />
+            <br />
+            이런 상황에서 어떻게 하면 좋을까요? <br />
+            무지님은 이런 제 마음을 헤아려주실 수 있을 것 같아요.
+          </div>
         )}
       </div>
     </div>

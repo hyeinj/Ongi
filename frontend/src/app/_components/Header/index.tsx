@@ -14,7 +14,7 @@ export default function Header({ stage }: { stage: number }) {
       <IconButton onClick={handleBackClick}>
         <ChevronLeft className="text-white" />
       </IconButton>
-      <div className="text-white">{stage === 2 ? <div>2편지쓰기</div> : <div>1타인공감</div>}</div>
+      <div className="text-white">{stage === 2 ? <div>2편지쓰기</div> : <div>3타인공감</div>}</div>
     </div>
   );
 }

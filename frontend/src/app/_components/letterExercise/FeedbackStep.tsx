@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useState, useRef, useEffect } from 'react';
 import letterExercisePostBox from '@/assets/images/letter-exercise-post-box.png';
 import Image from 'next/image';
@@ -5,37 +6,42 @@ import Link from 'next/link';
 import ChevronDown from '../icons/ChevronDown';
 import localFont from 'next/font/local';
 import letterExerciseBig from '@/assets/images/letter-exercise-bird.png';
-import { useLetter } from '@/presentation/hooks/useLetter';
+// ALERT: 클로즈베타 버전에서는 AI 피드백 생성 기능 제거
+// import { useLetter } from '@/presentation/hooks/useLetter';
 
 const garamFont = localFont({
   src: '../../../assets/fonts/gaRamYeonGgoc.ttf',
 });
 
 export default function FeedbackStep() {
-  const { getLetterData } = useLetter();
-  const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
+  // ALERT: 클로즈베타 버전에서는 AI 피드백 생성 기능 제거
+  // const { getLetterData } = useLetter();
+  // const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [feedback, setFeedback] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(true);
-  const [dataLoaded, setDataLoaded] = useState(false);
+  // const [dataLoaded, setDataLoaded] = useState(false);
   const extraRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  // ALERT: 클로즈베타 버전에서는 AI 피드백 생성 기능 제거
   // 편지 데이터 로드 (한 번만 실행)
-  useEffect(() => {
-    if (dataLoaded) return;
+  // useEffect(() => {
+  //   if (dataLoaded) return;
 
-    const loadLetterData = async () => {
-      const existingLetter = await getLetterData(currentDate);
-      if (existingLetter) {
-        setFeedback(existingLetter.aiFeedback || '');
-      }
-      setIsLoading(false);
-      setDataLoaded(true);
-    };
-    loadLetterData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentDate, dataLoaded]); // 함수를 의존성에서 제거
+  //   const loadLetterData = async () => {
+  //     const existingLetter = await getLetterData(currentDate);
+  //     if (existingLetter) {
+  //       setFeedback(existingLetter.aiFeedback || '');
+  //     }
+  //     setIsLoading(false);
+  //     setDataLoaded(true);
+  //   };
+  //   loadLetterData();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [currentDate, dataLoaded]); // 함수를 의존성에서 제거
 
   const handleChevronClick = () => {
     setIsOpen(true);
