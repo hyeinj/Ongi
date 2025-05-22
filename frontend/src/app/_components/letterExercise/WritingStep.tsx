@@ -2,12 +2,12 @@ import React from 'react';
 import Image from 'next/image';
 import letterExerciseDotImage from '@/assets/images/letter-exercise-dot-img.png';
 
-interface GuideStepProps {
+interface WritingStepProps {
   letterContent?: string;
   onLetterChange?: (content: string) => void;
 }
 
-export default function GuideStep({ letterContent = '', onLetterChange }: GuideStepProps) {
+export default function WritingStep({ letterContent = '', onLetterChange }: WritingStepProps) {
   const handleLetterChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (onLetterChange) {
       onLetterChange(e.target.value);
