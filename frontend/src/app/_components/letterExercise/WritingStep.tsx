@@ -1,33 +1,35 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import letterExerciseDotImage from '@/assets/images/letter-exercise-dot-img.png';
-import { useLetter } from '@/presentation/hooks/useLetter';
+// import { useLetter } from '@/presentation/hooks/useLetter';
 import paperPlane from '@/assets/icons/paper-plane.png';
 
 export default function WritingStep() {
-  const { saveUserResponse, generateFeedback, getLetterData } = useLetter();
-  const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
+  // ALERT: 클로즈베타 버전에서는 모의 편지 생성 기능 제거
+  // const { saveUserResponse, generateFeedback, getLetterData } = useLetter();
+  // const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [letterContent, setLetterContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [dataLoaded, setDataLoaded] = useState(false);
+  // const [dataLoaded, setDataLoaded] = useState(false);
   const router = useRouter();
 
   // 기존 답장 데이터 로드 (한 번만 실행)
-  useEffect(() => {
-    if (dataLoaded) return;
+  // useEffect(() => {
+  //   if (dataLoaded) return;
 
-    const loadLetterData = async () => {
-      const existingLetter = await getLetterData(currentDate);
-      if (existingLetter) {
-        setLetterContent(existingLetter.userResponse || '');
-      }
-      setDataLoaded(true);
-    };
-    loadLetterData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentDate, dataLoaded]); // 함수를 의존성에서 제거
+  //   const loadLetterData = async () => {
+  //     const existingLetter = await getLetterData(currentDate);
+  //     if (existingLetter) {
+  //       setLetterContent(existingLetter.userResponse || '');
+  //     }
+  //     setDataLoaded(true);
+  //   };
+  //   loadLetterData();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [currentDate, dataLoaded]); // 함수를 의존성에서 제거
 
   const handleLetterChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setLetterContent(e.target.value);
@@ -36,10 +38,12 @@ export default function WritingStep() {
   const handleSendLetter = async () => {
     if (letterContent.trim()) {
       setIsLoading(true);
-      await saveUserResponse(currentDate, letterContent);
-      await generateFeedback(currentDate);
-      setIsLoading(false);
-      router.push('/letter-exercise/3');
+      // await saveUserResponse(currentDate, letterContent);
+      // await generateFeedback(currentDate);
+      setTimeout(() => {
+        setIsLoading(false);
+        router.push('/letter-exercise/3');
+      }, 2000);
     }
   };
 

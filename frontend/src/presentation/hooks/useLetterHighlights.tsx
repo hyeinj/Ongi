@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useLetter } from './useLetter';
 
 interface LetterParagraph {
   id: string;
@@ -20,20 +21,11 @@ export interface Highlight {
   createdAt: number; // 생성 시간
 }
 
-// 로컬 스토리지에 저장할 데이터 구조
-interface StoredHighlightData {
-  version: number; // 데이터 버전 (향후 구조 변경 대비)
-  highlights: Highlight[];
-  lastUpdated: number;
-}
-
-// 로컬 스토리지 키
-const STORAGE_KEY = 'letter_highlights';
-
 // 훅 인터페이스
 interface UseLetterHighlightsProps {
   letterType: LetterType;
   letterContent: LetterParagraph[];
+  date?: string; // 편지 날짜 추가 (기본값: 오늘)
 }
 
 // 문장 분리 함수
@@ -44,62 +36,76 @@ const splitIntoSentences = (text: string): string[] => {
   return result.filter((sentence) => sentence.trim().length > 0);
 };
 
-export function useLetterHighlights({ letterType, letterContent }: UseLetterHighlightsProps) {
+export function useLetterHighlights({ letterType, letterContent, date }: UseLetterHighlightsProps) {
   const [highlights, setHighlights] = useState<Highlight[]>([]);
+  const { saveHighlight, getLetterData } = useLetter();
+  const currentDate = date || new Date().toISOString().split('T')[0];
 
-  // 로컬 스토리지에서 하이라이트 로드
-  const loadHighlightsFromStorage = () => {
-    if (typeof window === 'undefined') return; // SSR 대응
-
+  // Letters 시스템에서 하이라이트 로드
+  const loadHighlightsFromLetters = async () => {
     try {
-      const savedData = localStorage.getItem(STORAGE_KEY);
-      if (savedData) {
-        const parsedData = JSON.parse(savedData) as StoredHighlightData;
+      const letterData = await getLetterData(currentDate);
+      if (letterData && letterData.highlightedParts) {
+        // highlightedParts를 Highlight 객체로 변환
+        const convertedHighlights: Highlight[] = letterData.highlightedParts
+          .map((text, index) => {
+            // 해당 텍스트가 포함된 문단 찾기
+            for (const paragraph of letterContent) {
+              const sentences = splitIntoSentences(paragraph.text);
+              const sentenceIndex = sentences.findIndex(
+                (sentence) => sentence.trim() === text.trim()
+              );
 
-        // 저장된 하이라이트를 현재 문단과 매핑
-        const validHighlights = parsedData.highlights.filter((highlight) => {
-          // 문단 ID와 내용 기반으로 매칭
-          const matchingParagraph = letterContent.find(
-            (p) => p.id === highlight.paragraphId && p.text === highlight.paragraphText
-          );
+              if (sentenceIndex !== -1) {
+                return {
+                  id: `highlight_${Date.now()}_${index}`,
+                  text: text.trim(),
+                  letterType,
+                  paragraphId: paragraph.id,
+                  paragraphText: paragraph.text,
+                  sentenceIndex,
+                  createdAt: Date.now(),
+                };
+              }
+            }
+            return null;
+          })
+          .filter((highlight): highlight is Highlight => highlight !== null);
 
-          return !!matchingParagraph;
-        });
-
-        setHighlights(validHighlights);
+        setHighlights(convertedHighlights);
       }
     } catch (error) {
       console.error('하이라이트 불러오기 실패:', error);
     }
   };
 
-  // 하이라이트를 로컬 스토리지에 저장
-  const saveHighlightsToStorage = (updatedHighlights: Highlight[]) => {
-    if (typeof window === 'undefined') return; // SSR 대응
-
+  // 하이라이트를 Letters 시스템에 저장
+  const saveHighlightsToLetters = async (updatedHighlights: Highlight[]) => {
     try {
-      const dataToStore: StoredHighlightData = {
-        version: 1,
-        highlights: updatedHighlights,
-        lastUpdated: Date.now(),
-      };
+      // 현재 letterType에 해당하는 하이라이트만 필터링
+      const currentTypeHighlights = updatedHighlights.filter((h) => h.letterType === letterType);
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
+      // 하이라이트된 텍스트만 추출
+      const highlightedParts = currentTypeHighlights.map((h) => h.text);
+
+      await saveHighlight(currentDate, highlightedParts);
     } catch (error) {
       console.error('하이라이트 저장 실패:', error);
     }
   };
 
-  // 컴포넌트 마운트 시 로컬 스토리지에서 하이라이트 로드
+  // 컴포넌트 마운트 시 Letters 시스템에서 하이라이트 로드
   useEffect(() => {
-    loadHighlightsFromStorage();
-  }, [letterContent]); // letterContent가 변경될 때마다 로드
+    loadHighlightsFromLetters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [letterContent, currentDate]); // letterContent 또는 날짜가 변경될 때마다 로드
 
-  // 하이라이트 변경시 로컬 스토리지에 저장
+  // 하이라이트 변경시 Letters 시스템에 저장
   useEffect(() => {
     if (highlights.length > 0) {
-      saveHighlightsToStorage(highlights);
+      saveHighlightsToLetters(highlights);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [highlights]);
 
   // 새 하이라이트 아이디 생성

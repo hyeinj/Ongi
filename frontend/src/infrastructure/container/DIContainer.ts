@@ -9,6 +9,7 @@ import { GenerateLetterUseCase } from '../../application/usecases/GenerateLetter
 import { SaveLetterResponseUseCase } from '../../application/usecases/SaveLetterResponseUseCase';
 import { GenerateFeedbackUseCase } from '../../application/usecases/GenerateFeedbackUseCase';
 import { GetLetterDataUseCase } from '../../application/usecases/GetLetterDataUseCase';
+import { SaveHighlightUseCase } from '../../application/usecases/SaveHighlightUseCase';
 
 import { LocalStorageAdapter } from '../adapters/storage/LocalStorageAdapter';
 import { HttpApiAdapter } from '../adapters/api/HttpApiAdapter';
@@ -35,6 +36,7 @@ export class DIContainer {
   private _saveLetterResponseUseCase?: SaveLetterResponseUseCase;
   private _generateFeedbackUseCase?: GenerateFeedbackUseCase;
   private _getLetterDataUseCase?: GetLetterDataUseCase;
+  private _saveHighlightUseCase?: SaveHighlightUseCase;
   private _questionServiceType: QuestionServiceType;
 
   private constructor() {
@@ -160,6 +162,13 @@ export class DIContainer {
     return this._getLetterDataUseCase;
   }
 
+  get saveHighlightUseCase(): SaveHighlightUseCase {
+    if (!this._saveHighlightUseCase) {
+      this._saveHighlightUseCase = new SaveHighlightUseCase(this.letterRepository);
+    }
+    return this._saveHighlightUseCase;
+  }
+
   // 설정 메서드들
   setQuestionServiceType(type: QuestionServiceType): void {
     this._questionServiceType = type;
@@ -196,6 +205,7 @@ export class DIContainer {
     this._saveLetterResponseUseCase = undefined;
     this._generateFeedbackUseCase = undefined;
     this._getLetterDataUseCase = undefined;
+    this._saveHighlightUseCase = undefined;
     this._questionServiceType = 'server-action'; // 기본값으로 초기화
   }
 }

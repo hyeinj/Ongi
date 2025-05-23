@@ -116,6 +116,22 @@ export const useLetter = () => {
     }
   };
 
+  const saveHighlight = async (date: string, highlightedParts: string[]) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await container.saveHighlightUseCase.execute(date, highlightedParts);
+      return true;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '하이라이트 저장에 실패했습니다.';
+      setError(errorMessage);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     isLoading,
     error,
@@ -125,5 +141,6 @@ export const useLetter = () => {
     getLetterData,
     deleteLetterData,
     getAllLetters,
+    saveHighlight,
   };
 };
