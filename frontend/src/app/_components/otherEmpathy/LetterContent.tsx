@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import postboxIcon from '@/assets/images/postbox-icon.png';
-import { useLetterHighlights } from '@/infra/useLetterHighlights';
+import { useLetterHighlights } from '@/presentation/hooks/useLetterHighlights';
 import localFont from 'next/font/local';
 
 const garamFont = localFont({
@@ -38,30 +38,34 @@ const createParagraphs = (type: string, texts: string[]): LetterParagraph[] => {
 
 // 편지 내용 데이터
 const worryLetterContent = createParagraphs('w', [
-  '* 지금 회사에서 일어난 일이 잘 맞는지요?',
-  '회사일로 힘들긴 해요...',
-  '요즘 회사에서 급작스러운 프로젝트 변경으로 스트레스가 큽니다. 저도 잘못했다고 생각하는 부분이 있는데, 팀장님이 일방적으로 저를 탓하는 것 같아 억울해요.',
-  '동시에 제 실수가 맞는지, 그래도 이렇게 질책 받을만큼 큰 문제인지 확신이 안 들어요.',
-  '객관적인 시각으로 봤을 때 이런 상황에서 제가 정말 문제인걸까요?',
+  '안녕하세요, 다니던 직장을 그만두고 남들과는 다른 길을 택한 30대 남자입니다.',
+  '이 긴 여정에 저는 종종 외롭고, 지쳐버리는 것만 같네요.',
+  '다시 삶이 즐겁고, 희망으로 차오르고, 외로움이 덜어지면 좋겠습니다.',
+  '어떻게 하면 고민이 덜어질까요? 답을 주신다면, 온기에 제 마음을 담아 감사하겠습니다.',
 ]);
 
 const answerLetterContent = createParagraphs('a', [
-  '* 힘든 일을 겪고 계시는군요.',
-  '프로젝트 변경으로 인한 스트레스와 팀장님의 질책으로 힘드실 것 같아요.',
-  '객관적인 판단을 원하시는 마음이 느껴집니다. 실수가 있었다고 느끼시면서도, 일방적인 비난이 부당하게 느껴지는 건 자연스러운 감정이에요.',
-  '이런 상황에서는 팀장님과 직접 대화를 통해 오해를 풀어보는 것도 좋은 방법이 될 수 있을 것 같습니다.',
-  '힘든 시간이지만 스스로를 너무 몰아세우지 마시고, 객관적인 평가와 함께 자신을 돌보는 시간도 가지시길 바랍니다.',
+  '온기님, 오늘 하루 어떤 일이 있었나요?',
+  '온기님을 둘러싼 세상이 오늘 하루 버겁게 다가왔을지. 혹은 어제보다는 조금 나마진 하루였을지 궁금합니다. 무슨 일이 있으셨든.',
+  '몬기님, 오늘 하루 정말 수고 많으셨어요.',
+  '온기님께서 이 편지를 받아보실 조음. 그날 날씨는 어떨까요? 그늘진 곳에서 느껴지는 차가운 기운 대신 , 오늘 제게 닿은 오후의 햇살을 가득 담아 온기님께 전해드리고 싶어요.',
+  '위기와 역경을 딛고 썼다는 것은. 온기님께서 위기와 역경을 마주한 적이 있으셨다는 것이겠죠? 얼마나 힘들고, 마음이 아프셨을까요. 제가 감히 삼상할',
+  '잣대는 어떤 모양일까요. 별 모양, 나뭇잎 모양, 세모. 네모.... 사실 우리 모두는 그런 정형화된 모양으로 찍어낼 수 없는 소중한 이들인데 말이에요. 온기님, 좌절하셔도 괜찮아요. 깊은 고민을 하며 시간을 보내셔도 괜찮아요. 고민 끝에 눈물을 흘리 셔도 정말 괜찮아요. 그러한 치열한 고민 끝에 온기님께서 내리신 결론이 아름답게 빛나고 있었으면 좋겠어요. 나는 존재만으로 반짝이고 있구나, 도형 틀로 찍힐 존재가 아니었어, 하고요.',
+  '온기님, 어쩌면 온기님은 이미 즐거움과 희망을 스스로 만들어 주변에 전하고 계신 분일지도 몰라요. 온기님께서 마지막에 전해주신 그 한 문장으로 제 마음이 희망과 따뜻함으로 가득 찼거든요. 소중하게 빛나고 계신 온기님, 충분히 아름다우신 온기님.',
+  '제가 온기님을 늘 응원하겠습니다.',
+  '몬기님께 제 마음이 무사히 닿길 바라며...',
+  '온기무체부 드림',
 ]);
 
 // 편지 제목 데이터
 const letterTitles: Record<LetterType, LetterTitle> = {
   worry: {
-    title: '혼자만의는 편안함 못 그리워도',
-    subtitle: '소중한 공유하는 것은 부담 없이 편안하게',
+    title: `현재를 견뎌내는 긴 여정에 \n 외롭고, 지치는 것만 같아요.`,
+    subtitle: '',
   },
   answer: {
-    title: '소중한 공감이 전해지길 바라요',
-    subtitle: '* 지금 회사에서의 어려움을 공감해요',
+    title: '온기님께서는 여전히, 늘 그래왔듯\n소중한 존재라는 것을 부디 잊지 않으시길 바라요.',
+    subtitle: '※ 읽는 동안, 마음에 닿은 문장을 길게 눌러 하이라이트 해보세요.',
   },
 };
 
@@ -72,12 +76,12 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
   const [contentChanging, setContentChanging] = useState(false);
   const [letterTitle, setLetterTitle] = useState<LetterTitle>(letterTitles.worry);
   const [hasViewedAnswer, setHasViewedAnswer] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [tooltipShowing, setTooltipShowing] = useState(false);
+  const currentDate = new Date().toISOString().split('T')[0];
 
   const { handleTextSelection, renderHighlightedText } = useLetterHighlights({
     letterType: activeTab,
     letterContent,
+    date: currentDate,
   });
 
   // 편지 내용 변경 시 페이드 효과
@@ -103,33 +107,6 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
   useEffect(() => {
     if (isVisible) {
       setFadeIn(true);
-
-      // 3초 후에 말풍선 표시
-      const tooltipTimer = setTimeout(() => {
-        setShowTooltip(true);
-
-        // 툴팁 요소가 DOM에 추가된 후 약간의 지연을 두고 페이드인 시작
-        setTimeout(() => {
-          setTooltipShowing(true);
-        }, 10);
-
-        // 말풍선이 나타난 후 10초 후에 사라지게 함
-        const hideTooltipTimer = setTimeout(() => {
-          // 페이드아웃 애니메이션 시작
-          setTooltipShowing(false);
-
-          // 애니메이션 완료 후 실제로 요소 제거
-          const removeTooltipTimer = setTimeout(() => {
-            setShowTooltip(false);
-          }, 500); // 애니메이션 지속 시간과 일치하게 설정
-
-          return () => clearTimeout(removeTooltipTimer);
-        }, 10000);
-
-        return () => clearTimeout(hideTooltipTimer);
-      }, 3000);
-
-      return () => clearTimeout(tooltipTimer);
     } else {
       setFadeIn(false);
     }
@@ -171,31 +148,14 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
           </div>
         </div>
 
-        <div className="relative z-20 bg-[#F7F4E6] w-full mx-auto p-6 h-[80vh] transition-opacity duration-300 ease-in-out overflow-y-auto break-keep">
+        <div className="relative z-20 bg-[#F7F4E6] w-full mx-auto p-6 h-[80vh] transition-opacity duration-300 ease-in-out overflow-y-auto overflow-hidden break-keep">
           <div className="flex flex-col items-center mb-5 relative">
             <Image src={postboxIcon} alt="편지함 아이콘" width={50} height={50} priority />
 
-            {/* 말풍선 툴팁 */}
-            {showTooltip && (
-              <div
-                className={`absolute -right-4 top-10 bg-amber-100 p-3 rounded-lg shadow-md max-w-[200px] z-50 transition-opacity duration-500 ease-in-out ${
-                  tooltipShowing ? 'opacity-100' : 'opacity-0'
-                }`}
-              >
-                <div
-                  className="absolute top-2 -left-2 w-0 h-0 
-                  border-t-[8px] border-t-transparent 
-                  border-b-[8px] border-b-transparent 
-                  border-r-[8px] border-r-amber-100"
-                ></div>
-                <p className="text-sm text-amber-800 font-medium">원하는 문장을 터치해 보아요</p>
-              </div>
-            )}
-
-            <h3 className="text-center mt-3 font-medium text-lg text-amber-800">
+            <h3 className="text-center mt-3 font-medium text-lg text-amber-800 whitespace-pre-line">
               {letterTitle.title}
             </h3>
-            <p className="text-center text-sm text-amber-700 mt-1">{letterTitle.subtitle}</p>
+            <p className="text-end text-sm text-amber-700 mt-1 w-full">{letterTitle.subtitle}</p>
           </div>
 
           <div className="space-y-4 mt-6 transition-opacity duration-300 ease-in-out">
@@ -204,7 +164,9 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
                 id={`paragraph-${paragraph.id}`}
                 key={paragraph.id}
                 className=" text-gray-700 cursor-text"
-                onClick={(e) => handleTextSelection(paragraph.id, paragraph.text, e)}
+                onClick={(e) =>
+                  activeTab === 'answer' ? handleTextSelection(paragraph.id, paragraph.text, e) : ''
+                }
               >
                 {renderHighlightedText(paragraph.text, paragraph.id)}
               </p>

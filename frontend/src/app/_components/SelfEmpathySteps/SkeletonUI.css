@@ -1,0 +1,198 @@
+/* 기본 스켈레톤 컨테이너 */
+.skeleton-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+/* 질문 타입 스켈레톤 */
+.skeleton-question {
+  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 30px;
+}
+
+.skeleton-numbering {
+  width: 60px;
+  height: 24px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 12px;
+}
+
+.skeleton-text-group {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 16px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.skeleton-small-text {
+  width: 280px;
+  height: 20px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 10px;
+}
+
+.skeleton-large-text {
+  width: 300px;
+  height: 24px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 12px;
+}
+
+.skeleton-large-text-second {
+  width: 200px;
+  height: 24px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 12px;
+}
+
+.skeleton-buttons {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  margin-top: 20px;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.skeleton-yesno-btn {
+  width: 140px;
+  height: 48px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 24px;
+}
+
+.skeleton-next-btn {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 30px;
+  margin-top: 30px;
+}
+
+/* 카드 타입 스켈레톤 */
+.skeleton-message {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.skeleton-card {
+  background: #f8f9fa;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  min-height: 200px;
+  display: flex;
+  align-items: start;
+  justify-content: center;
+}
+
+.skeleton-card-content {
+  width: 70vw;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-line {
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.skeleton-line.short {
+  width: 60%;
+}
+
+.skeleton-bottom-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+/* 로딩 타입 스켈레톤 */
+.skeleton-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px 20px;
+}
+
+.skeleton-loading-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 50%;
+}
+
+.skeleton-loading-text {
+  width: 200px;
+  height: 20px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 10px;
+}
+
+/* 공통 애니메이션 */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* 반응형 스타일 */
+@media (max-width: 480px) {
+  .skeleton-container {
+    padding: 16px;
+  }
+
+  .skeleton-text-group {
+    max-width: 280px;
+  }
+
+  .skeleton-small-text {
+    width: 250px;
+  }
+
+  .skeleton-large-text {
+    width: 280px;
+  }
+
+  .skeleton-yesno-btn {
+    width: 120px;
+    height: 44px;
+  }
+
+  .skeleton-buttons {
+    gap: 8px;
+  }
+}

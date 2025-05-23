@@ -1,3 +1,12 @@
-export default function IconButton({ children }: { children: React.ReactNode }) {
-  return <button style={{ all: 'unset' }}>{children}</button>;
+interface IconButtonProps {
+  children: React.ReactNode;
+  onClick?: () => void;
+}
+
+export default function IconButton({ children, onClick }: IconButtonProps) {
+  return (
+    <button style={{ all: 'unset' }} onClick={onClick}>
+      {children}
+    </button>
+  );
 }
