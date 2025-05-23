@@ -23,8 +23,9 @@ public class Step3QuestionController {
     @PostMapping
     public ResponseEntity<Map<String, String>> generateStep3Question(@RequestBody SelfEmpathyDTO.step3RequestDTO step3RequestDTO) {
         try {
-            // 이전 질문인 2번 질문에 대한 답변이 존재하지 않음
-            if (step3RequestDTO.getStep2_answer() == null || step3RequestDTO.getStep2_answer().trim().isEmpty()) {
+            // 이전 질문인 1,2번 질문에 대한 답변이 존재하지 않는 경우 에러 처리
+            if (step3RequestDTO.getStep2_answer() == null || step3RequestDTO.getStep2_answer().trim().isEmpty() ||
+                    step3RequestDTO.getStep1_answer() == null || step3RequestDTO.getStep1_answer().trim().isEmpty()) {
                 Map<String, String> error = new HashMap<>();
                 error.put("error", "답변이 비어있습니다.");
                 return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);

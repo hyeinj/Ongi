@@ -1,5 +1,6 @@
 package com.ongi.backend.Controller;
 
+import com.ongi.backend.DTO.SelfEmpathyDTO;
 import com.ongi.backend.Service.Step4QuestionService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -20,22 +21,19 @@ public class Step4QuestionController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> generateStep4Question(@RequestBody Step4AnswerRequest request) {
+    public ResponseEntity<Map<String, String>> generateStep4Question(@RequestBody SelfEmpathyDTO.step4RequestDTO step4RequestDTO) {
         try {
             // 필수 데이터 검증
-            if (request.getStep2Answer() == null || request.getStep2Answer().trim().isEmpty() ||
-                request.getStep3Answer() == null || request.getStep3Answer().trim().isEmpty() ||
-                request.getStep4Feelings() == null || request.getStep4Feelings().trim().isEmpty()) {
+            if (step4RequestDTO.getStep1_answer() == null || step4RequestDTO.getStep1_answer().trim().isEmpty() ||
+                step4RequestDTO.getStep2_answer() == null || step4RequestDTO.getStep2_answer().trim().isEmpty() ||
+                step4RequestDTO.getStep3Feelings() == null || step4RequestDTO.getStep3Feelings().trim().isEmpty()) {
                 Map<String, String> error = new HashMap<>();
                 error.put("error", "필수 데이터가 누락되었습니다.");
                 return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
             }
 
             String generatedQuestion = step4QuestionService.createQuestionFromAnswer(
-                request.getStep4Answer(),
-                request.getStep2Answer(),
-                request.getStep3Answer(),
-                request.getStep4Feelings()
+                step4RequestDTO.getStep1_answer(), step4RequestDTO.getStep2_answer(), step4RequestDTO.getStep3Feelings()
             );
             
             Map<String, String> response = new HashMap<>();
@@ -48,22 +46,3 @@ public class Step4QuestionController {
         }
     }
 }
-
-class Step4AnswerRequest {
-    private String step4Answer;
-    private String step2Answer;
-    private String step3Answer;
-    private String step4Feelings;
-    
-    public String getStep4Answer() { return step4Answer; }
-    public void setStep4Answer(String step4Answer) { this.step4Answer = step4Answer; }
-    
-    public String getStep2Answer() { return step2Answer; }
-    public void setStep2Answer(String step2Answer) { this.step2Answer = step2Answer; }
-    
-    public String getStep3Answer() { return step3Answer; }
-    public void setStep3Answer(String step3Answer) { this.step3Answer = step3Answer; }
-    
-    public String getStep4Feelings() { return step4Feelings; }
-    public void setStep4Feelings(String step4Feelings) { this.step4Feelings = step4Feelings; }
-} 

@@ -22,10 +22,9 @@ public class Step4QuestionService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     
     public String createQuestionFromAnswer(
-        String step4Answer,
+        String step1Answer,
         String step2Answer,
-        String step3Answer,
-        String step4Feelings
+        String step3Feelings
     ) {
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -56,17 +55,21 @@ public class Step4QuestionService {
             누군가가 오늘 가장 귀찮았던 일에 대해 설명했어요.
             아래는 사용자가 자신의 상황과 감정을 설명한 내용이에요:
 
-            [Step2 답변 - 귀찮았던 일]  
+            [Step1 답변 - 귀찮았던 일]
             %s
 
-            [Step3 답변 - 상황 설명]  
+            [Step2 답변 - 구체적인 상황 설명]  
             %s
 
-            [Step4 선택한 감정들]  
+            [Step3 선택한 감정들]  
             %s
+            
+            예시:
+            귀찮은 것을 마주했을때, 무지님의 마음이 많이 복잡했을 것 같아요.
+            짜증남의 느낌이 들었던 무지님의 속 마음을 조금 더 말해주실 수 있나요?
 
             위의 내용을 바탕으로, 공감을 표현하고 감정의 이유를 탐색하는 질문을 두 문장 이내로 생성해주세요.
-            """, step2Answer, step3Answer, step4Feelings));
+            """, step1Answer, step2Answer, step3Feelings));
 
             requestBody.putArray("messages")
                 .add(systemMessage)

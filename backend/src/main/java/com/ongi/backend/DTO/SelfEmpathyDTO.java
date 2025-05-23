@@ -23,4 +23,13 @@ public class SelfEmpathyDTO {
         private String step1_answer;
         private String step2_answer;
     }
+
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class step4RequestDTO{
+        private String step1_answer;
+        private String step2_answer;
+        private String step3Feelings;
+    }
 }
