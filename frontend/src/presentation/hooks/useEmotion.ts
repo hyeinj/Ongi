@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { DailyEmotion, Category, EmotionType } from '../../domain/entities/Emotion';
 import { EmotionFacade } from '../facades/EmotionFacade';
+import { ContainerFactory } from '../../composition/ContainerFactory';
 
 interface UseEmotionReturn {
   // 상태
@@ -43,7 +44,10 @@ export function useEmotion(): UseEmotionReturn {
   const [emotionData, setEmotionData] = useState<DailyEmotion | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [emotionFacade] = useState(() => new EmotionFacade());
+  const [emotionFacade] = useState(() => {
+    const useCases = ContainerFactory.createEmotionUseCases();
+    return new EmotionFacade(useCases);
+  });
 
   const handleError = useCallback((err: unknown) => {
     const message = err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.';

@@ -1,7 +1,9 @@
 import { LetterGenerationService } from '../../domain/services/LetterGenerationService';
-import { generateMockLetter, generateFeedback } from '../../app/actions/letterActions';
+import { ServerActionAdapter } from '../adapters/api/ServerActionAdapter';
 
 export class ServerActionLetterGenerationService implements LetterGenerationService {
+  constructor(private serverActionAdapter: ServerActionAdapter) {}
+
   async generateMockLetter(emotionContext: {
     category: string;
     emotion: string;
@@ -12,7 +14,7 @@ export class ServerActionLetterGenerationService implements LetterGenerationServ
     success: boolean;
     error?: string;
   }> {
-    return await generateMockLetter(emotionContext);
+    return await this.serverActionAdapter.generateMockLetter(emotionContext);
   }
 
   async generateFeedback(
@@ -29,6 +31,6 @@ export class ServerActionLetterGenerationService implements LetterGenerationServ
     success: boolean;
     error?: string;
   }> {
-    return await generateFeedback(mockLetter, userResponse, emotionContext);
+    return await this.serverActionAdapter.generateFeedback(mockLetter, userResponse, emotionContext);
   }
 }

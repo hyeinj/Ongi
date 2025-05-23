@@ -1,13 +1,5 @@
 import { QuestionGenerationService } from '../../domain/services/QuestionGenerationService';
-import {
-  generateStep3Question,
-  generateStep4Question,
-  generateStep5Question,
-  generateNextQuestion,
-  analyzeEmotionAndCategory,
-  generateFinalCardText,
-  generateStep6Texts,
-} from '../../app/actions/questionActions';
+import { ServerActionAdapter } from '../adapters/api/ServerActionAdapter';
 import { Category, EmotionType } from '../../domain/entities/Emotion';
 
 interface EmotionAnalysisResult {
@@ -18,8 +10,10 @@ interface EmotionAnalysisResult {
 }
 
 export class ServerActionQuestionGenerationService implements QuestionGenerationService {
+  constructor(private serverActionAdapter: ServerActionAdapter) {}
+
   async generateStep3Question(step2Answer: string): Promise<string> {
-    const response = await generateStep3Question(step2Answer);
+    const response = await this.serverActionAdapter.generateStep3Question(step2Answer);
 
     if (!response.success) {
       throw new Error(response.error || 'Step3 질문 생성에 실패했습니다.');
@@ -29,7 +23,7 @@ export class ServerActionQuestionGenerationService implements QuestionGeneration
   }
 
   async generateStep4Question(step2Answer: string, step3Answer: string): Promise<string> {
-    const response = await generateStep4Question(step2Answer, step3Answer);
+    const response = await this.serverActionAdapter.generateStep4Question(step2Answer, step3Answer);
 
     if (!response.success) {
       throw new Error(response.error || 'Step4 질문 생성에 실패했습니다.');
@@ -43,7 +37,7 @@ export class ServerActionQuestionGenerationService implements QuestionGeneration
     step3Answer: string,
     step4Feelings: string[]
   ): Promise<string> {
-    const response = await generateStep5Question(step2Answer, step3Answer, step4Feelings);
+    const response = await this.serverActionAdapter.generateStep5Question(step2Answer, step3Answer, step4Feelings);
 
     if (!response.success) {
       throw new Error(response.error || 'Step5 질문 생성에 실패했습니다.');
@@ -56,7 +50,7 @@ export class ServerActionQuestionGenerationService implements QuestionGeneration
     previousAnswers: { [stage: string]: string },
     feelings?: string[]
   ): Promise<string> {
-    const response = await generateNextQuestion(previousAnswers, feelings);
+    const response = await this.serverActionAdapter.generateNextQuestion(previousAnswers, feelings);
 
     if (!response.success) {
       throw new Error(response.error || '다음 질문 생성에 실패했습니다.');
@@ -68,7 +62,7 @@ export class ServerActionQuestionGenerationService implements QuestionGeneration
   async analyzeEmotionAndCategory(allAnswers: {
     [stage: string]: string;
   }): Promise<EmotionAnalysisResult> {
-    const response = await analyzeEmotionAndCategory(allAnswers);
+    const response = await this.serverActionAdapter.analyzeEmotionAndCategory(allAnswers);
 
     if (!response.success) {
       console.warn('감정 분석 실패, 기본값 사용:', response.error);
@@ -86,7 +80,7 @@ export class ServerActionQuestionGenerationService implements QuestionGeneration
     success: boolean;
     error?: string;
   }> {
-    const response = await generateFinalCardText(allAnswers, category, emotion);
+    const response = await this.serverActionAdapter.generateFinalCardText(allAnswers, category, emotion);
 
     if (!response.success) {
       console.warn('최종 카드 텍스트 생성 실패:', response.error);
@@ -101,7 +95,7 @@ export class ServerActionQuestionGenerationService implements QuestionGeneration
     success: boolean;
     error?: string;
   }> {
-    const response = await generateStep6Texts(allAnswers);
+    const response = await this.serverActionAdapter.generateStep6Texts(allAnswers);
 
     if (!response.success) {
       console.warn('Step6 텍스트 생성 실패:', response.error);

@@ -1,11 +1,15 @@
 import { DailyEmotion, Category, EmotionType } from '../../domain/entities/Emotion';
-import { DIContainer } from '../../infrastructure/container/DIContainer';
+import { EmotionUseCases } from '../../composition/ContainerFactory';
 
 export class EmotionFacade {
-  private container: DIContainer;
+  private saveEmotionEntryUseCase: EmotionUseCases['saveEmotionEntryUseCase'];
+  private generateQuestionUseCase: EmotionUseCases['generateQuestionUseCase'];
+  private getEmotionDataUseCase: EmotionUseCases['getEmotionDataUseCase'];
 
-  constructor() {
-    this.container = DIContainer.getInstance();
+  constructor(useCases: EmotionUseCases) {
+    this.saveEmotionEntryUseCase = useCases.saveEmotionEntryUseCase;
+    this.generateQuestionUseCase = useCases.generateQuestionUseCase;
+    this.getEmotionDataUseCase = useCases.getEmotionDataUseCase;
   }
 
   /**
@@ -20,14 +24,14 @@ export class EmotionFacade {
    */
   async getEmotionData(date?: string): Promise<DailyEmotion | null> {
     const targetDate = date || this.getCurrentDate();
-    return await this.container.getEmotionDataUseCase.execute(targetDate);
+    return await this.getEmotionDataUseCase.execute(targetDate);
   }
 
   /**
    * 모든 감정 데이터 조회
    */
   async getAllEmotionData(): Promise<Record<string, DailyEmotion>> {
-    return await this.container.getEmotionDataUseCase.getAll();
+    return await this.getEmotionDataUseCase.getAll();
   }
 
   /**
@@ -35,7 +39,7 @@ export class EmotionFacade {
    */
   async deleteEmotionData(date?: string): Promise<void> {
     const targetDate = date || this.getCurrentDate();
-    await this.container.getEmotionDataUseCase.deleteByDate(targetDate);
+    await this.getEmotionDataUseCase.deleteByDate(targetDate);
   }
 
   /**
@@ -45,7 +49,7 @@ export class EmotionFacade {
     const date = this.getCurrentDate();
 
     // Step2 답변 저장
-    await this.container.saveEmotionEntryUseCase.execute(
+    await this.saveEmotionEntryUseCase.execute(
       date,
       'step2',
       '오늘, 가장 귀찮게 느껴졌던 건 무엇이었나요?',
@@ -53,7 +57,7 @@ export class EmotionFacade {
     );
 
     // Step3 질문 생성
-    return await this.container.generateQuestionUseCase.executeForStep3(answer);
+    return await this.generateQuestionUseCase.executeForStep3(answer);
   }
 
   /**
@@ -63,14 +67,14 @@ export class EmotionFacade {
     const date = this.getCurrentDate();
 
     // Step3 답변 저장
-    await this.container.saveEmotionEntryUseCase.execute(date, 'step3', question, answer);
+    await this.saveEmotionEntryUseCase.execute(date, 'step3', question, answer);
 
     // 이전 답변들 가져오기
     const emotionData = await this.getEmotionData(date);
     const step2Answer = emotionData?.entries.step2?.answer || '';
 
     // Step4 질문 생성
-    return await this.container.generateQuestionUseCase.executeForStep4(step2Answer, answer);
+    return await this.generateQuestionUseCase.executeForStep4(step2Answer, answer);
   }
 
   /**
@@ -84,7 +88,7 @@ export class EmotionFacade {
     const date = this.getCurrentDate();
 
     // Step4 감정 데이터 저장
-    await this.container.saveEmotionEntryUseCase.execute(
+    await this.saveEmotionEntryUseCase.execute(
       date,
       'step4',
       question,
@@ -97,7 +101,7 @@ export class EmotionFacade {
     const step3Answer = emotionData?.entries.step3?.answer || '';
 
     // Step5 질문 생성
-    return await this.container.generateQuestionUseCase.executeForStep5(
+    return await this.generateQuestionUseCase.executeForStep5(
       step2Answer,
       step3Answer,
       feelings
@@ -109,7 +113,7 @@ export class EmotionFacade {
    */
   async saveStageAnswer(stage: string, question: string, answer: string): Promise<void> {
     const date = this.getCurrentDate();
-    await this.container.saveEmotionEntryUseCase.execute(date, stage, question, answer);
+    await this.saveEmotionEntryUseCase.execute(date, stage, question, answer);
   }
 
   /**
@@ -117,7 +121,7 @@ export class EmotionFacade {
    */
   async updateCategoryAndEmotion(category: Category, emotion: EmotionType): Promise<void> {
     const date = this.getCurrentDate();
-    await this.container.getEmotionDataUseCase.updateCategoryAndEmotion(date, category, emotion);
+    await this.getEmotionDataUseCase.updateCategoryAndEmotion(date, category, emotion);
   }
 
   /**
@@ -125,7 +129,7 @@ export class EmotionFacade {
    */
   async generateNextQuestion(feelings?: string[]): Promise<string> {
     const date = this.getCurrentDate();
-    return await this.container.generateQuestionUseCase.executeForNextStep(date, feelings);
+    return await this.generateQuestionUseCase.executeForNextStep(date, feelings);
   }
 
   /**
@@ -147,7 +151,7 @@ export class EmotionFacade {
 
     try {
       // 모든 답변을 분석하여 category와 emotion 결정
-      const analysisResult = await this.container.generateQuestionUseCase.analyzeEmotionAndCategory(
+      const analysisResult = await this.generateQuestionUseCase.analyzeEmotionAndCategory(
         targetDate
       );
 
@@ -176,7 +180,7 @@ export class EmotionFacade {
     const targetDate = date || this.getCurrentDate();
 
     try {
-      return await this.container.generateQuestionUseCase.generateFinalCardText(targetDate);
+      return await this.generateQuestionUseCase.generateFinalCardText(targetDate);
     } catch (error) {
       console.error('최종 카드 텍스트 생성 실패:', error);
       return {
@@ -199,7 +203,7 @@ export class EmotionFacade {
     const targetDate = date || this.getCurrentDate();
 
     try {
-      return await this.container.generateQuestionUseCase.generateStep6Texts(targetDate);
+      return await this.generateQuestionUseCase.generateStep6Texts(targetDate);
     } catch (error) {
       console.error('Step6 텍스트 생성 실패:', error);
       return {

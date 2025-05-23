@@ -1,23 +1,24 @@
-import { EmotionRepository } from '../../domain/repositories/EmotionRepository';
-import { LetterRepository } from '../../domain/repositories/LetterRepository';
-import { QuestionGenerationService } from '../../domain/services/QuestionGenerationService';
-import { LetterGenerationService } from '../../domain/services/LetterGenerationService';
-import { SaveEmotionEntryUseCase } from '../../application/usecases/SaveEmotionEntryUseCase';
-import { GenerateQuestionUseCase } from '../../application/usecases/GenerateQuestionUseCase';
-import { GetEmotionDataUseCase } from '../../application/usecases/GetEmotionDataUseCase';
-import { GenerateLetterUseCase } from '../../application/usecases/GenerateLetterUseCase';
-import { SaveLetterResponseUseCase } from '../../application/usecases/SaveLetterResponseUseCase';
-import { GenerateFeedbackUseCase } from '../../application/usecases/GenerateFeedbackUseCase';
-import { GetLetterDataUseCase } from '../../application/usecases/GetLetterDataUseCase';
-import { SaveHighlightUseCase } from '../../application/usecases/SaveHighlightUseCase';
+import { EmotionRepository } from '../domain/repositories/EmotionRepository';
+import { LetterRepository } from '../domain/repositories/LetterRepository';
+import { QuestionGenerationService } from '../domain/services/QuestionGenerationService';
+import { LetterGenerationService } from '../domain/services/LetterGenerationService';
+import { SaveEmotionEntryUseCase } from '../application/usecases/SaveEmotionEntryUseCase';
+import { GenerateQuestionUseCase } from '../application/usecases/GenerateQuestionUseCase';
+import { GetEmotionDataUseCase } from '../application/usecases/GetEmotionDataUseCase';
+import { GenerateLetterUseCase } from '../application/usecases/GenerateLetterUseCase';
+import { SaveLetterResponseUseCase } from '../application/usecases/SaveLetterResponseUseCase';
+import { GenerateFeedbackUseCase } from '../application/usecases/GenerateFeedbackUseCase';
+import { GetLetterDataUseCase } from '../application/usecases/GetLetterDataUseCase';
+import { SaveHighlightUseCase } from '../application/usecases/SaveHighlightUseCase';
 
-import { LocalStorageAdapter } from '../adapters/storage/LocalStorageAdapter';
-import { HttpApiAdapter } from '../adapters/api/HttpApiAdapter';
-import { LocalStorageEmotionRepository } from '../repositories/LocalStorageEmotionRepository';
-import { LocalStorageLetterRepository } from '../repositories/LocalStorageLetterRepository';
-import { HttpQuestionGenerationService } from '../services/HttpQuestionGenerationService';
-import { ServerActionQuestionGenerationService } from '../services/ServerActionQuestionGenerationService';
-import { ServerActionLetterGenerationService } from '../services/ServerActionLetterGenerationService';
+import { LocalStorageAdapter } from '../infrastructure/adapters/storage/LocalStorageAdapter';
+import { HttpApiAdapter } from '../infrastructure/adapters/api/HttpApiAdapter';
+import { ServerActionAdapter } from '../infrastructure/adapters/api/ServerActionAdapter';
+import { LocalStorageEmotionRepository } from '../infrastructure/repositories/LocalStorageEmotionRepository';
+import { LocalStorageLetterRepository } from '../infrastructure/repositories/LocalStorageLetterRepository';
+import { HttpQuestionGenerationService } from '../infrastructure/services/HttpQuestionGenerationService';
+import { ServerActionQuestionGenerationService } from '../infrastructure/services/ServerActionQuestionGenerationService';
+import { ServerActionLetterGenerationService } from '../infrastructure/services/ServerActionLetterGenerationService';
 
 export type QuestionServiceType = 'http' | 'server-action';
 
@@ -25,6 +26,7 @@ export class DIContainer {
   private static instance: DIContainer;
   private _localStorageAdapter?: LocalStorageAdapter;
   private _httpApiAdapter?: HttpApiAdapter;
+  private _serverActionAdapter?: ServerActionAdapter;
   private _emotionRepository?: EmotionRepository;
   private _letterRepository?: LetterRepository;
   private _questionGenerationService?: QuestionGenerationService;
@@ -67,6 +69,13 @@ export class DIContainer {
     return this._httpApiAdapter;
   }
 
+  get serverActionAdapter(): ServerActionAdapter {
+    if (!this._serverActionAdapter) {
+      this._serverActionAdapter = new ServerActionAdapter();
+    }
+    return this._serverActionAdapter;
+  }
+
   // Repositories
   get emotionRepository(): EmotionRepository {
     if (!this._emotionRepository) {
@@ -86,7 +95,7 @@ export class DIContainer {
   get questionGenerationService(): QuestionGenerationService {
     if (!this._questionGenerationService) {
       if (this._questionServiceType === 'server-action') {
-        this._questionGenerationService = new ServerActionQuestionGenerationService();
+        this._questionGenerationService = new ServerActionQuestionGenerationService(this.serverActionAdapter);
       } else {
         this._questionGenerationService = new HttpQuestionGenerationService(this.httpApiAdapter);
       }
@@ -96,7 +105,7 @@ export class DIContainer {
 
   get letterGenerationService(): LetterGenerationService {
     if (!this._letterGenerationService) {
-      this._letterGenerationService = new ServerActionLetterGenerationService();
+      this._letterGenerationService = new ServerActionLetterGenerationService(this.serverActionAdapter);
     }
     return this._letterGenerationService;
   }
@@ -194,6 +203,7 @@ export class DIContainer {
   reset(): void {
     this._localStorageAdapter = undefined;
     this._httpApiAdapter = undefined;
+    this._serverActionAdapter = undefined;
     this._emotionRepository = undefined;
     this._letterRepository = undefined;
     this._questionGenerationService = undefined;

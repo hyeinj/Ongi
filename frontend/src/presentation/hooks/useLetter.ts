@@ -1,136 +1,159 @@
-import { useState } from 'react';
-import { DIContainer } from '../../infrastructure/container/DIContainer';
+import { useState, useCallback } from 'react';
 import { Letter } from '../../domain/entities/Letters';
+import { LetterFacade } from '../facades/LetterFacade';
+import { ContainerFactory } from '../../composition/ContainerFactory';
 
-export const useLetter = () => {
+interface UseLetterReturn {
+  // 상태
+  isLoading: boolean;
+  error: string | null;
+  
+  // 액션
+  generateMockLetter: (date?: string) => Promise<{
+    success: boolean;
+    error?: string;
+    realLetterId?: string;
+    mockLetter?: string;
+  } | null>;
+  saveUserResponse: (userResponse: string, date?: string) => Promise<boolean>;
+  generateFeedback: (date?: string) => Promise<{
+    success: boolean;
+    error?: string;
+    feedback?: string;
+    highlightedParts?: string[];
+  } | null>;
+  getLetterData: (date?: string) => Promise<Letter | null>;
+  deleteLetterData: (date?: string) => Promise<boolean>;
+  getAllLetters: () => Promise<Record<string, Letter>>;
+  saveHighlight: (highlightedParts: string[], date?: string) => Promise<boolean>;
+}
+
+export const useLetter = (): UseLetterReturn => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [letterFacade] = useState(() => {
+    const useCases = ContainerFactory.createLetterUseCases();
+    return new LetterFacade(useCases);
+  });
 
-  const container = DIContainer.getInstance();
+  const handleError = useCallback((err: unknown) => {
+    const message = err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.';
+    setError(message);
+    console.error('Letter error:', err);
+  }, []);
 
-  const generateMockLetter = async (date: string) => {
+  const generateMockLetter = useCallback(async (date?: string) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const result = await container.generateLetterUseCase.generateMockLetter(date);
-
+      const result = await letterFacade.generateMockLetter(date);
       if (!result.success) {
         setError(result.error || '모의 편지 생성에 실패했습니다.');
         return null;
       }
-
       return result;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.';
-      setError(errorMessage);
+      handleError(err);
       return null;
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [letterFacade, handleError]);
 
-  const saveUserResponse = async (date: string, userResponse: string) => {
+  const saveUserResponse = useCallback(async (userResponse: string, date?: string): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
 
     try {
-      await container.saveLetterResponseUseCase.execute(date, userResponse);
+      await letterFacade.saveUserResponse(userResponse, date);
       return true;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '답장 저장에 실패했습니다.';
-      setError(errorMessage);
+      handleError(err);
       return false;
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [letterFacade, handleError]);
 
-  const generateFeedback = async (date: string) => {
+  const generateFeedback = useCallback(async (date?: string) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const result = await container.generateFeedbackUseCase.execute(date);
-
+      const result = await letterFacade.generateFeedback(date);
       if (!result.success) {
         setError(result.error || 'AI 피드백 생성에 실패했습니다.');
         return null;
       }
-
       return result;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.';
-      setError(errorMessage);
+      handleError(err);
       return null;
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [letterFacade, handleError]);
 
-  const getLetterData = async (date: string): Promise<Letter | null> => {
+  const getLetterData = useCallback(async (date?: string): Promise<Letter | null> => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const result = await container.getLetterDataUseCase.execute(date);
+      const result = await letterFacade.getLetterData(date);
       return result;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '편지 데이터 조회에 실패했습니다.';
-      setError(errorMessage);
+      handleError(err);
       return null;
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [letterFacade, handleError]);
 
-  const deleteLetterData = async (date: string) => {
+  const deleteLetterData = useCallback(async (date?: string): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
 
     try {
-      await container.getLetterDataUseCase.deleteByDate(date);
+      await letterFacade.deleteLetterData(date);
       return true;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '편지 데이터 삭제에 실패했습니다.';
-      setError(errorMessage);
+      handleError(err);
       return false;
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [letterFacade, handleError]);
 
-  const getAllLetters = async () => {
+  const getAllLetters = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const result = await container.getLetterDataUseCase.getAll();
+      const result = await letterFacade.getAllLetters();
       return result;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '편지 목록 조회에 실패했습니다.';
-      setError(errorMessage);
+      handleError(err);
       return {};
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [letterFacade, handleError]);
 
-  const saveHighlight = async (date: string, highlightedParts: string[]) => {
+  const saveHighlight = useCallback(async (highlightedParts: string[], date?: string): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
 
     try {
-      await container.saveHighlightUseCase.execute(date, highlightedParts);
+      await letterFacade.saveHighlight(highlightedParts, date);
       return true;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '하이라이트 저장에 실패했습니다.';
-      setError(errorMessage);
+      handleError(err);
       return false;
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [letterFacade, handleError]);
 
   return {
     isLoading,
