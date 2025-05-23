@@ -21,7 +21,7 @@ public class Step3QuestionService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
     
-    public String createQuestionFromAnswer(String answer, String step2Answer) {
+    public String createQuestionFromAnswer(String step1_answer, String step2_answer) {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -45,14 +45,14 @@ public class Step3QuestionService {
             누군가가 오늘 가장 귀찮았던 일에 대해 설명했습니다.
             아래는 사용자가 자신의 상황을 설명한 내용입니다:
 
-            [Step2 답변 - 상황]  
+            [Step1 답변 - 상황]  
             %s
 
-            [Step3 답변 - 구체적인 상황]  
+            [Step2 답변 - 구체적인 상황]  
             %s
 
             위의 내용을 바탕으로, 담백하게 공감하는 문장을 두 문장 이내로 생성해주세요.
-            """, step2Answer, answer));
+            """, step1_answer, step2_answer));
 
             requestBody.putArray("messages")
                 .add(systemMessage)

@@ -15,4 +15,12 @@ public class SelfEmpathyDTO {
     public static class step2RequestDTO{
         private String step1_answer;
     }
+
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class step3RequestDTO{
+        private String step1_answer;
+        private String step2_answer;
+    }
 }
