@@ -1,7 +1,11 @@
-import { DIContainer, QuestionServiceType } from '../container/DIContainer';
+import { DIContainer, QuestionServiceType } from './DIContainer';
 
 /**
  * DI 컨테이너 설정 유틸리티
+ * 
+ * 의존성 주입 컨테이너의 설정과 관리를 담당하는 유틸리티 클래스입니다.
+ * 클린 아키텍처에서 Composition Layer의 일부로, 
+ * 의존성 조립과 설정을 중앙에서 관리합니다.
  */
 export class DIConfig {
   /**
@@ -56,4 +60,36 @@ export class DIConfig {
     // 개발 환경에서는 설정 정보 출력
     DIConfig.logCurrentConfig();
   }
-}
+
+  /**
+   * 테스트 환경용 초기화
+   */
+  static resetForTesting(): void {
+    const container = DIContainer.getInstance();
+    container.reset();
+  }
+
+  /**
+   * 프로덕션 환경용 최적화된 설정
+   */
+  static configureForProduction(): void {
+    // 프로덕션에서는 서버 액션을 기본으로 사용
+    DIConfig.setServerActionQuestionService();
+  }
+
+  /**
+   * 개발 환경용 설정 (HTTP API 사용)
+   */
+  static configureForDevelopment(): void {
+    // 개발 환경에서는 HTTP API를 사용할 수도 있음
+    const useHttp = process.env.NEXT_PUBLIC_USE_HTTP_API === 'true';
+    
+    if (useHttp) {
+      DIConfig.setHttpQuestionService();
+    } else {
+      DIConfig.setServerActionQuestionService();
+    }
+    
+    DIConfig.logCurrentConfig();
+  }
+} 

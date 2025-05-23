@@ -88,7 +88,7 @@ export function useLetterHighlights({ letterType, letterContent, date }: UseLett
       // 하이라이트된 텍스트만 추출
       const highlightedParts = currentTypeHighlights.map((h) => h.text);
 
-      await saveHighlight(currentDate, highlightedParts);
+      await saveHighlight(highlightedParts, currentDate);
     } catch (error) {
       console.error('하이라이트 저장 실패:', error);
     }
