@@ -11,11 +11,15 @@ export default function SkeletonUI({ type = 'question' }: SkeletonUIProps) {
     return (
       <div className="skeleton-container">
         <div className="skeleton-question">
-          <div className="skeleton-small-text"></div>
-          <div className="skeleton-large-text"></div>
-          <div className="skeleton-large-text short"></div>
+          <div className="skeleton-text-group">
+            <div className="skeleton-small-text"></div>
+            <div className="skeleton-large-text"></div>
+          </div>
+          <div className="skeleton-buttons">
+            <div className="skeleton-yesno-btn"></div>
+            <div className="skeleton-yesno-btn"></div>
+          </div>
         </div>
-        <div className="skeleton-input"></div>
       </div>
     );
   }
@@ -23,21 +27,23 @@ export default function SkeletonUI({ type = 'question' }: SkeletonUIProps) {
   if (type === 'card') {
     return (
       <div className="skeleton-container">
-        <div className="skeleton-message">
-          <div className="skeleton-line"></div>
-          <div className="skeleton-line short"></div>
-        </div>
-        <div className="skeleton-card">
-          <div className="skeleton-card-content">
-            <div className="skeleton-line"></div>
-            <div className="skeleton-line"></div>
+        <div className="skeleton-question">
+          <div className="skeleton-text-group">
+            <div className="skeleton-small-text"></div>
+            <div className="skeleton-large-text"></div>
+          </div>
+          <div className="skeleton-card">
+            <div className="skeleton-card-content">
+              <div className="skeleton-line"></div>
+              <div className="skeleton-line"></div>
+              <div className="skeleton-line short"></div>
+              <div className="skeleton-line"></div>
+            </div>
+          </div>
+          <div className="skeleton-bottom-text">
             <div className="skeleton-line short"></div>
             <div className="skeleton-line"></div>
           </div>
-        </div>
-        <div className="skeleton-bottom-text">
-          <div className="skeleton-line short"></div>
-          <div className="skeleton-line"></div>
         </div>
       </div>
     );

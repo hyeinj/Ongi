@@ -166,6 +166,52 @@ export class EmotionFacade {
   }
 
   /**
+   * 최종 카드 텍스트 생성
+   */
+  async generateFinalCardText(date?: string): Promise<{
+    finalText: string;
+    success: boolean;
+    error?: string;
+  }> {
+    const targetDate = date || this.getCurrentDate();
+
+    try {
+      return await this.container.generateQuestionUseCase.generateFinalCardText(targetDate);
+    } catch (error) {
+      console.error('최종 카드 텍스트 생성 실패:', error);
+      return {
+        finalText: '',
+        success: false,
+        error: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.',
+      };
+    }
+  }
+
+  /**
+   * Step6 텍스트 생성 (smallText, largeText)
+   */
+  async generateStep6Texts(date?: string): Promise<{
+    smallText: string;
+    largeText: string;
+    success: boolean;
+    error?: string;
+  }> {
+    const targetDate = date || this.getCurrentDate();
+
+    try {
+      return await this.container.generateQuestionUseCase.generateStep6Texts(targetDate);
+    } catch (error) {
+      console.error('Step6 텍스트 생성 실패:', error);
+      return {
+        smallText: '힘든 상황에서 여러 감정을 느끼셨군요.',
+        largeText: '그 감정을 느낀 가장 큰 이유가 무엇인지 생각해보실까요?',
+        success: false,
+        error: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.',
+      };
+    }
+  }
+
+  /**
    * 로컬 스토리지에서 기존 데이터 마이그레이션 (기존 컴포넌트와의 호환성을 위함)
    */
   async migrateFromLegacyStorage(): Promise<void> {

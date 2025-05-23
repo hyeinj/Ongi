@@ -41,4 +41,27 @@ export interface QuestionGenerationService {
   analyzeEmotionAndCategory(allAnswers: {
     [stage: string]: string;
   }): Promise<EmotionAnalysisResult>;
+
+  /**
+   * 모든 답변과 분석된 감정을 기반으로 최종 카드 텍스트 생성
+   */
+  generateFinalCardText(
+    allAnswers: { [stage: string]: string },
+    category: Category,
+    emotion: EmotionType
+  ): Promise<{
+    finalText: string;
+    success: boolean;
+    error?: string;
+  }>;
+
+  /**
+   * Step2-Step5 답변을 기반으로 Step6의 smallText와 largeText 생성
+   */
+  generateStep6Texts(allAnswers: { [stage: string]: string }): Promise<{
+    smallText: string;
+    largeText: string;
+    success: boolean;
+    error?: string;
+  }>;
 }

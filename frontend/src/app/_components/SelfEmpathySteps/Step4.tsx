@@ -257,7 +257,7 @@ export default function Step4() {
         totalStep={6}
         onBack={() => router.push('/self-empathy/3')}
       >
-        <SkeletonUI type="question" />
+        <SkeletonUI type="card" />
       </SelfEmpathyLayout>
     );
   }

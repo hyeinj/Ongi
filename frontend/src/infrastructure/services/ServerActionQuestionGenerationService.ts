@@ -5,6 +5,8 @@ import {
   generateStep5Question,
   generateNextQuestion,
   analyzeEmotionAndCategory,
+  generateFinalCardText,
+  generateStep6Texts,
 } from '../../app/actions/questionActions';
 import { Category, EmotionType } from '../../domain/entities/Emotion';
 
@@ -70,6 +72,39 @@ export class ServerActionQuestionGenerationService implements QuestionGeneration
 
     if (!response.success) {
       console.warn('감정 분석 실패, 기본값 사용:', response.error);
+    }
+
+    return response;
+  }
+
+  async generateFinalCardText(
+    allAnswers: { [stage: string]: string },
+    category: Category,
+    emotion: EmotionType
+  ): Promise<{
+    finalText: string;
+    success: boolean;
+    error?: string;
+  }> {
+    const response = await generateFinalCardText(allAnswers, category, emotion);
+
+    if (!response.success) {
+      console.warn('최종 카드 텍스트 생성 실패:', response.error);
+    }
+
+    return response;
+  }
+
+  async generateStep6Texts(allAnswers: { [stage: string]: string }): Promise<{
+    smallText: string;
+    largeText: string;
+    success: boolean;
+    error?: string;
+  }> {
+    const response = await generateStep6Texts(allAnswers);
+
+    if (!response.success) {
+      console.warn('Step6 텍스트 생성 실패:', response.error);
     }
 
     return response;

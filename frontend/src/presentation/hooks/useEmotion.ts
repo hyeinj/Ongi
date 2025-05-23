@@ -24,6 +24,17 @@ interface UseEmotionReturn {
   analyzeAndSaveEmotionAndCategory: (
     date?: string
   ) => Promise<{ category: Category; emotion: EmotionType; success: boolean } | null>;
+  generateFinalCardText: (date?: string) => Promise<{
+    finalText: string;
+    success: boolean;
+    error?: string;
+  } | null>;
+  generateStep6Texts: (date?: string) => Promise<{
+    smallText: string;
+    largeText: string;
+    success: boolean;
+    error?: string;
+  } | null>;
   refreshEmotionData: () => Promise<void>;
   migrateFromLegacyStorage: () => Promise<void>;
 }
@@ -204,6 +215,55 @@ export function useEmotion(): UseEmotionReturn {
     [emotionFacade, refreshEmotionData, handleError]
   );
 
+  const generateFinalCardText = useCallback(
+    async (
+      date?: string
+    ): Promise<{
+      finalText: string;
+      success: boolean;
+      error?: string;
+    } | null> => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const result = await emotionFacade.generateFinalCardText(date);
+        await refreshEmotionData();
+        return result;
+      } catch (err) {
+        handleError(err);
+        return null;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [emotionFacade, refreshEmotionData, handleError]
+  );
+
+  const generateStep6Texts = useCallback(
+    async (
+      date?: string
+    ): Promise<{
+      smallText: string;
+      largeText: string;
+      success: boolean;
+      error?: string;
+    } | null> => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const result = await emotionFacade.generateStep6Texts(date);
+        await refreshEmotionData();
+        return result;
+      } catch (err) {
+        handleError(err);
+        return null;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [emotionFacade, refreshEmotionData, handleError]
+  );
+
   const migrateFromLegacyStorage = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true);
@@ -235,6 +295,8 @@ export function useEmotion(): UseEmotionReturn {
     getAllEmotionData,
     deleteEmotionData,
     analyzeAndSaveEmotionAndCategory,
+    generateFinalCardText,
+    generateStep6Texts,
     refreshEmotionData,
     migrateFromLegacyStorage,
   };

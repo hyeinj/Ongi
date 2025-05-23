@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
+import SkeletonUI from './SkeletonUI';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import '@/styles/SelfEmpathyModal.css';
 import { useState, useEffect } from 'react';
@@ -14,28 +15,52 @@ export default function Step6() {
   const [answer, setAnswer] = useState<'yes' | 'no' | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedButton, setSelectedButton] = useState<string | null>(null);
+  const [smallText, setSmallText] = useState('');
+  const [largeText, setLargeText] = useState('');
+  const [textsLoading, setTextsLoading] = useState(true);
 
   // 클린 아키텍처를 통한 감정 데이터 관리
-  const { isLoading, error, saveStageAnswer, getStageAnswer } = useEmotion();
+  const { isLoading, error, saveStageAnswer, getStageAnswer, generateStep6Texts } = useEmotion();
 
   useEffect(() => {
-    // 이전에 저장된 답변이 있다면 불러오기
-    const loadPreviousAnswer = async () => {
-      const savedAnswer = await getStageAnswer('step6');
-      if (savedAnswer === '네 맞아요!' || savedAnswer === '다른 이유인 것 같아요.') {
-        setAnswer(savedAnswer === '네 맞아요!' ? 'yes' : 'no');
+    const loadDataAndGenerateTexts = async () => {
+      try {
+        setTextsLoading(true);
+
+        // Step6 텍스트 생성
+        const textsResult = await generateStep6Texts();
+        if (textsResult && textsResult.success) {
+          setSmallText(textsResult.smallText);
+          setLargeText(textsResult.largeText);
+        } else {
+          // 실패 시 기본 텍스트 사용
+          setSmallText('힘든 상황에서 여러 감정을 느끼셨군요.');
+          setLargeText('그 감정을 느낀 가장 큰 이유가 무엇인지 생각해보실까요?');
+        }
+
+        // 이전에 저장된 답변이 있다면 불러오기
+        const savedAnswer = await getStageAnswer('step6');
+        if (savedAnswer === '네 맞아요!' || savedAnswer === '다른 이유인 것 같아요.') {
+          setAnswer(savedAnswer === '네 맞아요!' ? 'yes' : 'no');
+        }
+      } catch (err) {
+        console.error('Step6 데이터 로드 실패:', err);
+        setSmallText('힘든 상황에서 여러 감정을 느끼셨군요.');
+        setLargeText('그 감정을 느낀 가장 큰 이유가 무엇인지 생각해보실까요?');
+      } finally {
+        setTextsLoading(false);
       }
     };
 
-    loadPreviousAnswer();
-  }, [getStageAnswer]);
+    loadDataAndGenerateTexts();
+  }, [getStageAnswer, generateStep6Texts]);
 
   const handleNext = async () => {
     if (!answer) return;
 
     try {
       const answerText = answer === 'yes' ? '네 맞아요!' : '다른 이유인 것 같아요.';
-      await saveStageAnswer('step6', '시간이 촉박했기 때문이 맞을까요?', answerText);
+      await saveStageAnswer('step6', largeText, answerText);
 
       if (answer === 'yes') {
         router.push('/self-empathy/7');
@@ -72,18 +97,22 @@ export default function Step6() {
     );
   }
 
+  // 텍스트 로딩 중일 때
+  if (textsLoading) {
+    return (
+      <SelfEmpathyLayout
+        currentStep={5}
+        totalStep={6}
+        onBack={() => router.push('/self-empathy/5')}
+      >
+        <SkeletonUI type="card" />
+      </SelfEmpathyLayout>
+    );
+  }
+
   return (
     <SelfEmpathyLayout currentStep={5} totalStep={6} onBack={() => router.push('/self-empathy/5')}>
-      <SelfEmpathyQuestion
-        numbering={5}
-        smallText={`스스로 준비를 미리 해두지 않은 자신에게 답답하고 화가나셨군요.`}
-        largeText={
-          <>
-            무지님이 답답함과 짜증, 초조함을 느꼈던 이유 중 가장 큰 이유는
-            <b> &quot;시간이 촉박했기 때문&quot; </b>이 맞을까요?
-          </>
-        }
-      >
+      <SelfEmpathyQuestion numbering={5} smallText={smallText} largeText={largeText}>
         <div className="yesno-btn-group">
           <button
             className={`yesno-btn${answer === 'yes' ? ' selected' : ''}`}

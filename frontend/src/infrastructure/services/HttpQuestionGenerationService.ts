@@ -78,4 +78,61 @@ export class HttpQuestionGenerationService implements QuestionGenerationService 
       };
     }
   }
+
+  async generateFinalCardText(
+    allAnswers: { [stage: string]: string },
+    category: Category,
+    emotion: EmotionType
+  ): Promise<{
+    finalText: string;
+    success: boolean;
+    error?: string;
+  }> {
+    try {
+      const response = await this.httpAdapter.post<{
+        finalText: string;
+        success: boolean;
+        error?: string;
+      }>('/generate-final-card-text', {
+        allAnswers,
+        category,
+        emotion,
+      });
+      return response;
+    } catch (error) {
+      console.error('최종 카드 텍스트 생성 실패:', error);
+      return {
+        finalText: '',
+        success: false,
+        error: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.',
+      };
+    }
+  }
+
+  async generateStep6Texts(allAnswers: { [stage: string]: string }): Promise<{
+    smallText: string;
+    largeText: string;
+    success: boolean;
+    error?: string;
+  }> {
+    try {
+      const response = await this.httpAdapter.post<{
+        smallText: string;
+        largeText: string;
+        success: boolean;
+        error?: string;
+      }>('/generate-step6-texts', {
+        allAnswers,
+      });
+      return response;
+    } catch (error) {
+      console.error('Step6 텍스트 생성 실패:', error);
+      return {
+        smallText: '힘든 상황에서 여러 감정을 느끼셨군요.',
+        largeText: '그 감정을 느낀 가장 큰 이유가 무엇인지 생각해보실까요?',
+        success: false,
+        error: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.',
+      };
+    }
+  }
 }

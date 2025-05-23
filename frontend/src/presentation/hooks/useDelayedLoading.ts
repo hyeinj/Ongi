@@ -11,7 +11,7 @@ export function useDelayedLoading(
   isLoading: boolean,
   options: UseDelayedLoadingOptions = {}
 ): boolean {
-  const { delay = 100 } = options;
+  const { delay = 200 } = options;
   const [showSkeleton, setShowSkeleton] = useState(true);
 
   useEffect(() => {
