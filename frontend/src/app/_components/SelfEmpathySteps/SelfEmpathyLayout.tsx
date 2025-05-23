@@ -14,12 +14,17 @@ interface SelfEmpathyLayoutProps {
   onBack: () => void;
 }
 
-export default function SelfEmpathyLayout({ children, currentStep, totalStep, onBack }: SelfEmpathyLayoutProps) {
+export default function SelfEmpathyLayout({
+  children,
+  currentStep,
+  totalStep,
+  onBack,
+}: SelfEmpathyLayoutProps) {
   return (
     <div className="self-empathy-step2-page">
       <div className="background">
         <Image className="ver" src={bottomMt} alt="배경 이미지" />
-        
+
         <Image className="element-1" alt="별똥별 1" src={star1} />
         <Image className="element-2" alt="별똥별 2" src={star2} />
         <Image className="element-3" alt="별똥별 3" src={star3} />
@@ -39,14 +44,12 @@ export default function SelfEmpathyLayout({ children, currentStep, totalStep, on
                   />
                 </div>
               )}
-              <span className="progress-text">
-                1&nbsp;&nbsp;&nbsp;자기공감
-              </span>
             </div>
+            <span className="progress-text">1&nbsp;&nbsp;&nbsp;자기공감</span>
           </div>
           {children}
         </div>
       </div>
     </div>
   );
-} 
+}

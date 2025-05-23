@@ -148,7 +148,7 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
           </div>
         </div>
 
-        <div className="relative z-20 bg-[#F7F4E6] w-full mx-auto p-6 h-[80vh] transition-opacity duration-300 ease-in-out overflow-y-auto break-keep">
+        <div className="relative z-20 bg-[#F7F4E6] w-full mx-auto p-6 h-[80vh] transition-opacity duration-300 ease-in-out overflow-y-auto overflow-hidden break-keep">
           <div className="flex flex-col items-center mb-5 relative">
             <Image src={postboxIcon} alt="편지함 아이콘" width={50} height={50} priority />
 
