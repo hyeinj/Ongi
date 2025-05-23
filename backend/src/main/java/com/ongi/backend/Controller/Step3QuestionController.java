@@ -1,5 +1,6 @@
 package com.ongi.backend.Controller;
 
+import com.ongi.backend.DTO.SelfEmpathyDTO;
 import com.ongi.backend.Service.Step3QuestionService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +21,19 @@ public class Step3QuestionController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> generateStep3Question(@RequestBody Step3AnswerRequest request) {
+    public ResponseEntity<Map<String, String>> generateStep3Question(@RequestBody SelfEmpathyDTO.step3RequestDTO step3RequestDTO) {
         try {
-            if (request.getStep3Answer() == null || request.getStep3Answer().trim().isEmpty()) {
+            // 이전 질문인 1,2번 질문에 대한 답변이 존재하지 않는 경우 에러 처리
+            if (step3RequestDTO.getStep2_answer() == null || step3RequestDTO.getStep2_answer().trim().isEmpty() ||
+                    step3RequestDTO.getStep1_answer() == null || step3RequestDTO.getStep1_answer().trim().isEmpty()) {
                 Map<String, String> error = new HashMap<>();
                 error.put("error", "답변이 비어있습니다.");
                 return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
             }
 
+            // 1번과 2번 둘 다 답변이 존재한 상태에서만 GPT에 요청을 날릴거기 때문에 이렇게 바로 답변 전달해주기
             String generatedQuestion = step3QuestionService.createQuestionFromAnswer(
-                request.getStep3Answer(), 
-                request.getStep2Answer() != null ? request.getStep2Answer() : ""
+                step3RequestDTO.getStep1_answer(), step3RequestDTO.getStep2_answer()
             );
             
             Map<String, String> response = new HashMap<>();
@@ -43,14 +46,3 @@ public class Step3QuestionController {
         }
     }
 }
-
-class Step3AnswerRequest {
-    private String step3Answer;
-    private String step2Answer;
-    
-    public String getStep3Answer() { return step3Answer; }
-    public void setStep3Answer(String step3Answer) { this.step3Answer = step3Answer; }
-    
-    public String getStep2Answer() { return step2Answer; }
-    public void setStep2Answer(String step2Answer) { this.step2Answer = step2Answer; }
-} 

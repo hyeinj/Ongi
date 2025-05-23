@@ -1,5 +1,6 @@
 package com.ongi.backend.Controller;
 
+import com.ongi.backend.DTO.SelfEmpathyDTO;
 import com.ongi.backend.Service.Step2QuestionService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -20,16 +21,18 @@ public class Step2QuestionController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> generateStep2Question(@RequestBody Step2AnswerRequest request) {
-        String generatedQuestion = step2QuestionService.createQuestionFromAnswer(request.getAnswer());
+    public ResponseEntity<Map<String, String>> generateStep2Question(@RequestBody SelfEmpathyDTO.step2RequestDTO step2RequestDTO) {
+        // 이전 질문인 1번 질문에 대한 답변이 존재하지 않음
+        if (step2RequestDTO.getStep1_answer() == null || step2RequestDTO.getStep1_answer().trim().isEmpty()) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "답변이 비어있습니다.");
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+
+        String answer = step2RequestDTO.getStep1_answer();
+        String generatedQuestion = step2QuestionService.createQuestionFromAnswer(answer);
         Map<String, String> response = new HashMap<>();
         response.put("question", generatedQuestion);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
-
-class Step2AnswerRequest {
-    private String answer;
-    public String getAnswer() { return answer; }
-    public void setAnswer(String answer) { this.answer = answer; }
-} 
