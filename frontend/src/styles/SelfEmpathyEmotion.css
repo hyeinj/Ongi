@@ -4,6 +4,7 @@
   justify-content: center;
   align-items: center;
   gap: 20px;
+  margin-bottom: 20px;
 }
 
 .emotion-icon-btn {
@@ -59,11 +60,7 @@
   justify-content: center;
   max-width: 320px;
   width: 100%;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  max-height: 390px;
-  margin-top: 10px;
+  max-height: 50vh;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: auto;
@@ -96,24 +93,4 @@
 .feeling-btn.selected.negative {
   background: #e3f0ff;
   color: #3578c6;
-}
-
-@media screen and (max-width: 360px) {
-  .emotion-icons-row {
-    top: 28vh;
-  }
-  
-  .feeling-list {
-    top: 36vh;
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .emotion-icons-row {
-    top: 32vh;
-  }
-  
-  .feeling-list {
-    top: 40vh;
-  }
 }
