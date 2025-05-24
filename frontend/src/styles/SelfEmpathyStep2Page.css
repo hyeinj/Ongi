@@ -204,7 +204,7 @@
   background: rgba(238, 238, 238, 0.4);
   border: none;
   color: black;
-  font-size: clamp(12px, 3.5vw, 13px);
+  font-size: 16px;
   line-height: 1.5;
   padding: 2vh;
   resize: none;
@@ -226,7 +226,7 @@
   background: rgba(238, 238, 238, 0.4);
   border: none;
   color: black;
-  font-size: clamp(12px, 3.5vw, 13px);
+  font-size: 16px;
   line-height: 1.5;
   padding: 2vh;
   resize: none;
@@ -248,7 +248,7 @@
   background: rgba(238, 238, 238, 0.4);
   border: none;
   color: black;
-  font-size: clamp(12px, 3.5vw, 13px);
+  font-size: 16px;
   line-height: 1.5;
   padding: 2vh;
   resize: none;
