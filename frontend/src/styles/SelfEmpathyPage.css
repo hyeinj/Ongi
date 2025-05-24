@@ -197,18 +197,6 @@
 }
 
 .final-button {
-  top: 684px;
   animation-delay: 1.5s;
   left: 50%;
-}
-
-.final-button-text {
-  left: 80px;
-  width: 180px;
-}
-
-@media screen and (max-height: 600px) {
-  .bottom-button {
-    bottom: max(3vh, 15px);
-  }
 }
