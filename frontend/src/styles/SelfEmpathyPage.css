@@ -108,25 +108,27 @@
 }
 
 .bottom-button {
-  position: absolute;
-  bottom: 5vh;
+  position: fixed;
+  bottom: max(5vh, 20px);
   width: 80%;
-  max-width: 336px;
+  max-width: 93vw;
   left: 50%;
   transform: translateX(-50%);
   background: none;
   border: none;
   padding: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   opacity: 0;
   animation: fadeInUpButton 0.8s ease-out forwards, floatButton 2s ease-in-out infinite 3s;
   animation-delay: 3s;
   transition: all 0.15s ease;
+  z-index: 10;
 }
 
 .bottom-button img {
   width: 100%;
   height: auto;
-  max-height: 64px;
+  max-height: min(64px, 18vw);
   display: block;
   transition: filter 0.15s ease;
   z-index: 2;
@@ -152,12 +154,22 @@
   line-height: 30px;
   position: absolute;
   text-align: center;
-  top: 50%;
+  top: 53%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 80%;
   max-width: auto;
   pointer-events: none;
+  transition: opacity 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.paper-plane {
+  width: 32px !important;
+  height: 18px !important;
   transition: opacity 0.15s ease;
 }
 
@@ -195,26 +207,8 @@
   width: 180px;
 }
 
-@media screen and (max-width: 360px) {
-  .self-empathy-page .text-wrapper {
-    top: 25vh;
-  }
-  
+@media screen and (max-height: 600px) {
   .bottom-button {
-    bottom: 3vh;
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .self-empathy-page .background {
-    max-width: 500px;
-  }
-  
-  .self-empathy-page .text-wrapper {
-    font-size: 16px;
-  }
-  
-  .button-text {
-    font-size: 16px;
+    bottom: max(3vh, 15px);
   }
 }
