@@ -4,9 +4,10 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
-import sendButton from '@/assets/icons/sendbutton.png';
+import bottomButton from '@/assets/icons/bottombutton.png';
 import { useState, useEffect } from 'react';
 import { useEmotion } from '../../../presentation/hooks/useEmotion';
+import paperPlane from '@/assets/icons/paper-plane.png';
 
 export default function Step7() {
   const router = useRouter();
@@ -68,8 +69,11 @@ export default function Step7() {
           onChange={(e) => setAnswer(e.target.value)}
           disabled={isLoading}
         />
-        <button className="send-button" onClick={handleNext} disabled={isLoading || !answer.trim()}>
-          {isLoading ? <span>저장 중...</span> : <Image src={sendButton} alt="완료" />}
+        <button className="bottom-button" onClick={handleNext} disabled={isLoading || !answer.trim()}>
+          {isLoading ? <span>저장 중...</span> : <Image src={bottomButton} alt="완료" />}
+          <span className="button-text">
+            <Image src={paperPlane} alt="전송" className="paper-plane"/>전송하기
+          </span>
         </button>
       </SelfEmpathyQuestion>
     </SelfEmpathyLayout>

@@ -73,6 +73,8 @@
   margin: 24px auto 0 auto;
   max-width: auto;
   height: auto;
+  min-height: 20vh;
+  max-height: 52vh;
   background: #fffbe8;
   border-radius: 30px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.06);
@@ -81,11 +83,14 @@
   font-weight: 500;
   line-height: 1.7;
   z-index: 3;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .final-card-text {
   white-space: pre-line;
-  padding: 3vh 4vw;
+  padding: 2vh 4vw;
+  padding-bottom: 2vh;
 }
 
 .mail-box {
@@ -107,17 +112,17 @@
 
 .final-bottom-ment {
   position: absolute;
-  top: 66vh;
+  top: 75.5vh;
   transform: translateX(-50%);
   width: auto;
   max-width: 360px;
-  left: 23%;
+  left: 33%;
   font-size: 14px;
   color: #222;
-  text-align: center;
+  text-align: right;
   font-weight: 400;
   line-height: 1.7;
-  z-index: 2;
+  z-index: 5;
   opacity: 0;
   animation: fadeInLine 0.8s forwards;
   animation-delay: 3.2s;
