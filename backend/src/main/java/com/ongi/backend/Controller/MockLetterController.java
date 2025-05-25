@@ -77,12 +77,21 @@ public class MockLetterController {
                     mockLetterFeedbackDTO.getLetter_response()
             );
 
+            // 네 번째 feedback
+            String generatedFeedback4 = mockLetterService.generateFeedback4(
+                    mockLetterFeedbackDTO.getStep1_answer(), mockLetterFeedbackDTO.getStep2_answer(),
+                    mockLetterFeedbackDTO.getStep3Feelings(), mockLetterFeedbackDTO.getStep4_answer(),
+                    mockLetterFeedbackDTO.getStep5_answer(), mockLetterFeedbackDTO.getMock_letter(),
+                    mockLetterFeedbackDTO.getLetter_response()
+            );
+
             Map<String, String> response = new HashMap<>();
             response.put("generatedFeedback1", generatedFeedback1);
             response.put("generatedFeedback2-공감의 문구", generatedFeedback2[0]);
             response.put("generatedFeedback2-위로 문장", generatedFeedback2[1]);
             response.put("generatedFeedback3-피드백 요약 문장", generatedFeedback3[0]);
             response.put("generatedFeedback3-피드백 내용", generatedFeedback3[1]);
+            response.put("generatedFeedback4", generatedFeedback4);
 
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {

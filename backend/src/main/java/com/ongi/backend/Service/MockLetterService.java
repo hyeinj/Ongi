@@ -383,4 +383,89 @@ public class MockLetterService {
             throw new RuntimeException("OpenAI API 호출 중 오류 발생", e);
         }
     }
+
+    public String generateFeedback4(
+            String step1Answer, String step2Answer, String step3Feelings, String step4Answer,
+            String step5Answer, String mockLetter, String letterResponse
+    ) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setBearerAuth(apiKey);
+
+            ObjectNode requestBody = objectMapper.createObjectNode();
+            requestBody.put("model", "gpt-4o-mini");
+
+            ObjectNode systemMessage = objectMapper.createObjectNode();
+            systemMessage.put("role", "system");
+            systemMessage.put("content", """
+            당신은 누군가의 다정한 편지에 섬세하고 따뜻한 피드백을 건네는 공감 코멘터입니다.
+                        
+            아래 사용자의 자기공감 기록과, 사연자에게 쓴 답장 편지를 보고, 그 편지가 전반적으로 어떤 느낌이었는지 따뜻한 말 한 문장으로 정리해 주세요.
+                        
+            [작성 지침]
+            - 말투는 다정하고 섬세하게, 칭찬 혹은 감정 공감이 담기도록 작성해주세요.
+            - 문장은 반드시 1문장으로만 작성해주세요.
+            - 지나친 분석 없이 느낌 위주로, 따뜻하고 감성적인 표현을 사용해주세요.
+            - 문장 끝을 “말이었어요”처럼 부드럽게 마무리해주세요.
+            - 아래 예시와 같은 형식을 따라주세요.
+                
+            [예시 1]
+            따뜻했고, 다정했고, 무엇보다 스스로에게도 다시 돌아올 수 있는 말이었어요.
+            
+            [예시 2]    
+            따뜻했고, 평안했으며, 스스로의 경험을 투영해서 더 진심어렸어요.  
+            
+            """);
+
+            ObjectNode userMessage = objectMapper.createObjectNode();
+            userMessage.put("role", "user");
+            userMessage.put("content", String.format("""
+
+            [자기공감 Step1 답변 - 귀찮았던 일]
+            %s
+
+            [자기공감 Step2 답변 - 구체적인 상황 설명]  
+            %s
+
+            [자기공감 Step3 선택한 감정들]  
+            %s
+            
+            [자기공감 Step4 답변 - 선택했던 감정이 들었던 자세한 속 마음]
+            %s
+            
+            [자기공감 Step5 답변 - 감정을 느꼈던 가장 큰 이유]
+            %s
+            
+            [사연편지]
+            %s
+            
+            [사용자가 사연편지에 대해 작성한 답변 편지]
+            %s
+            
+            """, step1Answer, step2Answer, step3Feelings, step4Answer, step5Answer, mockLetter, letterResponse));
+
+            requestBody.putArray("messages")
+                    .add(systemMessage)
+                    .add(userMessage);
+
+            HttpEntity<String> request = new HttpEntity<>(requestBody.toString(), headers);
+
+            String response = restTemplate.postForObject(OPENAI_API_URL, request, String.class);
+            log.info("OpenAI API 전체 응답: {}", response);
+
+            ObjectNode responseJson = (ObjectNode) objectMapper.readTree(response);
+            String getResponse = responseJson.path("choices")
+                    .get(0)
+                    .path("message")
+                    .path("content")
+                    .asText();
+
+            return "오늘 무지님의 편지는...\n" + getResponse + "\n그 마음이 이 여정의 끝에서 더 오래 머물 수 있길 바라요.";
+
+        } catch (Exception e) {
+            log.error("OpenAI API 호출 중 오류 발생", e);
+            throw new RuntimeException("OpenAI API 호출 중 오류 발생", e);
+        }
+    }
 }
