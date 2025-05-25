@@ -54,12 +54,12 @@ export const handlePWAInstall = (deferredPrompt: BeforeInstallPromptEvent | null
 };
 
 // iOS 감지 함수
-const isIOS = (): boolean => {
+export const isIOS = (): boolean => {
   return /iPad|iPhone|iPod/.test(navigator.userAgent) && !('MSStream' in window);
 };
 
 // 안드로이드 감지 함수
-const isAndroid = (): boolean => {
+export const isAndroid = (): boolean => {
   return /Android/.test(navigator.userAgent);
 };
 

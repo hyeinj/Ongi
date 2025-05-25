@@ -1,23 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { isPWA, canInstallPWA } from '@/utils/pwa';
+import { isPWA, canInstallPWA, isIOS, isAndroid } from '@/utils/pwa';
 
 interface UsePWAInstallReturn {
   shouldShowInstallModal: boolean;
   showInstallModal: () => void;
   hideInstallModal: () => void;
 }
-
-// iOS 감지 함수
-const isIOS = (): boolean => {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !('MSStream' in window);
-};
-
-// 안드로이드 감지 함수
-const isAndroid = (): boolean => {
-  return /Android/.test(navigator.userAgent);
-};
 
 // 모바일에서 PWA 설치 안내가 필요한지 확인
 const shouldShowPWAGuideOnMobile = (): boolean => {
