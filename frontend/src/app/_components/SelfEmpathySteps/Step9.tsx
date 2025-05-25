@@ -6,7 +6,7 @@ import SelfEmpathyLayout from './SelfEmpathyLayout';
 import '@/styles/SelfEmpathyFinal.css';
 import bottomButton from '@/assets/icons/bottombutton.png';
 import '@/styles/SelfEmpathyPage.css';
-import { useEmotion } from '../../../presentation/hooks/useEmotion';
+import { useEmotion } from '@/ui/hooks/useEmotion';
 
 export default function Step9() {
   const router = useRouter();

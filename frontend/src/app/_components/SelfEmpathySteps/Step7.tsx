@@ -6,7 +6,7 @@ import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
 import bottomButton from '@/assets/icons/bottombutton.png';
 import { useState, useEffect } from 'react';
-import { useEmotion } from '../../../presentation/hooks/useEmotion';
+import { useEmotion } from '@/ui/hooks/useEmotion';
 import paperPlane from '@/assets/icons/paper-plane.png';
 
 export default function Step7() {

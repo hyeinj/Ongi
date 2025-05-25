@@ -1,6 +1,6 @@
 import { DailyEmotion, EmotionEntry, Category, EmotionType } from '../../core/entities';
 
-const EMOTION_STORAGE_KEY = 'emotions';
+const EMOTION_STORAGE_KEY = 'emotion';
 
 // 감정 데이터 스토리지 서비스
 export class EmotionStorage {

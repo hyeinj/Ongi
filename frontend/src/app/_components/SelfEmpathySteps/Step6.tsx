@@ -8,7 +8,7 @@ import SkeletonUI from './SkeletonUI';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import '@/styles/SelfEmpathyModal.css';
 import { useState, useEffect } from 'react';
-import { useEmotion } from '../../../presentation/hooks/useEmotion';
+import { useEmotion } from '@/ui/hooks/useEmotion';
 
 export default function Step6() {
   const router = useRouter();

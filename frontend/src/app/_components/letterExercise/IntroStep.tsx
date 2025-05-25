@@ -183,7 +183,7 @@ const LetterContent = ({ mockLetter, isLoading }: { mockLetter?: string; isLoadi
             <div className=" h-[100vh]">{mockLetter}</div>
           </div>
         ) : (
-          <div className={` mb-6 ${garamFont.className} leading-8`}>
+          <div className={` mb-6 ${garamFont.className} leading-8 text-black`}>
             무지님, 안녕하세요.
             <br />
             저는 요즘 정말 힘든 시간을 보내고 있습니다.

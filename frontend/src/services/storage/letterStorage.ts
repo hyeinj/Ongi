@@ -1,6 +1,6 @@
 import { Letter } from '../../core/entities';
 
-const LETTER_STORAGE_KEY = 'letters';
+const LETTER_STORAGE_KEY = 'letter';
 
 // 편지 데이터 스토리지 서비스
 export class LetterStorage {
