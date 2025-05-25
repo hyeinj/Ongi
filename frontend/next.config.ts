@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // 개발 환경에서 허용할 오리진을 명시적으로 설정
+  allowedDevOrigins: ['192.168.0.28'],
   /* config options here */
 };
 
