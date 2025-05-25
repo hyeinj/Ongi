@@ -22,21 +22,23 @@ public class SelfSummaryController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> generateSelfEmpathySummary(@RequestBody SelfEmpathyDTO.step5RequestDTO step5RequestDTO) {
+    public ResponseEntity<Map<String, String>> generateSelfEmpathySummary(@RequestBody SelfEmpathyDTO.summaryRequestDTO summaryRequestDTO) {
         try {
             // 필수 데이터 검증
-            if (step5RequestDTO.getStep1_answer() == null || step5RequestDTO.getStep1_answer().trim().isEmpty() ||
-                    step5RequestDTO.getStep2_answer() == null || step5RequestDTO.getStep2_answer().trim().isEmpty() ||
-                    step5RequestDTO.getStep3Feelings() == null || step5RequestDTO.getStep3Feelings().trim().isEmpty() ||
-                    step5RequestDTO.getStep4_answer() == null || step5RequestDTO.getStep4_answer().trim().isEmpty()) {
+            if (summaryRequestDTO.getStep1_answer() == null || summaryRequestDTO.getStep1_answer().trim().isEmpty() ||
+                    summaryRequestDTO.getStep2_answer() == null || summaryRequestDTO.getStep2_answer().trim().isEmpty() ||
+                    summaryRequestDTO.getStep3Feelings() == null || summaryRequestDTO.getStep3Feelings().trim().isEmpty() ||
+                    summaryRequestDTO.getStep4_answer() == null || summaryRequestDTO.getStep4_answer().trim().isEmpty() ||
+                    summaryRequestDTO.getStep5_answer() == null || summaryRequestDTO.getStep5_answer().trim().isEmpty()) {
                 Map<String, String> error = new HashMap<>();
                 error.put("error", "필수 데이터가 누락되었습니다.");
                 return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
             }
 
             String generatedQuestion = selfSummaryService.createQuestionFromAnswer(
-                    step5RequestDTO.getStep1_answer(), step5RequestDTO.getStep2_answer(),
-                    step5RequestDTO.getStep3Feelings(), step5RequestDTO.getStep4_answer()
+                    summaryRequestDTO.getStep1_answer(), summaryRequestDTO.getStep2_answer(),
+                    summaryRequestDTO.getStep3Feelings(), summaryRequestDTO.getStep4_answer(),
+                    summaryRequestDTO.getStep5_answer()
             );
 
             Map<String, String> response = new HashMap<>();

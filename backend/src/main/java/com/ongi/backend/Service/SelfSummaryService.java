@@ -24,7 +24,8 @@ public class SelfSummaryService {
             String step1Answer,
             String step2Answer,
             String step3Feelings,
-            String step4Answer
+            String step4Answer,
+            String step5Answer
     ) {
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -87,8 +88,11 @@ public class SelfSummaryService {
             [Step4 답변 - 선택했던 감정이 들었던 자세한 속 마음]
             %s
             
+            [Step5 답변 - 감정을 느꼈던 가장 큰 이유]
+            %s
+            
             이 내용을 바탕으로, 위 지침에 맞는 따뜻한 자기공감 메시지를 생성해주세요.
-            """, step1Answer, step2Answer, step3Feelings, step4Answer));
+            """, step1Answer, step2Answer, step3Feelings, step4Answer, step5Answer));
 
             requestBody.putArray("messages")
                     .add(systemMessage)
