@@ -42,7 +42,7 @@ public class SelfSummaryController {
             );
 
             Map<String, String> response = new HashMap<>();
-            response.put("question", generatedQuestion);
+            response.put("summary", generatedQuestion);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();

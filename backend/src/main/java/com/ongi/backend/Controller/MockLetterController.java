@@ -42,4 +42,34 @@ public class MockLetterController {
             return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping(value = "/feedback")
+    public ResponseEntity<Map<String, String>> generateFeedback(@RequestBody MockLetterDTO.mockLetterFeedbackDTO mockLetterFeedbackDTO) {
+        try {
+            // 필수 데이터 검증
+            if (mockLetterFeedbackDTO.getMock_letter() == null || mockLetterFeedbackDTO.getMock_letter().trim().isEmpty() ||
+                mockLetterFeedbackDTO.getLetter_response()==null || mockLetterFeedbackDTO.getLetter_response().trim().isEmpty()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "필수 데이터가 누락되었습니다.");
+                return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+            }
+
+            // 첫 번째 feedback
+            String generatedFeedback1 = mockLetterService.generateFeedback1(
+                    mockLetterFeedbackDTO.getStep1_answer(), mockLetterFeedbackDTO.getStep2_answer(),
+                    mockLetterFeedbackDTO.getStep3Feelings(), mockLetterFeedbackDTO.getStep4_answer(),
+                    mockLetterFeedbackDTO.getStep5_answer(), mockLetterFeedbackDTO.getMock_letter(),
+                    mockLetterFeedbackDTO.getLetter_response()
+            );
+
+            Map<String, String> response = new HashMap<>();
+            response.put("generatedFeedback1", generatedFeedback1);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "질문 생성 중 오류가 발생했습니다.");
+            return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

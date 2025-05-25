@@ -106,4 +106,87 @@ public class MockLetterService {
             throw new RuntimeException("OpenAI API 호출 중 오류 발생", e);
         }
     }
+
+    public String generateFeedback1(
+            String step1Answer, String step2Answer, String step3Feelings, String step4Answer,
+            String step5Answer, String mockLetter, String letterResponse
+    ) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setBearerAuth(apiKey);
+
+            ObjectNode requestBody = objectMapper.createObjectNode();
+            requestBody.put("model", "gpt-4o-mini");
+
+            ObjectNode systemMessage = objectMapper.createObjectNode();
+            systemMessage.put("role", "system");
+            systemMessage.put("content", """
+            당신은 사람들의 감정을 섬세하게 연결하는 감정 코멘터입니다.           
+            아래 사용자의 자기공감 기록과, 사연자에게 보낸 편지를 바탕으로 두 사람의 감정이 어떻게 연결되는지를 설명해주세요.
+                
+            [작성 지침]
+            - 무지님이 자기공감에서 어떤 감정을 느꼈는지를 언급해주세요.
+            - 사연자와 무지님의 감정이나 경험이 어떤 공통점이 있는지를 자연스럽게 서술해주세요.
+            - 마지막 문장은 두 사람이 가진 공통된 정서나 마음을 한 문장으로 따뜻하게 정리해주세요.
+            - 총 2~3문장, 너무 길지 않고 부드럽고 섬세한 말투로 작성해주세요.    
+            
+            [예시 1]
+            무지님이 자기공감에서 “시간에 쫓겨서 짜증이 났다”고 말해주셨어요. 사연자도 해야할 일을 버텨내며 스스로 계속 몰아세우고 있었는지 몰라요. 그 짜증과 지침의 바닥엔, 무지님이 너무 열심히 버텨왔다는 흔적이 있었을지도요    
+            
+            [예시 2]
+            무지님이 자기공감에서 친한 친구에게 가장 편한 존재라는 생각이 들었을 때 뿌듯함을 느꼈다고 말해주셨죠. 사연자도 이전에는 좋지 않았던 교우관계가 점점 더 발전해나가며 스스로 뿌듯함을 느낌과 동시에 진짜 잘하고 있는게 맞나 의심이 들고 있는 것 같아요. 그 뿌듯함과 혹은 의심 이면에는, 두 분 모두 더 좋은 사람이 되고싶은 예쁜 마음이 있었을지도 몰라요.
+            
+            """);
+
+            ObjectNode userMessage = objectMapper.createObjectNode();
+            userMessage.put("role", "user");
+            userMessage.put("content", String.format("""
+
+            [자기공감 Step1 답변 - 귀찮았던 일]
+            %s
+
+            [자기공감 Step2 답변 - 구체적인 상황 설명]  
+            %s
+
+            [자기공감 Step3 선택한 감정들]  
+            %s
+            
+            [자기공감 Step4 답변 - 선택했던 감정이 들었던 자세한 속 마음]
+            %s
+            
+            [자기공감 Step5 답변 - 감정을 느꼈던 가장 큰 이유]
+            %s
+            
+            [사연편지]
+            %s
+            
+            [사용자가 사연편지에 대해 작성한 답변 편지]
+            %s
+            
+            """, step1Answer, step2Answer, step3Feelings, step4Answer, step5Answer, mockLetter, letterResponse));
+
+            requestBody.putArray("messages")
+                    .add(systemMessage)
+                    .add(userMessage);
+
+            HttpEntity<String> request = new HttpEntity<>(requestBody.toString(), headers);
+
+            String response = restTemplate.postForObject(OPENAI_API_URL, request, String.class);
+            log.info("OpenAI API 전체 응답: {}", response);
+
+            ObjectNode responseJson = (ObjectNode) objectMapper.readTree(response);
+            String getResponse = responseJson.path("choices")
+                    .get(0)
+                    .path("message")
+                    .path("content")
+                    .asText();
+
+            return getResponse;
+
+        } catch (Exception e) {
+            log.error("OpenAI API 호출 중 오류 발생", e);
+            throw new RuntimeException("OpenAI API 호출 중 오류 발생", e);
+        }
+    }
 }
