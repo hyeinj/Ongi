@@ -15,6 +15,7 @@ export default function BackgroundImage({
           alt="편지 배경 이미지"
           fill
           priority
+          loading="eager"
           style={{ objectFit: 'cover', zIndex: -1 }}
         />
       </div>
