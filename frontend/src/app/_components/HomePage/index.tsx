@@ -15,7 +15,7 @@ import growth from '@/assets/images/growth.png';
 import routine from '@/assets/images/routine.png';
 import relate from '@/assets/images/relate.png';
 import PWAInstallModal from '@/app/_components/common/PWAInstallModal';
-import { usePWAInstall } from '@/presentation/hooks/usePWAInstall';
+import { usePWAInstall } from '@/ui/hooks/usePWAInstall';
 
 const HomePage: React.FC = () => {
   const router = useRouter();

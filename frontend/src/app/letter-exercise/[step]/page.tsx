@@ -5,7 +5,7 @@ import IntroStep from '@/app/_components/letterExercise/IntroStep';
 import WritingStep from '@/app/_components/letterExercise/WritingStep';
 import FeedbackStep from '@/app/_components/letterExercise/FeedbackStep';
 import { useParams } from 'next/navigation';
-import { UIProvider } from '@/presentation/contexts/UIContext';
+import { UIProvider } from '@/ui/contexts/UIContext';
 
 // 스텝 컴포넌트들을 매핑합니다.
 const stepComponents: {

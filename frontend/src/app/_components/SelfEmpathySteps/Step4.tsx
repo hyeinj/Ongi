@@ -11,8 +11,9 @@ import positiveIcon from '@/assets/icons/positive.png';
 import neutralIcon from '@/assets/icons/neutral.png';
 import negativeIcon from '@/assets/icons/negative.png';
 import '@/styles/SelfEmpathyEmotion.css';
-import { useEmotion } from '../../../presentation/hooks/useEmotion';
-import { useDelayedLoading } from '../../../presentation/hooks/useDelayedLoading';
+import { useEmotion } from '@/ui/hooks/useEmotion';
+import { useDelayedLoading } from '@/ui/hooks/useDelayedLoading';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 const EMOTIONS = [
   { key: 'positive', icon: positiveIcon },
@@ -218,7 +219,6 @@ export default function Step4() {
       // 도메인 레이어를 통한 비즈니스 로직 처리
       const nextQuestion = await saveStep4FeelingsAndGenerateStep5(
         question,
-        selectedEmotion,
         selectedFeelings
       );
 
@@ -304,7 +304,7 @@ export default function Step4() {
           onClick={handleNext}
           disabled={isLoading || selectedFeelings.length === 0}
         >
-          {isLoading ? <span>질문 생성 중...</span> : <Image src={nextArrow} alt="다음" />}
+          {isLoading ? <LoadingSpinner size="large" color="white" /> : <Image src={nextArrow} alt="다음" />}
         </button>
       </SelfEmpathyQuestion>
     </SelfEmpathyLayout>

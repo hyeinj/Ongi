@@ -8,8 +8,8 @@ import SkeletonUI from './SkeletonUI';
 import mailBox from '@/assets/images/mailbox.png';
 import '@/styles/SelfEmpathyFinal.css';
 import nextArrow from '@/assets/icons/next-arrow.png';
-import { useEmotion } from '../../../presentation/hooks/useEmotion';
-import { useDelayedLoading } from '../../../presentation/hooks/useDelayedLoading';
+import { useEmotion } from '@/ui/hooks/useEmotion';
+import { useDelayedLoading } from '@/ui/hooks/useDelayedLoading';
 
 export default function Step8() {
   const router = useRouter();

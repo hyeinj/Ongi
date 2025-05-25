@@ -1,0 +1,54 @@
+/* 로딩 스피너 기본 스타일 */
+.loading-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner-circle {
+  border-radius: 50%;
+  border-style: solid;
+  animation: spin 1s linear infinite;
+}
+
+/* 크기별 스타일 */
+.loading-spinner.small .spinner-circle {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.loading-spinner.medium .spinner-circle {
+  width: 24px;
+  height: 24px;
+  border-width: 3px;
+}
+
+.loading-spinner.large .spinner-circle {
+  width: 32px;
+  height: 32px;
+  border-width: 4px;
+}
+
+/* 색상별 스타일 */
+.loading-spinner.primary .spinner-circle {
+  border-color: #007AFF transparent transparent transparent;
+}
+
+.loading-spinner.white .spinner-circle {
+  border-color: #ffffff transparent transparent transparent;
+}
+
+.loading-spinner.gray .spinner-circle {
+  border-color: #8E8E93 transparent transparent transparent;
+}
+
+/* 회전 애니메이션 */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} 

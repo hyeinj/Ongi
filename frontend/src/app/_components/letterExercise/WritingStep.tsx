@@ -1,35 +1,32 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import letterExerciseDotImage from '@/assets/images/letter-exercise-dot-img.png';
-// import { useLetter } from '@/presentation/hooks/useLetter';
+import { useLetter } from '@/ui/hooks/useLetter';
 import paperPlane from '@/assets/icons/paper-plane.png';
 
 export default function WritingStep() {
-  // ALERT: 클로즈베타 버전에서는 모의 편지 생성 기능 제거
-  // const { saveUserResponse, generateFeedback, getLetterData } = useLetter();
-  // const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const { saveUserResponse, getLetterData } = useLetter();
+  const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [letterContent, setLetterContent] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  // const [dataLoaded, setDataLoaded] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const router = useRouter();
 
   // 기존 답장 데이터 로드 (한 번만 실행)
-  // useEffect(() => {
-  //   if (dataLoaded) return;
+  useEffect(() => {
+    if (dataLoaded) return;
 
-  //   const loadLetterData = async () => {
-  //     const existingLetter = await getLetterData(currentDate);
-  //     if (existingLetter) {
-  //       setLetterContent(existingLetter.userResponse || '');
-  //     }
-  //     setDataLoaded(true);
-  //   };
-  //   loadLetterData();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [currentDate, dataLoaded]); // 함수를 의존성에서 제거
+    const loadLetterData = async () => {
+      const existingLetter = await getLetterData(currentDate);
+      if (existingLetter) {
+        setLetterContent(existingLetter.userResponse || '');
+      }
+      setDataLoaded(true);
+    };
+    loadLetterData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDate, dataLoaded]); // 함수를 의존성에서 제거
 
   const handleLetterChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setLetterContent(e.target.value);
@@ -37,13 +34,20 @@ export default function WritingStep() {
 
   const handleSendLetter = async () => {
     if (letterContent.trim()) {
-      setIsLoading(true);
-      // await saveUserResponse(currentDate, letterContent);
-      // await generateFeedback(currentDate);
-      setTimeout(() => {
-        setIsLoading(false);
+      try {
+        // 사용자 응답만 저장하고 즉시 다음 페이지로 이동
+        const saveSuccess = await saveUserResponse(letterContent, currentDate);
+        if (!saveSuccess) {
+          throw new Error('답장 저장에 실패했습니다.');
+        }
+
+        // 즉시 다음 단계로 이동 (피드백 생성은 FeedbackStep에서 처리)
         router.push('/letter-exercise/3');
-      }, 2000);
+      } catch (error) {
+        console.error('편지 저장 실패:', error);
+        // TODO: 에러 메시지 표시 UI 추가
+        alert(error instanceof Error ? error.message : '편지 저장에 실패했습니다.');
+      }
     }
   };
 
@@ -90,19 +94,13 @@ export default function WritingStep() {
 
           <button
             onClick={handleSendLetter}
-            disabled={!letterContent.trim() || isLoading}
+            disabled={!letterContent.trim()}
             className="flex-1 px-6 py-3 rounded-full bg-[#EEEEEE] active:bg-[#F4E8D1] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span className="text-black font-medium">
-              {isLoading ? (
-                '전송 중...'
-              ) : (
-                <div className="flex items-center justify-center gap-1">
-                  <Image src={paperPlane} alt="전송" width={30} height={30} />
-                  <span className="text-black font-medium">전송하기</span>
-                </div>
-              )}
-            </span>
+            <div className="flex items-center justify-center gap-1">
+              <Image src={paperPlane} alt="전송" width={30} height={30} />
+              <span className="text-black font-medium">전송하기</span>
+            </div>
           </button>
         </div>
       </div>
