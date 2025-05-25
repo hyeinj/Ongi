@@ -282,4 +282,105 @@ public class MockLetterService {
             throw new RuntimeException("OpenAI API 호출 중 오류 발생", e);
         }
     }
+
+    public String[] generateFeedback3(
+            String step1Answer, String step2Answer, String step3Feelings, String step4Answer,
+            String step5Answer, String mockLetter, String letterResponse
+    ) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setBearerAuth(apiKey);
+
+            ObjectNode requestBody = objectMapper.createObjectNode();
+            requestBody.put("model", "gpt-4o-mini");
+
+            ObjectNode systemMessage = objectMapper.createObjectNode();
+            systemMessage.put("role", "system");
+            systemMessage.put("content", """
+            당신은 감정 중심 피드백을 도와주는 따뜻한 조언자입니다.
+                        
+            아래 사용자의 자기공감 기록과, 사연자에게 보낸 답변 편지를 읽고,
+            혹시 공감이 충분하지 않았더라도, 더 감정 중심의 문장으로 바꿀 수 있도록 무조건 피드백을 생성해주세요.
+                        
+            [작성 지침]
+            - 피드백은 반드시 JSON 배열 형식으로 출력합니다.
+            - 배열 [0]번에는 요약 피드백 제목을 1문장으로 담아주세요. 예: "칭찬의 공감도 공감이에요!"
+            - 배열 [1]번에는 상세 피드백을 담되, 사용자의 문장을 감정 중심으로 어떻게 바꾸면 좋을지 구체적인 조언을 주세요.
+            - 해결책, 조언, 분석 중심의 문장을 ‘감정 공감형 표현’으로 바꿔주는 방향의 제안을 포함해주세요.
+            - 사용자의 표현이 이미 공감 중심이어도, 그 표현을 더 살릴 수 있는 조언을 추가해주세요.
+            - 문장은 부드럽고 친절한 말투로, 책임을 묻거나 강요하지 않게 써주세요.
+            - 출력은 반드시 아래 JSON 배열 형식이어야 합니다.
+                
+            [예시 1]
+            [
+              "사연자의 감정을 먼저 헤아려 보아요",
+              "“누구나 겪는 일이에요”처럼 들릴 수 있는 말보다는 “그 상황, 정말 버거우셨겠어요”처럼 사연자의 감정을 먼저 인정하는 말이 더 오래 기억에 남을 거에요."
+            ]
+            
+            [예시 2]
+            [
+                "칭찬의 공감도 공감이에요!",    
+                "“더 고민하려면~해보세요”처럼 더 발전시킬 수 있는 방법을 제시하는 것도 너무 좋지만, 사연자의 모습을 있는 그대로 칭찬하며 공감한다면, 사연자는 무지님의 말에 더 큰 용기를 얻을 것 같아요."
+            ]
+            
+            [예시 3]
+            [
+              "이미 좋은 말이에요, 더 따뜻하게 확장해보면 어때요?",
+              "“지금도 충분히 잘하고 있어요”라는 말에 공감이 담겨 있었어요. 여기에 사연자의 감정을 더 구체적으로 짚어주면, 위로가 더 잘 전달될 거예요. 예를 들어, ‘그만큼 애써온 시간이 있었기에 흔들릴 수도 있죠’ 같은 말이요."
+            ]
+            """);
+
+            ObjectNode userMessage = objectMapper.createObjectNode();
+            userMessage.put("role", "user");
+            userMessage.put("content", String.format("""
+
+            [자기공감 Step1 답변 - 귀찮았던 일]
+            %s
+
+            [자기공감 Step2 답변 - 구체적인 상황 설명]  
+            %s
+
+            [자기공감 Step3 선택한 감정들]  
+            %s
+            
+            [자기공감 Step4 답변 - 선택했던 감정이 들었던 자세한 속 마음]
+            %s
+            
+            [자기공감 Step5 답변 - 감정을 느꼈던 가장 큰 이유]
+            %s
+            
+            [사연편지]
+            %s
+            
+            [사용자가 사연편지에 대해 작성한 답변 편지]
+            %s
+            
+            """, step1Answer, step2Answer, step3Feelings, step4Answer, step5Answer, mockLetter, letterResponse));
+
+            requestBody.putArray("messages")
+                    .add(systemMessage)
+                    .add(userMessage);
+
+            HttpEntity<String> request = new HttpEntity<>(requestBody.toString(), headers);
+
+            String response = restTemplate.postForObject(OPENAI_API_URL, request, String.class);
+            log.info("OpenAI API 전체 응답: {}", response);
+
+            ObjectNode responseJson = (ObjectNode) objectMapper.readTree(response);
+            String getResponse = responseJson.path("choices")
+                    .get(0)
+                    .path("message")
+                    .path("content")
+                    .asText();
+
+            // getResponse를 JSON 배열로 파싱 (응답이 유효한 JSON 배열 형식이라고 가정)
+            String[] result = objectMapper.readValue(getResponse, String[].class);
+            return result;
+
+        } catch (Exception e) {
+            log.error("OpenAI API 호출 중 오류 발생", e);
+            throw new RuntimeException("OpenAI API 호출 중 오류 발생", e);
+        }
+    }
 }
