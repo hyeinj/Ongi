@@ -42,7 +42,7 @@ public class Step5QuestionController {
             );
 
             Map<String, List<String>> response = new HashMap<>();
-            response.put("question", generatedQuestion);
+            response.put("후보 리스트", generatedQuestion);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             Map<String, List<String>> error = new HashMap<>();
