@@ -1,12 +1,25 @@
 import { EmotionEntry, Category, EmotionType, DailyEmotion } from '../entities';
+import { IslandUseCases } from './islandUseCases';
 
 // 서비스 인터페이스들
 export interface IQuestionService {
   generateQuestion(data: QuestionData): Promise<string>;
   analyzeEmotion(answers: { [stage: string]: string }): Promise<AnalysisResult>;
-  generateFinalText(answers: { [stage: string]: string }, category: Category, emotion: EmotionType): Promise<TextResult>;
-  generateStep6Texts(answers: { [stage: string]: string }): Promise<{ smallText: string; largeText: string; options: string[]; success: boolean; error?: string }>;
-  generateStep7Question(answers: { [stage: string]: string }): Promise<{ question: string; success: boolean; error?: string }>;
+  generateFinalText(
+    answers: { [stage: string]: string },
+    category: Category,
+    emotion: EmotionType
+  ): Promise<TextResult>;
+  generateStep6Texts(answers: { [stage: string]: string }): Promise<{
+    smallText: string;
+    largeText: string;
+    options: string[];
+    success: boolean;
+    error?: string;
+  }>;
+  generateStep7Question(answers: {
+    [stage: string]: string;
+  }): Promise<{ question: string; success: boolean; error?: string }>;
 }
 
 export interface IEmotionStorage {
@@ -39,14 +52,15 @@ interface TextResult {
 export class EmotionUseCases {
   constructor(
     private questionService: IQuestionService,
-    private emotionStorage: IEmotionStorage
+    private emotionStorage: IEmotionStorage,
+    private islandUseCases: IslandUseCases
   ) {}
-  
+
   // 감정 엔트리 저장
   async saveEmotionEntry(
-    date: string, 
-    stage: string, 
-    question: string, 
+    date: string,
+    stage: string,
+    question: string,
     answer: string
   ): Promise<void> {
     const entry: EmotionEntry = { question, answer };
@@ -60,21 +74,19 @@ export class EmotionUseCases {
     step4Feelings?: string[]
   ): Promise<string> {
     const questionData: QuestionData = { step2Answer };
-    
+
     if (step3Answer) {
       questionData.step3Answer = step3Answer;
     }
     if (step4Feelings) {
       questionData.step4Feelings = step4Feelings;
     }
-    
+
     return await this.questionService.generateQuestion(questionData);
   }
 
   // 감정 분석
-  async analyzeEmotion(
-    allAnswers: { [stage: string]: string }
-  ): Promise<AnalysisResult> {
+  async analyzeEmotion(allAnswers: { [stage: string]: string }): Promise<AnalysisResult> {
     return await this.questionService.analyzeEmotion(allAnswers);
   }
 
@@ -88,16 +100,20 @@ export class EmotionUseCases {
   }
 
   // Step6 텍스트 생성
-  async generateStep6Texts(
-    allAnswers: { [stage: string]: string }
-  ): Promise<{ smallText: string; largeText: string; options: string[]; success: boolean; error?: string }> {
+  async generateStep6Texts(allAnswers: { [stage: string]: string }): Promise<{
+    smallText: string;
+    largeText: string;
+    options: string[];
+    success: boolean;
+    error?: string;
+  }> {
     return await this.questionService.generateStep6Texts(allAnswers);
   }
 
   // Step7 질문 생성
-  async generateStep7Question(
-    allAnswers: { [stage: string]: string }
-  ): Promise<{ question: string; success: boolean; error?: string }> {
+  async generateStep7Question(allAnswers: {
+    [stage: string]: string;
+  }): Promise<{ question: string; success: boolean; error?: string }> {
     return await this.questionService.generateStep7Question(allAnswers);
   }
 
@@ -110,7 +126,7 @@ export class EmotionUseCases {
   // 감정 분석 및 저장
   async analyzeAndSaveEmotion(date: string): Promise<AnalysisResult> {
     const data = await this.emotionStorage.getByDate(date);
-    
+
     if (!data?.entries) {
       throw new Error('분석할 데이터가 없습니다.');
     }
@@ -124,8 +140,10 @@ export class EmotionUseCases {
 
     if (result.success) {
       await this.emotionStorage.updateCategoryAndEmotion(date, result.category, result.emotion);
+      // Island에 해당 카테고리에 날짜 추가
+      await this.islandUseCases.addDateToCategory(result.category, date);
     }
 
     return result;
   }
-} 
+}
