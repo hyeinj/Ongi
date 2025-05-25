@@ -5,44 +5,63 @@ import Link from 'next/link';
 import ChevronDown from '../icons/ChevronDown';
 import localFont from 'next/font/local';
 import letterExerciseBig from '@/assets/images/letter-exercise-bird.png';
-// ALERT: 클로즈베타 버전에서는 AI 피드백 생성 기능 제거
-// import { useLetter } from '@/presentation/hooks/useLetter';
+import { useLetter } from '@/ui/hooks/useLetter';
+import { Letter } from '@/core/entities';
 
 const garamFont = localFont({
   src: '../../../assets/fonts/gaRamYeonGgoc.ttf',
 });
 
 export default function FeedbackStep() {
-  // ALERT: 클로즈베타 버전에서는 AI 피드백 생성 기능 제거
-  // const { getLetterData } = useLetter();
-  // const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [feedback, setFeedback] = useState('');
+  const { getLetterData, generateFeedback } = useLetter();
+  const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [letterData, setLetterData] = useState<Letter | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
-  // const [dataLoaded, setDataLoaded] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const extraRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // ALERT: 클로즈베타 버전에서는 AI 피드백 생성 기능 제거
-  // 편지 데이터 로드 (한 번만 실행)
+  // 편지 데이터 로드 및 피드백 생성 (한 번만 실행)
   useEffect(() => {
-    // if (dataLoaded) return;
+    if (dataLoaded) return;
 
-    // const loadLetterData = async () => {
-    //   const existingLetter = await getLetterData(currentDate);
-    //   if (existingLetter) {
-    //     setFeedback(existingLetter.aiFeedback || '');
-    //   }
-    //   setIsLoading(false);
-    //   setDataLoaded(true);
-    // };
-    // loadLetterData();
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-  }, []); // 함수를 의존성에서 제거 임시로 currentDate, dataLoaded 제거 나중에 추가해야함
+    const loadLetterDataAndGenerateFeedback = async () => {
+      try {
+        const existingLetter = await getLetterData(currentDate);
+
+        if (existingLetter?.feedbackSections || existingLetter?.aiFeedback) {
+          // 이미 피드백이 있는 경우
+          setLetterData(existingLetter);
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 2000);
+        } else {
+          // 피드백이 없는 경우 생성
+          const feedbackResult = await generateFeedback(currentDate);
+          if (feedbackResult?.success) {
+            // 피드백 생성 후 다시 데이터 로드
+            const updatedLetter = await getLetterData(currentDate);
+            setLetterData(updatedLetter);
+          }
+          // 최소 로딩 시간 보장 (사용자 경험을 위해)
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('피드백 로드/생성 실패:', error);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 2000);
+      }
+      setDataLoaded(true);
+    };
+
+    loadLetterDataAndGenerateFeedback();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDate, dataLoaded]); // 함수를 의존성에서 제거
 
   const handleChevronClick = () => {
     setIsOpen(true);
@@ -92,11 +111,40 @@ export default function FeedbackStep() {
         </h2>
 
         <div className="pt-4 mb-6 flex-1">
-          {feedback ? (
+          {letterData?.feedbackSections ? (
+            // 새로운 4개 영역 피드백 구조
+            <>
+              {/* 1. 감정 연결 피드백 */}
+              {letterData.feedbackSections.emotionConnection && (
+                <div className="bg-[#FFFBEC]/80 rounded-2xl p-4 mb-4">
+                  <p className="text-gray-800 text-sm leading-7 whitespace-pre-wrap">
+                    {letterData.feedbackSections.emotionConnection}
+                  </p>
+                </div>
+              )}
+
+              {/* 2. 공감 문장 반영 */}
+              {letterData.feedbackSections.empathyReflection &&
+                letterData.feedbackSections.empathyReflection.length >= 2 && (
+                  <div className="bg-[#FFFBEC]/80 rounded-2xl p-4 mb-4">
+                    <p className={`${garamFont.className} text-[#6A3C00] text-lg mb-2 text-center`}>
+                      &ldquo;{letterData.feedbackSections.empathyReflection[0]}&rdquo;
+                    </p>
+                    <p className="text-gray-800 text-sm leading-7">
+                      {letterData.feedbackSections.empathyReflection[1]}
+                    </p>
+                  </div>
+                )}
+            </>
+          ) : letterData?.aiFeedback ? (
+            // 기존 단일 피드백 구조
             <div className="bg-[#FFFBEC]/80 rounded-2xl p-4 mb-4">
-              <p className="text-gray-800 text-sm leading-7 whitespace-pre-wrap">{feedback}</p>
+              <p className="text-gray-800 text-sm leading-7 whitespace-pre-wrap">
+                {letterData.aiFeedback}
+              </p>
             </div>
           ) : (
+            // 폴백 하드코딩된 구조
             <>
               <div className="bg-[#FFFBEC]/80 rounded-2xl p-4 mb-4">
                 <p className="text-gray-800 text-sm leading-7">
@@ -141,23 +189,39 @@ export default function FeedbackStep() {
         >
           <div className="mb-4">
             <p className="text-white mb-6">더 깊은 공감을 만드는 작은 제안을 드릴게요.</p>
-            <div className="bg-[#FFFBEC]/80 rounded-2xl p-3 mb-8">
-              <p className="text-gray-800 text-sm font-bold mb-3">
-                사연자의 감정을 먼저 헤아려 보아요.
-              </p>
-              <p className="text-gray-800 text-sm leading-7">
-                &ldquo;누구나 겪는 일이에요&rdquo;처럼 들릴 수 있는 말보다는,
-                <br />
-                &ldquo;그 상황, 정말 버거우셨겠어요&rdquo;처럼 사연자의 감정을 먼저 인정하는 말이 더
-                오래 기억에 남을 거예요.
-              </p>
-            </div>
+
+            {letterData?.feedbackSections?.improvementSuggestion &&
+            letterData.feedbackSections.improvementSuggestion.length >= 2 ? (
+              // 새로운 개선 제안 구조
+              <div className="bg-[#FFFBEC]/80 rounded-2xl p-3 mb-8">
+                <p className="text-gray-800 text-sm font-bold mb-3">
+                  {letterData.feedbackSections.improvementSuggestion[0]}
+                </p>
+                <p className="text-gray-800 text-sm leading-7">
+                  {letterData.feedbackSections.improvementSuggestion[1]}
+                </p>
+              </div>
+            ) : (
+              // 폴백 하드코딩된 구조
+              <div className="bg-[#FFFBEC]/80 rounded-2xl p-3 mb-8">
+                <p className="text-gray-800 text-sm font-bold mb-3">
+                  사연자의 감정을 먼저 헤아려 보아요.
+                </p>
+                <p className="text-gray-800 text-sm leading-7">
+                  &ldquo;누구나 겪는 일이에요&rdquo;처럼 들릴 수 있는 말보다는,
+                  <br />
+                  &ldquo;그 상황, 정말 버거우셨겠어요&rdquo;처럼 사연자의 감정을 먼저 인정하는 말이
+                  더 오래 기억에 남을 거예요.
+                </p>
+              </div>
+            )}
+
             <p className="text-white mb-6">오늘 무지님의 편지는 …</p>
 
             <div className="bg-[#FFFBEC]/80 rounded-xl p-3">
               <p className="text-gray-800 text-sm leading-7">
-                따뜻했고, 다정했고, 무엇보다 스스로에게도 다시 돌아올 수 있는 말이었어요.
-                <br />그 마음이 이 여정의 끝에서 오래 머물 수 있길 바라요.
+                {letterData?.feedbackSections?.overallComment ||
+                  '따뜻했고, 다정했고, 무엇보다 스스로에게도 다시 돌아올 수 있는 말이었어요. 그 마음이 이 여정의 끝에서 오래 머물 수 있길 바라요.'}
               </p>
             </div>
           </div>

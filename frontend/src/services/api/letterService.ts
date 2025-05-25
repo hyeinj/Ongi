@@ -1,4 +1,8 @@
-import { generateMockLetter, generateFeedback } from '../../app/actions/letterActions';
+import {
+  generateMockLetter,
+  generateFeedback,
+  generateStructuredFeedback,
+} from '../actions/letterActions';
 import { Category, EmotionType } from '../../core/entities';
 import { ILetterService } from '../../core/usecases/letterUseCases';
 
@@ -14,6 +18,12 @@ interface FeedbackResult {
   error?: string;
   feedback?: string;
   highlightedParts?: string[];
+  feedbackSections?: {
+    emotionConnection?: string;
+    empathyReflection?: string[];
+    improvementSuggestion?: string[];
+    overallComment?: string;
+  };
 }
 
 interface EmotionContext {
@@ -24,7 +34,6 @@ interface EmotionContext {
 
 // 편지 생성 관련 서비스 (인터페이스 구현)
 export class LetterService implements ILetterService {
-  
   // 모의 편지 생성
   async generateLetter(emotionContext: EmotionContext): Promise<LetterGenerationResult> {
     try {
@@ -48,24 +57,39 @@ export class LetterService implements ILetterService {
     }
   }
 
-  // 피드백 생성
+  // 피드백 생성 (구조화된 피드백 우선 시도)
   async generateFeedback(
     mockLetter: string,
     userResponse: string,
     emotionContext: EmotionContext
   ): Promise<FeedbackResult> {
     try {
-      const result = await generateFeedback(mockLetter, userResponse, {
+      // 먼저 구조화된 피드백 시도
+      const structuredResult = await generateStructuredFeedback(mockLetter, userResponse, {
+        category: emotionContext.category,
+        emotion: emotionContext.emotion,
+        answers: emotionContext.answers,
+      });
+
+      if (structuredResult.success && structuredResult.feedbackSections) {
+        return {
+          success: true,
+          feedbackSections: structuredResult.feedbackSections,
+        };
+      }
+
+      // 구조화된 피드백 실패 시 기존 피드백으로 폴백
+      const fallbackResult = await generateFeedback(mockLetter, userResponse, {
         category: emotionContext.category,
         emotion: emotionContext.emotion,
         answers: emotionContext.answers,
       });
 
       return {
-        success: result.success,
-        error: result.error,
-        feedback: result.feedback,
-        highlightedParts: result.highlightedParts,
+        success: fallbackResult.success,
+        error: fallbackResult.error,
+        feedback: fallbackResult.feedback,
+        highlightedParts: fallbackResult.highlightedParts,
       };
     } catch (error) {
       return {
@@ -74,4 +98,4 @@ export class LetterService implements ILetterService {
       };
     }
   }
-} 
+}

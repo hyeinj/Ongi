@@ -1,12 +1,12 @@
-import { 
+import {
   generateStep3Question,
-  generateStep4Question, 
+  generateStep4Question,
   generateStep5Question,
   generateStep7Question,
   analyzeEmotionAndCategory,
   generateFinalCardText,
-  generateStep6Texts
-} from '../../app/actions/questionActions';
+  generateStep6Texts,
+} from '../actions/questionActions';
 import { Category, EmotionType } from '../../core/entities';
 import { IQuestionService } from '../../core/usecases/emotionUseCases';
 
@@ -31,11 +31,10 @@ interface TextResult {
 
 // 질문 생성 관련 서비스 (인터페이스 구현)
 export class QuestionService implements IQuestionService {
-  
   // 다음 질문 생성
   async generateQuestion(data: QuestionData): Promise<string> {
     const { step2Answer, step3Answer, step4Feelings } = data;
-    
+
     if (!step3Answer) {
       const result = await generateStep3Question(step2Answer);
       if (!result.success) {
@@ -43,7 +42,7 @@ export class QuestionService implements IQuestionService {
       }
       return result.question;
     }
-    
+
     if (!step4Feelings) {
       const result = await generateStep4Question(step2Answer, step3Answer);
       if (!result.success) {
@@ -51,7 +50,7 @@ export class QuestionService implements IQuestionService {
       }
       return result.question;
     }
-    
+
     const result = await generateStep5Question(step2Answer, step3Answer, step4Feelings);
     if (!result.success) {
       throw new Error(result.error || '질문 생성에 실패했습니다.');
@@ -92,4 +91,4 @@ export class QuestionService implements IQuestionService {
   }> {
     return await generateStep7Question(allAnswers);
   }
-} 
+}

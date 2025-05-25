@@ -3,7 +3,11 @@ import { Letter, Category, EmotionType } from '../entities';
 // 서비스 인터페이스들
 export interface ILetterService {
   generateLetter(emotionContext: EmotionContext): Promise<LetterGenerationResult>;
-  generateFeedback(mockLetter: string, userResponse: string, emotionContext: EmotionContext): Promise<FeedbackResult>;
+  generateFeedback(
+    mockLetter: string,
+    userResponse: string,
+    emotionContext: EmotionContext
+  ): Promise<FeedbackResult>;
 }
 
 export interface ILetterStorage {
@@ -34,22 +38,25 @@ interface FeedbackResult {
   error?: string;
   feedback?: string;
   highlightedParts?: string[];
+  feedbackSections?: {
+    emotionConnection?: string;
+    empathyReflection?: string[];
+    improvementSuggestion?: string[];
+    overallComment?: string;
+  };
 }
 
 // 편지 관련 비즈니스 로직을 담당하는 클래스
 export class LetterUseCases {
-  constructor(
-    private letterService: ILetterService,
-    private letterStorage: ILetterStorage
-  ) {}
-  
+  constructor(private letterService: ILetterService, private letterStorage: ILetterStorage) {}
+
   // 편지 생성
   async generateLetter(
     date: string,
     emotionContext: EmotionContext
   ): Promise<LetterGenerationResult> {
     const result = await this.letterService.generateLetter(emotionContext);
-    
+
     // 성공시 스토리지에 저장
     if (result.success && result.mockLetter && result.realLetterId) {
       await this.letterStorage.saveLetter(date, {
@@ -57,15 +64,12 @@ export class LetterUseCases {
         realLetterId: result.realLetterId,
       });
     }
-    
+
     return result;
   }
 
   // 사용자 응답 저장
-  async saveUserResponse(
-    date: string,
-    response: string
-  ): Promise<void> {
+  async saveUserResponse(date: string, response: string): Promise<void> {
     await this.letterStorage.saveUserResponse(date, response);
   }
 
@@ -76,30 +80,39 @@ export class LetterUseCases {
     userResponse: string,
     emotionContext: EmotionContext
   ): Promise<FeedbackResult> {
-    const result = await this.letterService.generateFeedback(mockLetter, userResponse, emotionContext);
-    
+    const result = await this.letterService.generateFeedback(
+      mockLetter,
+      userResponse,
+      emotionContext
+    );
+
     // 성공시 스토리지에 저장
-    if (result.success && result.feedback) {
-      await this.letterStorage.saveLetter(date, {
-        aiFeedback: result.feedback,
-      });
+    if (result.success) {
+      const updateData: Partial<Letter> = {};
+
+      if (result.feedback) {
+        updateData.aiFeedback = result.feedback;
+      }
+
+      if (result.feedbackSections) {
+        updateData.feedbackSections = result.feedbackSections;
+      }
+
+      if (Object.keys(updateData).length > 0) {
+        await this.letterStorage.saveLetter(date, updateData);
+      }
     }
-    
+
     return result;
   }
 
   // 하이라이트 저장
-  async saveHighlight(
-    date: string,
-    highlights: string[]
-  ): Promise<void> {
+  async saveHighlight(date: string, highlights: string[]): Promise<void> {
     await this.letterStorage.saveHighlights(date, highlights);
   }
 
   // 편지 데이터 조회
-  async getLetterData(
-    date: string
-  ): Promise<Letter | null> {
+  async getLetterData(date: string): Promise<Letter | null> {
     return await this.letterStorage.getByDate(date);
   }
 
@@ -112,4 +125,4 @@ export class LetterUseCases {
   async deleteLetterData(date: string): Promise<void> {
     await this.letterStorage.deleteByDate(date);
   }
-} 
+}

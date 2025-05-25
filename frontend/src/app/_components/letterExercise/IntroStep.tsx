@@ -7,7 +7,7 @@ import letterImage from '@/assets/images/letter.png';
 import localFont from 'next/font/local';
 import letterExerciseLetterBg from '@/assets/images/letter-exercise-letter-bg.png';
 import letterExerciseLetterTopIcon from '@/assets/images/postbox-icon.png';
-// import { useLetter } from '@/presentation/hooks/useLetter';
+import { useLetter } from '@/ui/hooks/useLetter';
 import { useSearchParams } from 'next/navigation';
 
 const garamFont = localFont({
@@ -16,12 +16,11 @@ const garamFont = localFont({
 
 export default function IntroStep() {
   const searchParams = useSearchParams();
-  // ALERT: 클로즈베타 버전에서는 모의 편지 생성 기능 제거
-  // const { generateMockLetter, getLetterData } = useLetter();
-  // const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
-  // const [mockLetter, setMockLetter] = useState('');
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [dataLoaded, setDataLoaded] = useState(false);
+  const { generateMockLetter, getLetterData } = useLetter();
+  const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [mockLetter, setMockLetter] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [showContent, setShowContent] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
 
@@ -29,32 +28,31 @@ export default function IntroStep() {
   const introStepShown = searchParams.get('introStepShown') === 'true';
 
   // 편지 데이터 로드 및 생성 (한 번만 실행)
-  // ALERT: 클로즈베타 버전에서는 모의 편지 생성 기능 제거
-  // useEffect(() => {
-  //   if (dataLoaded) return;
+  useEffect(() => {
+    if (dataLoaded) return;
 
-  //   const loadOrGenerateLetter = async () => {
-  //     setIsLoading(true);
+    const loadOrGenerateLetter = async () => {
+      setIsLoading(true);
 
-  //     // 먼저 기존 편지 확인
-  //     const existingLetter = await getLetterData(currentDate);
-  //     if (existingLetter && existingLetter.mockLetter) {
-  //       setMockLetter(existingLetter.mockLetter);
-  //     } else {
-  //       // 없으면 새로 생성
-  //       const result = await generateMockLetter(currentDate);
-  //       if (result) {
-  //         setMockLetter(result.mockLetter);
-  //       }
-  //     }
+      // 먼저 기존 편지 확인
+      const existingLetter = await getLetterData(currentDate);
+      if (existingLetter && existingLetter.mockLetter) {
+        setMockLetter(existingLetter.mockLetter);
+      } else {
+        // 없으면 새로 생성
+        const result = await generateMockLetter(currentDate);
+        if (result?.mockLetter) {
+          setMockLetter(result.mockLetter);
+        }
+      }
 
-  //     setIsLoading(false);
-  //     setDataLoaded(true);
-  //   };
+      setIsLoading(false);
+      setDataLoaded(true);
+    };
 
-  //   loadOrGenerateLetter();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [currentDate, dataLoaded]); // 함수들을 의존성에서 제거
+    loadOrGenerateLetter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDate, dataLoaded]); // 함수들을 의존성에서 제거
 
   useEffect(() => {
     if (!introStepShown) {
@@ -80,10 +78,9 @@ export default function IntroStep() {
 
   if (!showContent) {
     // 인트로 단계가 끝나면 편지 내용 표시
-    // ALERT: 클로즈베타 버전에서는 모의 편지 생성 기능 제거 - LetterContent에서 mockletter isLoading 임시 제거
     return (
       <>
-        <LetterContent />
+        <LetterContent mockLetter={mockLetter} isLoading={isLoading} />
         <div className="fixed bottom-12 w-full flex justify-end px-8 z-50">
           <Link href="/letter-exercise/2">
             <div className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg">
