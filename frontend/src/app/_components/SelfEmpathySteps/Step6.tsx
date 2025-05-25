@@ -9,6 +9,7 @@ import nextArrow from '@/assets/icons/next-arrow.png';
 import '@/styles/SelfEmpathyModal.css';
 import { useState, useEffect } from 'react';
 import { useEmotion } from '@/ui/hooks/useEmotion';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 export default function Step6() {
   const router = useRouter();
@@ -132,7 +133,7 @@ export default function Step6() {
           </button>
         </div>
         <button className="next-button" onClick={handleNext} disabled={isLoading || !answer}>
-          {isLoading ? <span>저장 중...</span> : <Image src={nextArrow} alt="다음" />}
+          {isLoading ? <LoadingSpinner size="large" color="white" /> : <Image src={nextArrow} alt="다음" />}
         </button>
 
         {showConfirm && (

@@ -8,6 +8,7 @@ import bottomButton from '@/assets/icons/bottombutton.png';
 import { useState, useEffect } from 'react';
 import { useEmotion } from '@/ui/hooks/useEmotion';
 import paperPlane from '@/assets/icons/paper-plane.png';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 export default function Step7() {
   const router = useRouter();
@@ -70,7 +71,7 @@ export default function Step7() {
           disabled={isLoading}
         />
         <button className="bottom-button" onClick={handleNext} disabled={isLoading || !answer.trim()}>
-          {isLoading ? <span>저장 중...</span> : <Image src={bottomButton} alt="완료" />}
+          {isLoading ? <LoadingSpinner size="large" color="white" /> : <Image src={bottomButton} alt="완료" />}
           <span className="button-text">
             <Image src={paperPlane} alt="전송" className="paper-plane"/>전송하기
           </span>

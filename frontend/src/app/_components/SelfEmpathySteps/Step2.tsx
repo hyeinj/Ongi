@@ -5,6 +5,7 @@ import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
 import SkeletonUI from './SkeletonUI';
+import LoadingSpinner from '../common/LoadingSpinner';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import { useState, useEffect } from 'react';
 import { useEmotion } from '@/ui/hooks/useEmotion';
@@ -95,7 +96,7 @@ export default function Step2() {
           disabled={isLoading}
         />
         <button className="next-button" onClick={handleNext} disabled={isLoading || !answer.trim()}>
-          {isLoading ? <span>질문 생성 중...</span> : <Image src={nextArrow} alt="다음" />}
+          {isLoading ? <LoadingSpinner size="large" color="white" /> : <Image src={nextArrow} alt="다음" />}
         </button>
       </SelfEmpathyQuestion>
     </SelfEmpathyLayout>

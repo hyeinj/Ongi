@@ -13,6 +13,7 @@ import negativeIcon from '@/assets/icons/negative.png';
 import '@/styles/SelfEmpathyEmotion.css';
 import { useEmotion } from '@/ui/hooks/useEmotion';
 import { useDelayedLoading } from '@/ui/hooks/useDelayedLoading';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 const EMOTIONS = [
   { key: 'positive', icon: positiveIcon },
@@ -303,7 +304,7 @@ export default function Step4() {
           onClick={handleNext}
           disabled={isLoading || selectedFeelings.length === 0}
         >
-          {isLoading ? <span>질문 생성 중...</span> : <Image src={nextArrow} alt="다음" />}
+          {isLoading ? <LoadingSpinner size="large" color="white" /> : <Image src={nextArrow} alt="다음" />}
         </button>
       </SelfEmpathyQuestion>
     </SelfEmpathyLayout>
