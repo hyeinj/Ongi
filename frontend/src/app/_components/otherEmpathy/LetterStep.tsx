@@ -64,6 +64,7 @@ export default function LetterStep() {
               isOpen ? 'opacity-0 rotate-3' : 'opacity-100 rotate-0'
             }`}
             priority
+            loading="eager"
           />
 
           <Image
@@ -73,6 +74,7 @@ export default function LetterStep() {
               isOpen ? 'opacity-100 scale-105' : 'opacity-0 scale-95'
             }`}
             priority
+            loading="eager"
           />
         </div>
         <p className="pt-20 text-center text-white text-lg transition-opacity duration-700 ease-in-out">
@@ -112,6 +114,7 @@ export default function LetterStep() {
             height={350}
             className="w-full h-auto"
             priority
+            loading="eager"
           />
         </div>
       </div>

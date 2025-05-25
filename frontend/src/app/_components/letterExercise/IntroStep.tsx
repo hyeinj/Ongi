@@ -131,6 +131,7 @@ export default function IntroStep() {
           layout="responsive"
           objectFit="contain"
           priority
+          loading="eager"
         />
       </div>
     </div>
@@ -160,9 +161,17 @@ const LetterContent = ({ mockLetter, isLoading }: { mockLetter?: string; isLoadi
         alt="편지 배경 이미지"
         loading="eager"
         className="absolute bottom-15 left-0 w-full h-auto"
+        priority
       />
       <div className="flex flex-col items-center justify-start bg-[#F7F4E6] w-full h-[80vh] shadow-[#00000058] shadow-xl p-4 scroll-auto overflow-y-auto ">
-        <Image src={letterExerciseLetterTopIcon} alt="편지 위 아이콘" width={50} height={50} />
+        <Image
+          src={letterExerciseLetterTopIcon}
+          alt="편지 위 아이콘"
+          width={50}
+          height={50}
+          loading="eager"
+          priority
+        />
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-full">

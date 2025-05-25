@@ -89,7 +89,13 @@ export default function FeedbackStep() {
       >
         <div className="flex flex-col items-center">
           <div className="animate-float mb-4">
-            <Image src={letterExerciseBig} alt="letter exercise big" width={100} />
+            <Image
+              src={letterExerciseBig}
+              alt="letter exercise big"
+              width={100}
+              priority
+              loading="eager"
+            />
           </div>
           <p className="text-white font-thin mb-5">무지님의 편지를 보내고 있어요</p>
         </div>
@@ -255,6 +261,8 @@ export default function FeedbackStep() {
           alt="post box"
           width={130}
           className="absolute bottom-15 left-0"
+          priority
+          loading="eager"
         />
       </div>
 
