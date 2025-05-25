@@ -33,7 +33,7 @@ public class SelfEmpathyDTO {
         private String step3Feelings;
     }
 
-    // step 5,6, summary 다 이 DTO 사용
+    // step 5,6 둘 다 이 DTO 사용
     @NoArgsConstructor
     @Getter
     @Setter
@@ -42,5 +42,17 @@ public class SelfEmpathyDTO {
         private String step2_answer;
         private String step3Feelings;
         private String step4_answer;
+    }
+
+    // summary에서 사용하는 DTO
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class summaryRequestDTO{
+        private String step1_answer;
+        private String step2_answer;
+        private String step3Feelings;
+        private String step4_answer;
+        private String step5_answer;
     }
 }
