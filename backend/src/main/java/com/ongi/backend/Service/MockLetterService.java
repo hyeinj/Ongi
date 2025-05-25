@@ -189,4 +189,97 @@ public class MockLetterService {
             throw new RuntimeException("OpenAI API 호출 중 오류 발생", e);
         }
     }
+
+    public String[] generateFeedback2(
+            String step1Answer, String step2Answer, String step3Feelings, String step4Answer,
+            String step5Answer, String mockLetter, String letterResponse
+    ) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setBearerAuth(apiKey);
+
+            ObjectNode requestBody = objectMapper.createObjectNode();
+            requestBody.put("model", "gpt-4o-mini");
+
+            ObjectNode systemMessage = objectMapper.createObjectNode();
+            systemMessage.put("role", "system");
+            systemMessage.put("content", """
+            당신은 사람들의 따뜻한 말을 기억하고 되돌려주는 공감의 메신저입니다.
+            무지님이 다른 사람에게 써준 편지 속에서 진심이 담긴 공감의 문장을 찾아, 이번에는 그 말을 무지님에게도 다시 들려주세요.
+                        
+            [작성 지침]
+            - 사용자가 사연자에게 써준 편지 중, 진심이 담긴 따뜻한 공감 문장을 한 줄 추출하세요.
+            - 해당 문장을 JSON 배열의 첫 번째 요소로 출력합니다. 반드시 큰따옴표 없이 문장만 작성하세요.
+            - 두 번째 요소에는, 그 말을 이번에는 사용자 자신에게 들려주는 따뜻한 위로 문장을 작성하세요.
+            - 말투는 부드럽고 다정하게, 길이는 2~3문장 정도로 해주세요.
+            - 전체 응답은 JSON 배열 형식으로 출력합니다. 예시는 다음과 같아요:
+               
+            [예시 1]
+            [
+                “조금 쉬어도 괜찮아요”,
+                "무지님과 비슷한 마음을 지닌 누군가에게 무지님이 조심스레 건넨 이 한마디처럼, 이번엔 그 말을 자신에게도 들려주세요. “조금 쉬어도 괜찮아요.” 무지님은 정말, 여기까지 열심히 잘 걸어오셨어요."
+            ]
+                
+            [예시 2]
+            [
+              "당신은 참 좋은 사람이에요",
+              "비슷한 마음을 지닌 누군가에게 무지님이 건넨 따듯한 한마디처럼, 이번에는 그 말을 자신에게도 들려주세요. “당신은 참 좋은 사람이에요.” 언제나 타인에게 의지가 되는 사람으로 올바르게 서 가는 당신은, 그 자체로도 충분하고 가치있는 사람이에요."
+            ]
+            """);
+
+            ObjectNode userMessage = objectMapper.createObjectNode();
+            userMessage.put("role", "user");
+            userMessage.put("content", String.format("""
+            아래는 사용자의 자기공감 기록과, 사연자에게 써준 답장 편지입니다.
+            이 중에서 사연자에게 해준 따뜻한 공감 문장을 하나 골라주세요. 그리고 그 말을 무지님 자신에게도 건네주세요.
+
+            [자기공감 Step1 답변 - 귀찮았던 일]
+            %s
+
+            [자기공감 Step2 답변 - 구체적인 상황 설명]  
+            %s
+
+            [자기공감 Step3 선택한 감정들]  
+            %s
+            
+            [자기공감 Step4 답변 - 선택했던 감정이 들었던 자세한 속 마음]
+            %s
+            
+            [자기공감 Step5 답변 - 감정을 느꼈던 가장 큰 이유]
+            %s
+            
+            [사연편지]
+            %s
+            
+            [사용자가 사연편지에 대해 작성한 답변 편지]
+            %s
+            
+            """, step1Answer, step2Answer, step3Feelings, step4Answer, step5Answer, mockLetter, letterResponse));
+
+            requestBody.putArray("messages")
+                    .add(systemMessage)
+                    .add(userMessage);
+
+            HttpEntity<String> request = new HttpEntity<>(requestBody.toString(), headers);
+
+            String response = restTemplate.postForObject(OPENAI_API_URL, request, String.class);
+            log.info("OpenAI API 전체 응답: {}", response);
+
+            ObjectNode responseJson = (ObjectNode) objectMapper.readTree(response);
+            String getResponse = responseJson.path("choices")
+                    .get(0)
+                    .path("message")
+                    .path("content")
+                    .asText();
+
+            // getResponse를 JSON 배열로 파싱 (응답이 유효한 JSON 배열 형식이라고 가정)
+            String[] result = objectMapper.readValue(getResponse, String[].class);
+            return result;
+
+        } catch (Exception e) {
+            log.error("OpenAI API 호출 중 오류 발생", e);
+            throw new RuntimeException("OpenAI API 호출 중 오류 발생", e);
+        }
+    }
 }

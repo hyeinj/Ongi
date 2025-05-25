@@ -1,7 +1,6 @@
 package com.ongi.backend.Controller;
 
 import com.ongi.backend.DTO.MockLetterDTO;
-import com.ongi.backend.DTO.SelfEmpathyDTO;
 import com.ongi.backend.Service.MockLetterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -62,8 +61,18 @@ public class MockLetterController {
                     mockLetterFeedbackDTO.getLetter_response()
             );
 
+            // 두 번째 feedback
+            String[] generatedFeedback2 = mockLetterService.generateFeedback2(
+                    mockLetterFeedbackDTO.getStep1_answer(), mockLetterFeedbackDTO.getStep2_answer(),
+                    mockLetterFeedbackDTO.getStep3Feelings(), mockLetterFeedbackDTO.getStep4_answer(),
+                    mockLetterFeedbackDTO.getStep5_answer(), mockLetterFeedbackDTO.getMock_letter(),
+                    mockLetterFeedbackDTO.getLetter_response()
+            );
+
             Map<String, String> response = new HashMap<>();
             response.put("generatedFeedback1", generatedFeedback1);
+            response.put("generatedFeedback2-공감의 문구", generatedFeedback2[0]);
+            response.put("generatedFeedback2-위로 문장", generatedFeedback2[1]);
 
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
