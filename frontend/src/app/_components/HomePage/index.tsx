@@ -14,9 +14,12 @@ import self from '@/assets/images/self.png';
 import growth from '@/assets/images/growth.png';
 import routine from '@/assets/images/routine.png';
 import relate from '@/assets/images/relate.png';
+import PWAInstallModal from '@/app/_components/common/PWAInstallModal';
+import { usePWAInstall } from '@/presentation/hooks/usePWAInstall';
 
 const HomePage: React.FC = () => {
   const router = useRouter();
+  const { shouldShowInstallModal, hideInstallModal } = usePWAInstall();
 
   // 임시 데이터 - 나중에 백엔드에서 가져올 예정
   const letterCounts = {
@@ -67,6 +70,12 @@ const HomePage: React.FC = () => {
           <span>{letterCounts.relate}</span>
         </div>
       </div>
+      
+      {/* PWA 설치 모달 */}
+      <PWAInstallModal 
+        isOpen={shouldShowInstallModal} 
+        onClose={hideInstallModal} 
+      />
     </div>
   );
 };
