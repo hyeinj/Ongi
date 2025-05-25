@@ -1,9 +1,10 @@
 import { DailyEmotion, EmotionEntry, Category, EmotionType } from '../../core/entities';
+import { IEmotionStorage } from '../../core/usecases/emotionUseCases';
 
 const EMOTION_STORAGE_KEY = 'emotion';
 
-// 감정 데이터 스토리지 서비스
-export class EmotionStorage {
+// 감정 데이터 스토리지 서비스 (인터페이스 구현)
+export class EmotionStorage implements IEmotionStorage {
   
   // 날짜별 감정 데이터 조회
   async getByDate(date: string): Promise<DailyEmotion | null> {

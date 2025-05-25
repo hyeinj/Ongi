@@ -41,11 +41,11 @@ export const useLetter = (): UseLetterReturn => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 의존성을 useMemo로 감싸서 매 렌더링마다 새로 생성되지 않도록 함
-  const letterUseCases = useMemo(() => new LetterUseCases(), []);
+  // DI: 의존성 주입으로 UseCase에 구현체들을 주입
   const letterService = useMemo(() => new LetterService(), []);
   const letterStorage = useMemo(() => new LetterStorage(), []);
   const emotionStorage = useMemo(() => new EmotionStorage(), []);
+  const letterUseCases = useMemo(() => new LetterUseCases(letterService, letterStorage), [letterService, letterStorage]);
 
   // 현재 날짜 가져오기
   const getCurrentDate = () => new Date().toISOString().split('T')[0];
@@ -80,19 +80,7 @@ export const useLetter = (): UseLetterReturn => {
         ),
       };
 
-      const result = await letterUseCases.generateLetter(
-        targetDate,
-        async () => await letterService.generateLetter(emotionContext)
-      );
-
-      // 성공시 스토리지에 저장
-      if (result.success && result.mockLetter && result.realLetterId) {
-        await letterStorage.saveLetter(targetDate, {
-          mockLetter: result.mockLetter,
-          realLetterId: result.realLetterId,
-        });
-      }
-
+      const result = await letterUseCases.generateLetter(targetDate, emotionContext);
       return result;
     } catch (err) {
       handleError(err);
@@ -100,7 +88,7 @@ export const useLetter = (): UseLetterReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, [letterUseCases, letterService, letterStorage, emotionStorage, handleError]);
+  }, [letterUseCases, emotionStorage, handleError]);
 
   // 기존 인터페이스: 사용자 응답 저장
   const saveUserResponse = useCallback(async (userResponse: string, date?: string): Promise<boolean> => {
@@ -109,11 +97,7 @@ export const useLetter = (): UseLetterReturn => {
 
     try {
       const targetDate = date || getCurrentDate();
-      await letterUseCases.saveUserResponse(
-        targetDate,
-        userResponse,
-        letterStorage.saveUserResponse.bind(letterStorage)
-      );
+      await letterUseCases.saveUserResponse(targetDate, userResponse);
       return true;
     } catch (err) {
       handleError(err);
@@ -121,7 +105,7 @@ export const useLetter = (): UseLetterReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, [letterUseCases, letterStorage, handleError]);
+  }, [letterUseCases, handleError]);
 
   // 기존 인터페이스: 피드백 생성
   const generateFeedback = useCallback(async (date?: string) => {
@@ -155,19 +139,10 @@ export const useLetter = (): UseLetterReturn => {
 
       const result = await letterUseCases.generateFeedback(
         targetDate,
-        async () => await letterService.generateFeedback(
-          letterData.mockLetter,
-          letterData.userResponse,
-          emotionContext
-        )
+        letterData.mockLetter,
+        letterData.userResponse,
+        emotionContext
       );
-
-      // 성공시 스토리지에 저장
-      if (result.success && result.feedback) {
-        await letterStorage.saveLetter(targetDate, {
-          aiFeedback: result.feedback,
-        });
-      }
 
       return result;
     } catch (err) {
@@ -176,7 +151,7 @@ export const useLetter = (): UseLetterReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, [letterUseCases, letterService, letterStorage, emotionStorage, handleError]);
+  }, [letterUseCases, letterStorage, emotionStorage, handleError]);
 
   // 기존 인터페이스: 편지 데이터 조회
   const getLetterData = useCallback(async (date?: string): Promise<Letter | null> => {
@@ -185,10 +160,7 @@ export const useLetter = (): UseLetterReturn => {
 
     try {
       const targetDate = date || getCurrentDate();
-      const result = await letterUseCases.getLetterData(
-        targetDate,
-        letterStorage.getByDate.bind(letterStorage)
-      );
+      const result = await letterUseCases.getLetterData(targetDate);
       return result;
     } catch (err) {
       handleError(err);
@@ -196,7 +168,7 @@ export const useLetter = (): UseLetterReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, [letterUseCases, letterStorage, handleError]);
+  }, [letterUseCases, handleError]);
 
   // 기존 인터페이스: 편지 데이터 삭제
   const deleteLetterData = useCallback(async (date?: string): Promise<boolean> => {
@@ -205,7 +177,7 @@ export const useLetter = (): UseLetterReturn => {
 
     try {
       const targetDate = date || getCurrentDate();
-      await letterStorage.deleteByDate(targetDate);
+      await letterUseCases.deleteLetterData(targetDate);
       return true;
     } catch (err) {
       handleError(err);
@@ -213,7 +185,7 @@ export const useLetter = (): UseLetterReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, [letterStorage, handleError]);
+  }, [letterUseCases, handleError]);
 
   // 기존 인터페이스: 모든 편지 조회
   const getAllLetters = useCallback(async (): Promise<Record<string, Letter>> => {
@@ -221,7 +193,7 @@ export const useLetter = (): UseLetterReturn => {
     setError(null);
 
     try {
-      const result = await letterStorage.getAll();
+      const result = await letterUseCases.getAllLetters();
       return result;
     } catch (err) {
       handleError(err);
@@ -229,7 +201,7 @@ export const useLetter = (): UseLetterReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, [letterStorage, handleError]);
+  }, [letterUseCases, handleError]);
 
   // 기존 인터페이스: 하이라이트 저장
   const saveHighlight = useCallback(async (highlightedParts: string[], date?: string): Promise<boolean> => {
@@ -238,11 +210,7 @@ export const useLetter = (): UseLetterReturn => {
 
     try {
       const targetDate = date || getCurrentDate();
-      await letterUseCases.saveHighlight(
-        targetDate,
-        highlightedParts,
-        letterStorage.saveHighlights.bind(letterStorage)
-      );
+      await letterUseCases.saveHighlight(targetDate, highlightedParts);
       return true;
     } catch (err) {
       handleError(err);
@@ -250,7 +218,7 @@ export const useLetter = (): UseLetterReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, [letterUseCases, letterStorage, handleError]);
+  }, [letterUseCases, handleError]);
 
   return {
     isLoading,

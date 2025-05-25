@@ -1,5 +1,6 @@
 import { generateMockLetter, generateFeedback } from '../../app/actions/letterActions';
 import { Category, EmotionType } from '../../core/entities';
+import { ILetterService } from '../../core/usecases/letterUseCases';
 
 interface LetterGenerationResult {
   success: boolean;
@@ -21,8 +22,8 @@ interface EmotionContext {
   answers: { [stage: string]: string };
 }
 
-// 편지 생성 관련 서비스
-export class LetterService {
+// 편지 생성 관련 서비스 (인터페이스 구현)
+export class LetterService implements ILetterService {
   
   // 모의 편지 생성
   async generateLetter(emotionContext: EmotionContext): Promise<LetterGenerationResult> {

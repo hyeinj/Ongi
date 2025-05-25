@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { EmotionUseCases } from '../../core/usecases/emotionUseCases';
 import { QuestionService } from '../../services/api/questionService';
 import { EmotionStorage } from '../../services/storage/emotionStorage';
-import { DailyEmotion } from '../../core/entities';
+import { DailyEmotion, EmotionEntry } from '../../core/entities';
 
 // 기존 인터페이스와 호환되는 감정 훅
 export const useEmotion = () => {
@@ -10,10 +10,10 @@ export const useEmotion = () => {
   const [error, setError] = useState<string | null>(null);
   const [emotionData, setEmotionData] = useState<DailyEmotion | null>(null);
 
-  // 의존성을 useMemo로 감싸서 매 렌더링마다 새로 생성되지 않도록 함
-  const emotionUseCases = useMemo(() => new EmotionUseCases(), []);
+  // DI: 의존성 주입으로 UseCase에 구현체들을 주입
   const questionService = useMemo(() => new QuestionService(), []);
   const emotionStorage = useMemo(() => new EmotionStorage(), []);
+  const emotionUseCases = useMemo(() => new EmotionUseCases(questionService, emotionStorage), [questionService, emotionStorage]);
 
   // 현재 날짜 가져오기
   const getCurrentDate = () => new Date().toISOString().split('T')[0];
@@ -32,15 +32,11 @@ export const useEmotion = () => {
         today,
         'step2',
         question,
-        answer,
-        emotionStorage.saveStageEntry.bind(emotionStorage)
+        answer
       );
       
       // 2. 다음 질문 생성
-      return await emotionUseCases.generateNextQuestion(
-        answer,
-        questionService.generateQuestion.bind(questionService)
-      );
+      return await emotionUseCases.generateNextQuestion(answer);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '처리에 실패했습니다.';
       setError(errorMessage);
@@ -48,7 +44,7 @@ export const useEmotion = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [emotionUseCases, questionService, emotionStorage]);
+  }, [emotionUseCases]);
 
   // 기존 인터페이스: Step3 답변 저장 및 Step4 질문 생성
   const saveStep3AndGenerateStep4 = useCallback(async (question: string, answer: string) => {
@@ -63,8 +59,7 @@ export const useEmotion = () => {
         today,
         'step3',
         question,
-        answer,
-        emotionStorage.saveStageEntry.bind(emotionStorage)
+        answer
       );
       
       // 2. 다음 질문 생성 (step2 답변도 필요)
@@ -73,7 +68,6 @@ export const useEmotion = () => {
       
       return await emotionUseCases.generateNextQuestion(
         step2Answer,
-        questionService.generateQuestion.bind(questionService),
         answer
       );
     } catch (err) {
@@ -83,7 +77,7 @@ export const useEmotion = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [emotionUseCases, questionService, emotionStorage]);
+  }, [emotionUseCases, emotionStorage]);
 
   // 기존 인터페이스: Step4 감정 저장 및 Step5 질문 생성
   const saveStep4FeelingsAndGenerateStep5 = useCallback(async (
@@ -102,8 +96,7 @@ export const useEmotion = () => {
         today,
         'step4',
         question,
-        answer,
-        emotionStorage.saveStageEntry.bind(emotionStorage)
+        answer
       );
       
       // 2. 다음 질문 생성
@@ -113,7 +106,6 @@ export const useEmotion = () => {
       
       return await emotionUseCases.generateNextQuestion(
         step2Answer,
-        questionService.generateQuestion.bind(questionService),
         step3Answer,
         selectedFeelings
       );
@@ -124,7 +116,7 @@ export const useEmotion = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [emotionUseCases, questionService, emotionStorage]);
+  }, [emotionUseCases, emotionStorage]);
 
   // 기존 인터페이스: 스테이지 답변 저장
   const saveStageAnswer = useCallback(async (
@@ -141,8 +133,7 @@ export const useEmotion = () => {
         today,
         stage,
         question,
-        answer,
-        emotionStorage.saveStageEntry.bind(emotionStorage)
+        answer
       );
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '저장에 실패했습니다.';
@@ -151,19 +142,18 @@ export const useEmotion = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [emotionUseCases, emotionStorage]);
+  }, [emotionUseCases]);
 
   // 기존 인터페이스: 스테이지 답변 조회
   const getStageAnswer = useCallback(async (stage: string): Promise<string | null> => {
     try {
       const today = getCurrentDate();
-      const data = await emotionStorage.getByDate(today);
-      return data?.entries?.[stage]?.answer || null;
+      return await emotionUseCases.getStageAnswer(today, stage);
     } catch (err) {
       console.error('답변 조회 실패:', err);
       return null;
     }
-  }, [emotionStorage]);
+  }, [emotionUseCases]);
 
   // 기존 인터페이스: 감정 분석 및 저장
   const analyzeAndSaveEmotionAndCategory = useCallback(async () => {
@@ -172,25 +162,11 @@ export const useEmotion = () => {
       setError(null);
       
       const today = getCurrentDate();
-      const data = await emotionStorage.getByDate(today);
-      
-      if (!data?.entries) {
-        throw new Error('분석할 데이터가 없습니다.');
-      }
-
-      const allAnswers: { [stage: string]: string } = {};
-      Object.entries(data.entries).forEach(([stage, entry]) => {
-        allAnswers[stage] = entry.answer;
-      });
-
-      const result = await emotionUseCases.analyzeEmotion(
-        allAnswers,
-        questionService.analyzeEmotion.bind(questionService)
-      );
+      const result = await emotionUseCases.analyzeAndSaveEmotion(today);
 
       if (result.success) {
-        await emotionStorage.updateCategoryAndEmotion(today, result.category, result.emotion);
-        setEmotionData({ ...data, category: result.category, emotion: result.emotion });
+        const data = await emotionStorage.getByDate(today);
+        setEmotionData(data);
       }
 
       return result;
@@ -201,7 +177,7 @@ export const useEmotion = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [emotionUseCases, questionService, emotionStorage]);
+  }, [emotionUseCases, emotionStorage]);
 
   // 기존 인터페이스: 최종 카드 텍스트 생성
   const generateFinalCardText = useCallback(async () => {
@@ -218,14 +194,13 @@ export const useEmotion = () => {
 
       const allAnswers: { [stage: string]: string } = {};
       Object.entries(data.entries).forEach(([stage, entry]) => {
-        allAnswers[stage] = entry.answer;
+        allAnswers[stage] = (entry as EmotionEntry).answer;
       });
 
       return await emotionUseCases.generateFinalText(
         allAnswers,
         data.category,
-        data.emotion,
-        questionService.generateFinalText.bind(questionService)
+        data.emotion
       );
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '텍스트 생성에 실패했습니다.';
@@ -234,7 +209,7 @@ export const useEmotion = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [emotionUseCases, questionService, emotionStorage]);
+  }, [emotionUseCases, emotionStorage]);
 
   // 기존 인터페이스: Step6 텍스트 생성
   const generateStep6Texts = useCallback(async () => {
@@ -252,11 +227,11 @@ export const useEmotion = () => {
       const allAnswers: { [stage: string]: string } = {};
       Object.entries(data.entries).forEach(([stage, entry]) => {
         if (['step2', 'step3', 'step4', 'step5'].includes(stage)) {
-          allAnswers[stage] = entry.answer;
+          allAnswers[stage] = (entry as EmotionEntry).answer;
         }
       });
 
-      return await questionService.generateStep6Texts(allAnswers);
+      return await emotionUseCases.generateStep6Texts(allAnswers);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Step6 텍스트 생성에 실패했습니다.';
       setError(errorMessage);
@@ -264,7 +239,7 @@ export const useEmotion = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [emotionStorage, questionService]);
+  }, [emotionStorage, emotionUseCases]);
 
   return {
     isLoading,

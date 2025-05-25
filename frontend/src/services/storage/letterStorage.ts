@@ -1,9 +1,10 @@
 import { Letter } from '../../core/entities';
+import { ILetterStorage } from '../../core/usecases/letterUseCases';
 
 const LETTER_STORAGE_KEY = 'letter';
 
-// 편지 데이터 스토리지 서비스
-export class LetterStorage {
+// 편지 데이터 스토리지 서비스 (인터페이스 구현)
+export class LetterStorage implements ILetterStorage {
   
   // 날짜별 편지 데이터 조회
   async getByDate(date: string): Promise<Letter | null> {

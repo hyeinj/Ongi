@@ -7,6 +7,7 @@ import {
   generateStep6Texts
 } from '../../app/actions/questionActions';
 import { Category, EmotionType } from '../../core/entities';
+import { IQuestionService } from '../../core/usecases/emotionUseCases';
 
 interface QuestionData {
   step2Answer: string;
@@ -27,8 +28,8 @@ interface TextResult {
   error?: string;
 }
 
-// 질문 생성 관련 서비스
-export class QuestionService {
+// 질문 생성 관련 서비스 (인터페이스 구현)
+export class QuestionService implements IQuestionService {
   
   // 다음 질문 생성
   async generateQuestion(data: QuestionData): Promise<string> {
