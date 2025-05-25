@@ -241,6 +241,36 @@ export const useEmotion = () => {
     }
   }, [emotionStorage, emotionUseCases]);
 
+  // Step7 질문 생성
+  const generateStep7Question = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const today = getCurrentDate();
+      const data = await emotionStorage.getByDate(today);
+      
+      if (!data?.entries) {
+        throw new Error('Step7 질문 생성을 위한 데이터가 부족합니다.');
+      }
+
+      const allAnswers: { [stage: string]: string } = {};
+      Object.entries(data.entries).forEach(([stage, entry]) => {
+        if (['step2', 'step3', 'step4', 'step5'].includes(stage)) {
+          allAnswers[stage] = (entry as EmotionEntry).answer;
+        }
+      });
+
+      return await emotionUseCases.generateStep7Question(allAnswers);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Step7 질문 생성에 실패했습니다.';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [emotionStorage, emotionUseCases]);
+
   return {
     isLoading,
     error,
@@ -254,5 +284,6 @@ export const useEmotion = () => {
     analyzeAndSaveEmotionAndCategory,
     generateFinalCardText,
     generateStep6Texts,
+    generateStep7Question,
   };
 }; 

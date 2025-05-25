@@ -85,3 +85,84 @@
         padding-top: 41vh;
     }
 }
+
+/* Step6 선택지 스타일 */
+.step6-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* 기존 예/아니오 버튼 그룹 스타일 조정 */
+.yesno-btn-group2 {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.yesno-btn2 {
+  width: 100%;
+  padding: 1.5vh 0;
+  border-radius: 30px;
+  border: none;
+  background: #eeeeee;
+  color: black;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: center;
+  cursor: pointer;
+  flex: 1;
+}
+
+.yesno-btn2:hover {
+  background: #e0e0e0;
+}
+
+.yesno-btn2.selected {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.yesno-btn2:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 기존 예/아니오 버튼 그룹 스타일 조정 */
+.yesno-btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.yesno-btn {
+  width: 100%;
+  padding: 1.5vh 0;
+  border-radius: 30px;
+  border: none;
+  background: #eeeeee;
+  color: black;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: center;
+  cursor: pointer;
+  flex: 1;
+}
+
+.yesno-btn:hover {
+  background: #e0e0e0;
+}
+
+.yesno-btn.selected {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.yesno-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

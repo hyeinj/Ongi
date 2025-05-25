@@ -5,7 +5,8 @@ export interface IQuestionService {
   generateQuestion(data: QuestionData): Promise<string>;
   analyzeEmotion(answers: { [stage: string]: string }): Promise<AnalysisResult>;
   generateFinalText(answers: { [stage: string]: string }, category: Category, emotion: EmotionType): Promise<TextResult>;
-  generateStep6Texts(answers: { [stage: string]: string }): Promise<{ smallText: string; largeText: string; success: boolean; error?: string }>;
+  generateStep6Texts(answers: { [stage: string]: string }): Promise<{ smallText: string; largeText: string; options: string[]; success: boolean; error?: string }>;
+  generateStep7Question(answers: { [stage: string]: string }): Promise<{ question: string; success: boolean; error?: string }>;
 }
 
 export interface IEmotionStorage {
@@ -89,8 +90,15 @@ export class EmotionUseCases {
   // Step6 텍스트 생성
   async generateStep6Texts(
     allAnswers: { [stage: string]: string }
-  ): Promise<{ smallText: string; largeText: string; success: boolean; error?: string }> {
+  ): Promise<{ smallText: string; largeText: string; options: string[]; success: boolean; error?: string }> {
     return await this.questionService.generateStep6Texts(allAnswers);
+  }
+
+  // Step7 질문 생성
+  async generateStep7Question(
+    allAnswers: { [stage: string]: string }
+  ): Promise<{ question: string; success: boolean; error?: string }> {
+    return await this.questionService.generateStep7Question(allAnswers);
   }
 
   // 스테이지 답변 조회

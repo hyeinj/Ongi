@@ -2,6 +2,7 @@ import {
   generateStep3Question,
   generateStep4Question, 
   generateStep5Question,
+  generateStep7Question,
   analyzeEmotionAndCategory,
   generateFinalCardText,
   generateStep6Texts
@@ -76,9 +77,19 @@ export class QuestionService implements IQuestionService {
   async generateStep6Texts(allAnswers: { [stage: string]: string }): Promise<{
     smallText: string;
     largeText: string;
+    options: string[];
     success: boolean;
     error?: string;
   }> {
     return await generateStep6Texts(allAnswers);
+  }
+
+  // Step7 질문 생성
+  async generateStep7Question(allAnswers: { [stage: string]: string }): Promise<{
+    question: string;
+    success: boolean;
+    error?: string;
+  }> {
+    return await generateStep7Question(allAnswers);
   }
 } 
