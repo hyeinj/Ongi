@@ -462,7 +462,7 @@ public class MockLetterService {
                     .path("content")
                     .asText();
 
-            return "오늘 무지님의 편지는...\n" + getResponse + "\n그 마음이 이 여정의 끝에서 더 오래 머물 수 있길 바라요.";
+            return getResponse + "\n\n그 마음이 이 여정의 끝에서 더 오래 머물 수 있길 바라요.";
 
         } catch (Exception e) {
             log.error("OpenAI API 호출 중 오류 발생", e);
