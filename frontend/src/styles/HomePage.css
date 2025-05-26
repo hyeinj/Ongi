@@ -73,19 +73,17 @@
 .home-page .postoffice {
   height: 285px;
   position: absolute;
-  left: 50%;
+  left: 19%;
   top: 54.62%;
   width: 251px;
   z-index: 1;
   transition: none;
-  cursor: pointer;
-  transform: translateX(-50%);
   filter: none;
-  animation: none;
+  animation: float 3s ease-in-out infinite;
 }
 
 .home-page .postoffice:active {
-  animation: none;
+  animation: glow 1.5s ease-in-out infinite;
 }
 
 /* 물결 효과를 위한 가상 요소 */
@@ -121,6 +119,24 @@
   }
 }
 
+@keyframes bounce {
+  0%, 100% {
+    transform: translate(-50%, 0);
+  }
+  50% {
+    transform: translate(-50%, -10px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.3);
+  }
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -131,14 +147,11 @@
 }
 
 @keyframes float {
-  0% {
-    transform: translateY(0px) rotate(0deg);
+  0%, 100% {
+    transform: translateY(0);
   }
   50% {
-    transform: translateY(-6px) rotate(2deg);
-  }
-  100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translateY(-15px);
   }
 }
 
