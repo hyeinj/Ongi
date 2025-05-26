@@ -90,13 +90,13 @@ export default function Step6() {
     try {
       await saveStageAnswer('step6', largeText || '감정의 원인에 대한 질문', answer);
       
-      // "네 맞아요" 선택 시 바로 다음 단계로
-      if (answer === 'yes') {
-        router.push('/self-empathy/7');
-      } else {
-        // 다른 선택지는 모달 표시
+      // "다른 이유인 것 같아요" 선택 시만 모달 표시
+      if (answer === 'no') {
         setShowModal(true);
         setSelectedButton(null);
+      } else {
+        // "네 맞아요" 및 GPT 생성 선택지들은 바로 다음 단계로
+        router.push('/self-empathy/7');
       }
     } catch (err) {
       console.error('Step6 처리 실패:', err);

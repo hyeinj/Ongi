@@ -110,7 +110,7 @@ export default function FeedbackStep() {
         `}
         ref={scrollContainerRef}
       >
-        <h2 className="text-white text-md mb-6 w-full text-left">
+        <h2 className="text-white text-md mb-0 w-full text-left">
           잠시, 이 편지를 함께 바라볼까요?
           <br />
           무지님의 마음과 사연자의 마음이 닮아 있었어요.
@@ -123,7 +123,7 @@ export default function FeedbackStep() {
               {/* 1. 감정 연결 피드백 */}
               {letterData.feedbackSections.emotionConnection && (
                 <div className="bg-[#FFFBEC]/80 rounded-2xl p-4 mb-4">
-                  <p className="text-gray-800 text-sm leading-7 whitespace-pre-wrap">
+                  <p className="text-gray-800 text-sm leading-6 whitespace-pre-wrap">
                     {letterData.feedbackSections.emotionConnection}
                   </p>
                 </div>
@@ -136,7 +136,7 @@ export default function FeedbackStep() {
                     <p className={`${garamFont.className} text-[#6A3C00] text-lg mb-2 text-center`}>
                       &ldquo;{letterData.feedbackSections.empathyReflection[0]}&rdquo;
                     </p>
-                    <p className="text-gray-800 text-sm leading-7">
+                    <p className="text-gray-800 text-sm leading-6">
                       {letterData.feedbackSections.empathyReflection[1]}
                     </p>
                   </div>
@@ -203,7 +203,7 @@ export default function FeedbackStep() {
                 <p className="text-gray-800 text-sm font-bold mb-3">
                   {letterData.feedbackSections.improvementSuggestion[0]}
                 </p>
-                <p className="text-gray-800 text-sm leading-7">
+                <p className="text-gray-800 text-sm leading-6">
                   {letterData.feedbackSections.improvementSuggestion[1]}
                 </p>
               </div>
@@ -213,7 +213,7 @@ export default function FeedbackStep() {
                 <p className="text-gray-800 text-sm font-bold mb-3">
                   사연자의 감정을 먼저 헤아려 보아요.
                 </p>
-                <p className="text-gray-800 text-sm leading-7">
+                <p className="text-gray-800 text-sm leading-6">
                   &ldquo;누구나 겪는 일이에요&rdquo;처럼 들릴 수 있는 말보다는,
                   <br />
                   &ldquo;그 상황, 정말 버거우셨겠어요&rdquo;처럼 사연자의 감정을 먼저 인정하는 말이
@@ -225,8 +225,9 @@ export default function FeedbackStep() {
             <p className="text-white mb-6">오늘 무지님의 편지는 …</p>
 
             <div className="bg-[#FFFBEC]/80 rounded-xl p-3">
-              <p className="text-gray-800 text-sm leading-7">
-                {letterData?.feedbackSections?.overallComment ||
+              <p className="text-gray-800 text-sm leading-6 whitespace-pre-wrap">
+                {letterData?.feedbackSections?.overallComment +
+                  '\n그 마음이 이 여정의 끝에서 더 오래 머물 수 있길 바라요.' ||
                   '따뜻했고, 다정했고, 무엇보다 스스로에게도 다시 돌아올 수 있는 말이었어요. 그 마음이 이 여정의 끝에서 오래 머물 수 있길 바라요.'}
               </p>
             </div>
@@ -243,7 +244,7 @@ export default function FeedbackStep() {
           aria-hidden={!isOpen}
         >
           <div className="mb-4 text-end">
-            <p className="text-white mb-1 leading-7">
+            <p className="text-white mb-1 leading-6">
               마음을 건네고, 마음을 받아보는 일.
               <br />
               그 연결의 여정을

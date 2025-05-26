@@ -11,6 +11,8 @@ interface LetterGenerationResult {
   error?: string;
   realLetterId?: string;
   mockLetter?: string;
+  letterTitle?: string;
+  letterContent?: string;
 }
 
 interface FeedbackResult {
@@ -48,6 +50,8 @@ export class LetterService implements ILetterService {
         error: result.error,
         realLetterId: result.realLetterId,
         mockLetter: result.mockLetter,
+        letterTitle: result.letterTitle,
+        letterContent: result.letterContent,
       };
     } catch (error) {
       return {
