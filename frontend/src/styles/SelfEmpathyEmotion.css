@@ -11,13 +11,32 @@
   background: none;
   border: none;
   outline: none;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: all 0.3s ease;
   border-radius: 50%;
   padding: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.emotion-icon-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: transparent;
+  transition: all 0.3s ease;
+  z-index: -1;
+}
+
+.emotion-icon-btn:hover::before {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .emotion-icon-btn.selected {
@@ -26,19 +45,62 @@
   transform: scale(1.08);
 }
 
+.emotion-icon-btn.selected::before {
+  background: rgba(0, 0, 0, 0.1);
+}
+
 .emotion-icon-btn.selected.positive img {
   box-shadow: 0 0 12px 4px #ffe06680;
   border-radius: 50%;
+  animation: pulsePositive 1.5s infinite;
 }
 
 .emotion-icon-btn.selected.neutral img {
   box-shadow: 0 0 12px 4px #7ed95780;
   border-radius: 50%;
+  animation: pulseNeutral 1.5s infinite;
 }
 
 .emotion-icon-btn.selected.negative img {
   box-shadow: 0 0 12px 4px #90cdf480;
   border-radius: 50%;
+  animation: pulseNegative 1.5s infinite;
+}
+
+@keyframes pulsePositive {
+  0% {
+    box-shadow: 0 0 12px 4px rgba(255, 224, 102, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px 8px rgba(255, 224, 102, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 12px 4px rgba(255, 224, 102, 0.5);
+  }
+}
+
+@keyframes pulseNeutral {
+  0% {
+    box-shadow: 0 0 12px 4px rgba(126, 217, 87, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px 8px rgba(126, 217, 87, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 12px 4px rgba(126, 217, 87, 0.5);
+  }
+}
+
+@keyframes pulseNegative {
+  0% {
+    box-shadow: 0 0 12px 4px rgba(144, 205, 244, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px 8px rgba(144, 205, 244, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 12px 4px rgba(144, 205, 244, 0.5);
+  }
 }
 
 .emotion-label {
@@ -64,6 +126,19 @@
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: auto;
+  transition: background-color 0.3s ease;
+}
+
+.feeling-list.positive {
+  background: rgba(255, 247, 209, 0.5);
+}
+
+.feeling-list.neutral {
+  background: rgba(230, 252, 217, 0.5);
+}
+
+.feeling-list.negative {
+  background: rgba(227, 240, 255, 0.5);
 }
 
 .feeling-btn {
@@ -75,22 +150,48 @@
   color: #222;
   font-size: 13px;
   font-weight: 400;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  transition: all 0.3s ease;
   box-shadow: 0 1px 2px rgba(0,0,0,0.03);
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.feeling-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.feeling-btn:hover::before {
+  transform: translateX(100%);
 }
 
 .feeling-btn.selected.positive {
   background: #fff7d1;
   color: #bfa100;
+  box-shadow: 0 2px 6px rgba(191, 161, 0, 0.2);
+  transform: translateY(-1px);
 }
+
 .feeling-btn.selected.neutral {
   background: #e6fcd9;
   color: #3ca352;
+  box-shadow: 0 2px 6px rgba(60, 163, 82, 0.2);
+  transform: translateY(-1px);
 }
+
 .feeling-btn.selected.negative {
   background: #e3f0ff;
   color: #3578c6;
+  box-shadow: 0 2px 6px rgba(53, 120, 198, 0.2);
+  transform: translateY(-1px);
 }
