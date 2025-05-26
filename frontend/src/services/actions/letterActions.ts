@@ -624,7 +624,7 @@ ${userResponse}`,
     }
 
     const data = await response.json();
-    return data.choices[0]?.message?.content?.trim();
+    return data.choices[0]?.message?.content?.trim() + "\n그 마음이 이 여정의 끝에서 더 오래 머물 수 있길 바라요.";
   } catch (error) {
     console.error('전체 코멘트 생성 실패:', error);
     return undefined;
