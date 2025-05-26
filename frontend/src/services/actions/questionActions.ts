@@ -20,6 +20,13 @@ interface Step6TextResponse {
   error?: string;
 }
 
+interface Step5QuestionResponse {
+  smallText: string;
+  largeText: string;
+  success: boolean;
+  error?: string;
+}
+
 /**
  * Step2 답변을 기반으로 Step3 질문 생성
  */
@@ -174,7 +181,7 @@ export async function generateStep5Question(
   step2Answer: string,
   step3Answer: string,
   step4Feelings: string[]
-): Promise<QuestionResponse> {
+): Promise<Step5QuestionResponse> {
   try {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
@@ -201,7 +208,8 @@ export async function generateStep5Question(
             작성 시 주의사항:
             - 과장된 위로나 감정적 표현은 피하고, 따뜻하고 공감 어린 말투로 작성해주세요
             - 선택된 감정 단어들을 반드시 자연스럽게 포함시켜 문장을 작성해주세요
-            - 응답은 정확히 두 문장으로 구성하고, 모든 문장은 정중한 말투(~요)로 끝나야 합니다
+            - 응답은 반드시 **두 문장**으로 구성하고, 모든 문장은 정중한 말투(~요)로 끝나야 합니다
+            - 두 문장을 줄바꿈으로 구분해서 작성해주세요
             
             [예시 1]
             귀찮은 것을 마주했을때, 무지님의 마음이 많이 복잡했을 것 같아요.
@@ -227,16 +235,7 @@ export async function generateStep5Question(
             ${step3Answer}
 
             [Step4 - 선택했던 감정이 들었던 자세한 속 마음]  
-            ${step4Feelings.join(', ')}
-
-            예시:
-            스스로 준비를 미리 해두지 않은 자신에게 답답하고 화가 나셨군요.
-            무지님이 답답함과 짜증, 초조함을 느꼈던 이유 중 가장 큰 이유는 무엇인가요?
-            "나 스스로 준비되지 않았다는 생각이 많이 들었기 때문"
-            "팀장님이 나의 실력을 제대로 믿어주시지 않는다는 생각이 들었기 때문"
-            "프로젝트가 중요한데 망치기 싫다는 생각이 많이 들었기 때문"
-
-            위의 내용을 바탕으로, 공감을 표현하고 거기서 짜증남이 있었는지 탐색하는 질문을 두 문장 이내로 생성해주세요.`,
+            ${step4Feelings.join(', ')}`,
           },
         ],
         max_tokens: 200,
@@ -249,16 +248,23 @@ export async function generateStep5Question(
     }
 
     const data = await response.json();
-    const question = data.choices[0]?.message?.content?.trim() || '';
+    const fullResponse = data.choices[0]?.message?.content?.trim() || '';
+    
+    // 두 문장을 분리
+    const sentences = fullResponse.split('\n').filter((s: string) => s.trim());
+    const smallText = sentences[0] || '';
+    const largeText = sentences[1] || sentences[0] || ''; // 두 번째 문장이 없으면 첫 번째 문장 사용
 
     return {
-      question,
+      smallText,
+      largeText,
       success: true,
     };
   } catch (error) {
     console.error('Step5 질문 생성 실패:', error);
     return {
-      question: '',
+      smallText: '',
+      largeText: '',
       success: false,
       error: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.',
     };

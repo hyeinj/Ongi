@@ -15,9 +15,10 @@ export default function Step5() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // URL 파라미터의 질문
+  // URL 파라미터의 질문을 smallText와 largeText로 분리
   const urlQuestion = searchParams.get('question');
-  const [question, setQuestion] = useState(urlQuestion || '질문을 불러올 수 없습니다.');
+  const [smallText, setSmallText] = useState('');
+  const [largeText, setLargeText] = useState('짜증남의 느낌이 들었던 무지님의 속마음을 조금 더 말해주실 수 있나요?');
   const [answer, setAnswer] = useState('');
 
   // 클린 아키텍처를 통한 감정 데이터 관리
@@ -37,9 +38,16 @@ export default function Step5() {
 
     loadPreviousAnswer();
 
-    // URL 파라미터로 전달된 질문이 있다면 설정
+    // URL 파라미터로 전달된 질문을 smallText와 largeText로 분리
     if (urlQuestion) {
-      setQuestion(urlQuestion);
+      const sentences = urlQuestion.split('\n').filter((s: string) => s.trim());
+      if (sentences.length >= 2) {
+        setSmallText(sentences[0]);
+        setLargeText(sentences[1]);
+      } else if (sentences.length === 1) {
+        setSmallText(sentences[0]);
+        setLargeText('무지님의 속마음을 조금 더 말해주실 수 있나요?');
+      }
     }
   }, [urlQuestion, getStageAnswer]);
 
@@ -48,7 +56,8 @@ export default function Step5() {
 
     try {
       // 도메인 레이어를 통한 비즈니스 로직 처리
-      await saveStageAnswer('step5', question, answer);
+      const fullQuestion = `${smallText}\n${largeText}`;
+      await saveStageAnswer('step5', fullQuestion, answer);
       router.push('/self-empathy/6');
     } catch (err) {
       console.error('Step5 처리 실패:', err);
@@ -89,8 +98,8 @@ export default function Step5() {
     <SelfEmpathyLayout currentStep={4} totalStep={6} onBack={() => router.push('/self-empathy/4')}>
       <SelfEmpathyQuestion
         numbering={4}
-        smallText={question}
-        largeText="짜증남의 느낌이 들었던 무지님의 속마음을 조금 더 말해주실 수 있나요?"
+        smallText={smallText}
+        largeText={largeText}
       >
         <textarea
           className="answer-input step3"
