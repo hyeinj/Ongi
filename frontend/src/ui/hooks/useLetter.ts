@@ -22,6 +22,8 @@ interface UseLetterReturn {
     error?: string;
     realLetterId?: string;
     mockLetter?: string;
+    letterTitle?: string;
+    letterContent?: string;
   } | null>;
   saveUserResponse: (userResponse: string, date?: string) => Promise<boolean>;
   generateFeedback: (date?: string) => Promise<{

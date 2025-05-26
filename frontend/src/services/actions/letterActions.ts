@@ -2,6 +2,8 @@
 
 interface MockLetterResponse {
   mockLetter: string;
+  letterTitle: string;
+  letterContent: string;
   realLetterId: string;
   success: boolean;
   error?: string;
@@ -100,16 +102,25 @@ ${answersText}`,
 
     // JSON 배열 형식으로 파싱 (제목과 본문)
     let mockLetter = '';
+    let letterTitle = '';
+    let letterContent = '';
+    
     try {
       const result = JSON.parse(content);
       if (Array.isArray(result) && result.length >= 2) {
-        // 제목과 본문을 합쳐서 하나의 편지로 구성
+        letterTitle = result[0];
+        letterContent = result[1];
+        // 제목과 본문을 합쳐서 하나의 편지로 구성 (기존 호환성 유지)
         mockLetter = `제목: ${result[0]}\n\n${result[1]}`;
       } else {
         mockLetter = content; // 파싱 실패 시 원본 내용 사용
+        letterTitle = '익명의 편지';
+        letterContent = content;
       }
     } catch {
       mockLetter = content; // 파싱 실패 시 원본 내용 사용
+      letterTitle = '익명의 편지';
+      letterContent = content;
     }
 
     // 임시 realLetterId 생성 (추후 실제 편지 매칭 시스템으로 교체)
@@ -117,6 +128,8 @@ ${answersText}`,
 
     return {
       mockLetter,
+      letterTitle,
+      letterContent,
       realLetterId,
       success: true,
     };
@@ -124,6 +137,8 @@ ${answersText}`,
     console.error('모의 편지 생성 실패:', error);
     return {
       mockLetter: '',
+      letterTitle: '',
+      letterContent: '',
       realLetterId: '',
       success: false,
       error: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.',

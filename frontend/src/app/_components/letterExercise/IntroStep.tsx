@@ -19,6 +19,7 @@ export default function IntroStep() {
   const { generateMockLetter, getLetterData } = useLetter();
   const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [mockLetter, setMockLetter] = useState('');
+  const [letterTitle, setLetterTitle] = useState('매일이 전쟁 같은 시간 속, 숨 쉴 틈이 필요해요.');
   const [isLoading, setIsLoading] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [showContent, setShowContent] = useState(true);
@@ -38,11 +39,19 @@ export default function IntroStep() {
       const existingLetter = await getLetterData(currentDate);
       if (existingLetter && existingLetter.mockLetter) {
         setMockLetter(existingLetter.mockLetter);
+        // 기존 편지에서 제목 추출 (제목: 형태로 저장된 경우)
+        const titleMatch = existingLetter.mockLetter.match(/^제목: (.+)\n/);
+        if (titleMatch) {
+          setLetterTitle(titleMatch[1]);
+        }
       } else {
         // 없으면 새로 생성
         const result = await generateMockLetter(currentDate);
         if (result?.mockLetter) {
           setMockLetter(result.mockLetter);
+          if (result.letterTitle) {
+            setLetterTitle(result.letterTitle);
+          }
         }
       }
 
@@ -118,7 +127,7 @@ export default function IntroStep() {
         <div className="relative mb-6">
           <div className="bg-white/25 rounded-full mx-auto blur-[2.50px] w-full h-full absolute top-0 left-0" />
           <p className={`relative text-black px-6 py-3 text-m italic ${garamFont.className}`}>
-            &ldquo;매일이 전쟁 같은 시간 속, 숨 쉴 틈이 필요해요.&rdquo;
+            &ldquo;{letterTitle}&rdquo;
           </p>
         </div>
       </div>
