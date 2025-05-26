@@ -52,10 +52,10 @@ const HomePage: React.FC = () => {
         <Image className="element-2" alt="별똥별 2" src={star2} />
         <Image className="element-3" alt="별똥별 3" src={star3} />
         <Image className="mountain" alt="산" src={homepageMt} />
-        <Image className="self" alt="자아섬" src={self} />
-        <Image className="growth" alt="성장섬" src={growth} />
-        <Image className="routine" alt="루틴섬" src={routine} />
-        <Image className="relate" alt="관계섬" src={relate} />
+        <Image className="self" alt="자아섬" src={self} onClick={() => router.push('/island/self')} />
+        <Image className="growth" alt="성장섬" src={growth} onClick={() => router.push('/island/growth')} />
+        <Image className="routine" alt="루틴섬" src={routine} onClick={() => router.push('/island/routine')} />
+        <Image className="relate" alt="관계섬" src={relate} onClick={() => router.push('/island/relate')} />
         {/* 백앤드로 채워야하는 숫자 */}
         <div className="circle-ellipse circle-self">
           <span>{letterCounts.self}</span>
