@@ -20,7 +20,7 @@ import TutorialOverlay from './TutorialOverlay';
 
 const HomePage: React.FC = () => {
   const router = useRouter();
-  const { shouldShowInstallModal, hideInstallModal } = usePWAInstall();
+  const { shouldShowInstallModal } = usePWAInstall();
 
   // 임시 데이터 - 나중에 백엔드에서 가져올 예정
   const letterCounts = {
