@@ -99,7 +99,7 @@
 
 .island-page .island {
   position: absolute;
-  bottom: 20%;
+  bottom: 15%;
   left: 50%;
   transform: translateX(-50%);
   width: 40%;
@@ -152,7 +152,7 @@
   width: 24%;
   position: absolute;
   left: 67%;
-  bottom: 15%;
+  bottom: 10%;
   z-index: 1;
   transition: all 0.3s ease-in-out;
   cursor: pointer;
