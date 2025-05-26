@@ -284,7 +284,7 @@ export default function Step4() {
             </button>
           ))}
         </div>
-        <div className="feeling-list">
+        <div className={`feeling-list ${selectedEmotion}`}>
           {feelings.map((feeling) => (
             <button
               key={feeling}

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import '@/styles/HomePage.css';
@@ -16,10 +16,11 @@ import routine from '@/assets/images/routine.png';
 import relate from '@/assets/images/relate.png';
 import PWAInstallModal from '@/app/_components/common/PWAInstallModal';
 import { usePWAInstall } from '@/ui/hooks/usePWAInstall';
+import TutorialOverlay from './TutorialOverlay';
 
 const HomePage: React.FC = () => {
   const router = useRouter();
-  const { shouldShowInstallModal, hideInstallModal } = usePWAInstall();
+  const { shouldShowInstallModal } = usePWAInstall();
 
   // 임시 데이터 - 나중에 백엔드에서 가져올 예정
   const letterCounts = {
@@ -29,12 +30,52 @@ const HomePage: React.FC = () => {
     relate: 4,
   };
 
+  // 상태 분리
+  const [showPWAModal, setShowPWAModal] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  useEffect(() => {
+    // PWA 모달이 필요한지, 튜토리얼이 필요한지 한 번에 판단
+    const neverShowPWA = localStorage.getItem('pwa-install-never-show');
+    const pwaReminder = localStorage.getItem('pwa-install-reminder');
+    const isTutorialDone = localStorage.getItem('homepage_tutorial_done');
+
+    // PWA 모달 조건(예시)
+    if (!neverShowPWA && (!pwaReminder || new Date(pwaReminder) < new Date()) && shouldShowInstallModal) {
+      setShowPWAModal(true);
+      setShowTutorial(false); // PWA 모달이 뜰 때는 튜토리얼 무조건 숨김
+    } else if (!isTutorialDone) {
+      setShowTutorial(true);
+      setShowPWAModal(false);
+    }
+  }, [shouldShowInstallModal]);
+
+  // PWA 모달 닫힐 때 튜토리얼 띄우기
+  const handlePWAModalClose = () => {
+    setShowPWAModal(false);
+    if (!localStorage.getItem('homepage_tutorial_done')) {
+      setShowTutorial(true);
+    }
+  };
+
+  const handleTutorialFinish = () => {
+    localStorage.setItem('homepage_tutorial_done', 'true');
+    setShowTutorial(false);
+  };
+
   const handlePostOfficeClick = () => {
     router.replace('/self-empathy/1');
   };
 
   return (
     <div className="home-page">
+      {showPWAModal && (
+        <PWAInstallModal
+          isOpen={showPWAModal}
+          onClose={handlePWAModalClose}
+        />
+      )}
+      {showTutorial && <TutorialOverlay onFinish={handleTutorialFinish} />}
       <div className="background">
         <div className="text-wrapper">
           <Image className="line" alt="Line" src={line} />
@@ -70,12 +111,6 @@ const HomePage: React.FC = () => {
           <span>{letterCounts.relate}</span>
         </div>
       </div>
-      
-      {/* PWA 설치 모달 */}
-      <PWAInstallModal 
-        isOpen={shouldShowInstallModal} 
-        onClose={hideInstallModal} 
-      />
     </div>
   );
 };
