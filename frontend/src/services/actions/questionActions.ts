@@ -81,7 +81,7 @@ export async function generateStep3Question(answer: string): Promise<QuestionRes
     }
 
     const data = await response.json();
-    const question = data.choices[0]?.message?.content?.trim() || '';
+    const question = '솔직하게 나눠주셔서 감사해요\n' + data.choices[0]?.message?.content?.trim() || '';
 
     return {
       question,
@@ -137,10 +137,6 @@ export async function generateStep4Question(
             [Step3 답변 - 구체적인 상황]  
             ${step3Answer}
 
-            예시:
-            귀찮은 것을 마주했을때, 무지님의 마음이 많이 복잡했을 것 같아요.
-            짜증남의 느낌이 들었던 무지님의 속 마음을 조금 더 말해주실 수 있나요?
-
             위의 내용을 바탕으로, 담백하게 공감하는 문장을 두 문장 이내로 생성해주세요.`,
           },
         ],
@@ -154,10 +150,11 @@ export async function generateStep4Question(
     }
 
     const data = await response.json();
-    const question = data.choices[0]?.message?.content?.trim() || '';
+    const question = data.choices[0]?.message?.content?.trim() + "\n그럼 우리 한 발짝 물러나서 감정을 살펴볼게요" || '';
 
+    console.log(question);
     return {
-      question,
+      question: question,
       success: true,
     };
   } catch (error) {
@@ -602,7 +599,7 @@ ${answersText}
 
 예시:
 smallText: 스스로 준비를 미리 해두지 않은 자신에게 답답하고 화가 나셨군요.
-largeText: 무지님이 답답함과 짜증, 초조함을 느꼈던 이유 중 가장 큰 이유는 “시간이 촉박했기 때문”이 맞을까요?
+largeText: 무지님이 답답함과 짜증, 초조함을 느꼈던 이유 중 가장 큰 이유는 "시간이 촉박했기 때문"이 맞을까요?
 options: [
   "나 스스로 준비되지 않았다는 생각이 많이 들었기 때문",
   "팀장님이 나의 실력을 제대로 믿어주시지 않는다는 생각이 들었기 때문",
@@ -706,7 +703,7 @@ export async function generateStep7Question(allAnswers: {
             - 따옴표(")는 사용하지 마세요.
             
             [예시1]
-            무지님은 오늘 옷을 고르는 평범한 상황 속에서 답답함과 짜증이라는 감정을 느꼈어요. 그 감정은 단순한 불편함이 아니라 ‘시간을 효율적으로 써야 한다’는 내면의 기준에서 비롯된 것이었죠
+            무지님은 오늘 옷을 고르는 평범한 상황 속에서 답답함과 짜증이라는 감정을 느꼈어요. 그 감정은 단순한 불편함이 아니라 '시간을 효율적으로 써야 한다'는 내면의 기준에서 비롯된 것이었죠
                         
             그 짜증을 따라가며 무지님은 왜 그런 감정이 들었는지, 무엇을 기대하고 있었는지를 상황의 맥락과 자신의 가치 기준과 연결해 바라보았어요. 앞으로 비슷한 순간에, 자신을 덜 다그치고 더 부드럽게 조율할 수 있는 실마리가 될 거에요.
                         
@@ -715,7 +712,7 @@ export async function generateStep7Question(allAnswers: {
             [예시 2]
             무지님은 오늘 친구와의 대화 속에서 함께 있으면 마음이 편해진다는 친구의 말에 뿌듯함과 설렘의 감정을 느꼈어요. 그 감정은 단순히 말에서 오는 설렘이 아닌, 친구에게 다가가기 어려웠던 과거의 무지님을 극복했다는 내면의 성장에서 비롯된 것이었죠.
                         
-            뿌듯함의 감정을 따라가며 무지님은 “왜 그런 감정이 들었는지”, “그 감정이 느끼게 된 과거의 다른 사건들이 무엇인지”를 상황의 맥락과 자신의 과거 경험을 연결해서 바라보았어요.
+            뿌듯함의 감정을 따라가며 무지님은 "왜 그런 감정이 들었는지", "그 감정이 느끼게 된 과거의 다른 사건들이 무엇인지"를 상황의 맥락과 자신의 과거 경험을 연결해서 바라보았어요.
             앞으로 수많은 극복의 순간들 속에서, 이 경험은 더 큰 뿌듯함을 불러올 수 있을 것이라 확신해요
                         
             오늘의 무지님은, 뿌듯함의 감정 속에서 본인의 힘듦을 극복하며 한단계 더 성장했어요.`,
