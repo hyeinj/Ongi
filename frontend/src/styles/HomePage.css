@@ -48,7 +48,6 @@
   width: 60px;
   opacity: 0.5;
   animation: float 4s ease-in-out infinite, twinkle 2s ease-in-out infinite;
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
 }
 
 .home-page .element-2 {
@@ -59,7 +58,6 @@
   width: 98px;
   opacity: 0.5;
   animation: float 4s ease-in-out infinite 0.7s, twinkle 2s ease-in-out infinite 0.3s;
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
 }
 
 .home-page .element-3 {
@@ -70,50 +68,24 @@
   width: 77px;
   opacity: 0.5;
   animation: float 4s ease-in-out infinite 1.4s, twinkle 2s ease-in-out infinite 0.7s;
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
 }
 
 .home-page .postoffice {
   height: 285px;
   position: absolute;
-  left: 50%; /* 화면 중앙 기준점 */
-  top: 54.62%; /* 426/780*100 */
+  left: 50%;
+  top: 54.62%;
   width: 251px;
   z-index: 1;
-  transition: all 0.3s ease-in-out;
+  transition: none;
   cursor: pointer;
-  transform: translateX(-50%); /* 자신의 너비의 절반만큼 왼쪽으로 이동 */
+  transform: translateX(-50%);
+  filter: none;
+  animation: none;
 }
 
 .home-page .postoffice:active {
-  animation: islandClick 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes islandClick {
-  0% {
-    transform: scale(1) translateX(-50%);
-  }
-  15% {
-    transform: scale(1.08) translateY(-8px) translateX(-50%);
-  }
-  30% {
-    transform: scale(1.05) translateY(-5px) translateX(-50%);
-  }
-  45% {
-    transform: scale(1.07) translateY(-7px) translateX(-50%);
-  }
-  60% {
-    transform: scale(1.04) translateY(-4px) translateX(-50%);
-  }
-  75% {
-    transform: scale(1.06) translateY(-6px) translateX(-50%);
-  }
-  90% {
-    transform: scale(1.03) translateY(-3px) translateX(-50%);
-  }
-  100% {
-    transform: scale(1) translateX(-50%);
-  }
+  animation: none;
 }
 
 /* 물결 효과를 위한 가상 요소 */
@@ -173,15 +145,12 @@
 @keyframes twinkle {
   0% {
     opacity: 0.5;
-    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
   }
   50% {
     opacity: 0.8;
-    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
   }
   100% {
     opacity: 0.5;
-    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
   }
 }
 
@@ -281,3 +250,10 @@
   top: 43.33%; /* 338/780*100 */
   left: 86.11%; /* 310/360*100 */
 }
+
+@keyframes pulseMain {
+  0% { transform: scale(1);}
+  50% { transform: scale(1.07);}
+  100% { transform: scale(1);}
+}
+

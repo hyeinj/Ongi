@@ -1,0 +1,46 @@
+.tutorial-overlay {
+  position: fixed;
+  left: 0; top: 0; width: 100vw; height: 100vh;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.tutorial-backdrop {
+  position: absolute;
+  left: 0; top: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.7);
+  -webkit-mask-image: radial-gradient(circle 150px at 50% 68%, transparent 0 140px, black 160px 100%);
+  mask-image: radial-gradient(circle 150px at 50% 68%, transparent 0 140px, black 160px 100%);
+  pointer-events: none;
+}
+
+.tutorial-tooltip {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, 0);
+  background: #fff;
+  color: #222;
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 24px #0002;
+  min-width: 280px;
+  text-align: center;
+  z-index: 10000;
+}
+
+.tutorial-tooltip button {
+  margin: 12px 8px 0 8px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  background: #ffe066;
+  color: #222;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.tutorial-tooltip button:last-child {
+  background: #eee;
+  color: #666;
+}
