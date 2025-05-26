@@ -55,7 +55,7 @@ export class QuestionService implements IQuestionService {
     if (!result.success) {
       throw new Error(result.error || '질문 생성에 실패했습니다.');
     }
-    // Step5는 smallText와 largeText를 합쳐서 반환 (기존 호환성 유지)
+    // Step5는 smallText와 largeText를 합쳐서 반환
     return `${result.smallText}\n${result.largeText}`;
   }
 
