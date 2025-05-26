@@ -95,10 +95,10 @@ export default function Step8() {
         <div className="final-card-text">{finalCardText}</div>
       </div>
       <div className="final-bottom-ment">
-        오늘도 무지님은,
+        {/* 오늘도 무지님은,
         <br />
         여러 감정 속에서도, 스스로를
-        <br />더 다정하게 대하는 법을 찾아가고 있어요
+        <br />더 다정하게 대하는 법을 찾아가고 있어요 */}
       </div>
       <Image className="mail-box" src={mailBox} alt="메일박스" />
       <button className="next-button" onClick={() => router.push('/self-empathy/9')}>

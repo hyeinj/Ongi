@@ -44,7 +44,7 @@ export async function generateStep3Question(answer: string): Promise<QuestionRes
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4',
         messages: [
           {
             role: 'system',
@@ -123,7 +123,7 @@ export async function generateStep4Question(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4',
         messages: [
           {
             role: 'system',
@@ -221,36 +221,20 @@ export async function generateStep5Question(
         messages: [
           {
             role: 'system',
-            content: `당신은 감정 분석과 공감에 능숙한 상담사입니다. 사용자의 답변을 바탕으로 세 가지 텍스트를 생성해주세요:
+            content: `당신은 공감 능력이 뛰어난 상담사입니다.  
+사용자의 상황 설명과 감정 단어들을 바탕으로 따뜻하고 담백한 공감을 표현해주세요.  
 
-1. smallText: 사용자가 Step5에서 자세히 설명한 감정과 속마음에 대한 공감 메시지 (1문장, ~셨군요로 끝남)
-   - Step5의 감정 설명을 가장 중요하게 참고하여 작성해주세요
-   - 사용자가 자신의 감정을 어떻게 이해하고 있는지에 초점을 맞춰주세요
-   - 다른 단계의 내용은 보조적으로만 참고해주세요
+형식은 다음과 같습니다:  
+1. **첫 번째 문장**: Step2, Step3 내용을 요약하며, 감정 단어 중 대표적인 것 1~2개를 자연스럽게 녹여 공감해주세요.  
+2. **두 번째 문장**: 전체 감정 단어들을 바탕으로 아래 형식을 그대로 사용해주세요:  
+"[선택한 감정 표현]의 느낌이 들었던 무지님의 속 마음을 조금 더 말해주실 수 있나요?"
 
-2. largeText: 감정의 핵심 원인을 추론하고 확인하는 질문 (2문장 내외, 정중한 말투)
-   - 가장 가능성이 높은 원인 하나를 선택하여 질문해주세요
-   - 이 원인은 options에 포함되지 않아야 합니다
-
-3. options: 감정의 가능한 원인들을 3개의 선택지로 제시 (각각 따옴표로 감싸진 문장, ~때문으로 끝남)
-   - largeText에서 제시한 원인과는 다른, 추가적인 가능성들을 제시해주세요
-   - 사용자의 답변에서 발견할 수 있는 다른 관점이나 원인들을 포함해주세요
-
-largeText는 다음 패턴을 따라주세요:
-"무지님이 [감정들]을 느꼈던 이유 중 가장 큰 이유는 [원인] 때문이 맞을까요?"
-
-응답 형식:
-{
-  "smallText": "생성된 공감 메시지",
-  "largeText": "생성된 확인 질문",
-  "options": [
-    "첫 번째 가능한 원인 (largeText와 다른 원인)",
-    "두 번째 가능한 원인 (largeText와 다른 원인)", 
-    "세 번째 가능한 원인 (largeText와 다른 원인)"
-  ]
-}
-
-JSON 형식으로만 응답해주세요.`,
+제한 조건:  
+- 응답은 **두 문장으로만**, 반드시 줄바꿈으로 구분해 작성해야 합니다.  
+- 모든 문장은 **정중한 말투(~요)**로 끝나야 합니다.  
+- **감정 단어는 쉼표로 나열하지 말고 자연스럽게 연결**해주세요.  
+- 두 번째 문장은 감정 단어 전체를 반영하지만, 문법적으로 부드럽게 연결된 표현이어야 합니다.  
+- 과장된 위로나 감정적 과잉 표현은 피해주세요.`,
           },
           {
             role: 'user',
@@ -273,8 +257,19 @@ JSON 형식으로만 응답해주세요.`,
 [Step4 감정들] 반가움, 따뜻함, 편안함
 
 → 출력:  
-오랜만에 친구와 편안하게 대화하며 식사했던 시간이 무지님에게 따뜻한 기억으로 남으셨을 것 같아요.  
-반가움과 따뜻함과 편안함의 느낌이 들었던 무지님의 속 마음을 조금 더 말해주실 수 있나요?`
+친구와 오랜만에 마주 앉아 편안하게 나눈 대화가 무지님에게 따뜻하게 다가왔을 것 같아요.  
+반가움과 따뜻함, 그리고 편안함의 감정이 어우러졌던 무지님의 속 마음을 조금 더 들려주실 수 있나요?`
+          },
+          {
+            role: 'user',
+            content: `사용자의 답변입니다:
+[Step2] 발표를 했어요  
+[Step3] 발표를 앞두고 엄청 긴장했는데, 막상 하다보니 잘 끝냈고 칭찬도 들었어요  
+[Step4 감정들] 긴장됨, 뿌듯함, 안도감
+
+→ 출력:  
+준비한 발표를 무사히 마치고 칭찬까지 받았던 경험이 무지님에게 뿌듯하면서도 안도되는 순간이었을 것 같아요.  
+긴장됨과 뿌듯함, 그리고 안도감의 감정이 섞여 있었던 무지님의 속 마음을 조금 더 말해주실 수 있나요?`
           },
           {
             role: 'user',
@@ -423,7 +418,7 @@ export async function analyzeEmotionAndCategory(allAnswers: {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4',
         messages: [
           {
             role: 'system',
@@ -541,7 +536,7 @@ export async function generateFinalCardText(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4',
         messages: [
           {
             role: 'system',
@@ -558,6 +553,7 @@ export async function generateFinalCardText(
             - 전체 문장은 3문단으로 구성해주세요.
             - "무지님은 오늘..."으로 시작하며, 마지막 문장은 "오늘의 무지님은, ~ 하고 있어요"로 마무리해주세요.
             - 선택된 감정 단어를 반드시 자연스럽게 포함시켜 작성해주세요.
+            - 450자 이내로 작성해주세요.
             - 따옴표(")는 사용하지 마세요.
             
             [예시1]
@@ -763,7 +759,7 @@ export async function generateStep7Question(allAnswers: {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4',
         messages: [
           {
             role: 'system',
@@ -782,10 +778,10 @@ export async function generateStep7Question(allAnswers: {
           },
           {
             role: 'user',
-            content: `누군가가 오늘 가장 귀찮았던 일에 대해 설명했어요.
+            content: `누군가가 오늘 가장 인상깊었던 일에 대해 설명했어요.
             아래는 사용자가 자신의 상황과 감정을 설명한 내용이에요:
 
-            [Step1 답변 - 귀찮았던 일]
+            [Step1 답변 - 인상깊었던 일]
             ${allAnswers.step2 || ''}
 
             [Step2 답변 - 구체적인 상황 설명]  
