@@ -86,7 +86,7 @@ export default function Step2() {
       <SelfEmpathyQuestion
         numbering={1}
         smallText="무지님의 하루가 궁금해요."
-        largeText="오늘, 가장 귀찮게 느껴졌던 건 무엇이었나요?"
+        largeText="오늘 하루, 가장 인상깊었던 일은 무엇이었나요?"
       >
         <textarea
           className="answer-input step2"
