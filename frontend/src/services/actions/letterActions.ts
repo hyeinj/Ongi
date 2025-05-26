@@ -68,6 +68,7 @@ export async function generateMockLetter(emotionContext: {
 - 본문은 4~6문장 정도의 길이로 자연스럽고 공감 가는 흐름을 가지도록 작성하고, 1인칭 시점(저는 ~해요)으로 작성합니다.
 - 사용자의 경험에서 완전히 벗어나지 않되, 직접적인 복붙이 아닌 비슷한 맥락의 다른 고민처럼 보이도록 변형해서 작성해주세요.
 - 따옴표(")는 사용하지 마세요.
+- 적절하게 줄바꿈을 해주세요
 
 [예시]
 [
@@ -111,7 +112,7 @@ ${answersText}`,
         letterTitle = result[0];
         letterContent = result[1];
         // 제목과 본문을 합쳐서 하나의 편지로 구성 (기존 호환성 유지)
-        mockLetter = `제목: ${result[0]}\n\n${result[1]}`;
+        mockLetter = `제목: ${result[0]}\n${result[1]}`;
       } else {
         mockLetter = content; // 파싱 실패 시 원본 내용 사용
         letterTitle = '익명의 편지';
@@ -624,7 +625,7 @@ ${userResponse}`,
     }
 
     const data = await response.json();
-    return data.choices[0]?.message?.content?.trim() + "\n그 마음이 이 여정의 끝에서 더 오래 머물 수 있길 바라요.";
+    return data.choices[0]?.message?.content?.trim();
   } catch (error) {
     console.error('전체 코멘트 생성 실패:', error);
     return undefined;
