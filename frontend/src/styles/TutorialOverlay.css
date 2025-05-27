@@ -22,11 +22,12 @@
   background: #fff;
   color: #222;
   border-radius: 16px;
-  padding: 20px 24px;
+  padding: 15px 15px;
   box-shadow: 0 4px 24px #0002;
-  min-width: 280px;
+  min-width: 260px;
   text-align: center;
   z-index: 10000;
+  white-space: pre-line;
 }
 
 .tutorial-tooltip button {

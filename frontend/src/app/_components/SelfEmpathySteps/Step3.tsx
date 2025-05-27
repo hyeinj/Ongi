@@ -95,7 +95,7 @@ export default function Step3() {
       <SelfEmpathyQuestion
         numbering={2}
         smallText={question}
-        largeText="그럼 조금 더 자세하게, 그 순간 어떤 상황이었는지 들려주실 수 있을까요?"
+        largeText="그럼, 그 일을 마주했을 때의 구체적인 상황이나 장면을 조금 더 들려주실 수 있을까요?"
       >
         <textarea
           className="answer-input step3"

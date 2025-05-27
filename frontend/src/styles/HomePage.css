@@ -73,19 +73,18 @@
 .home-page .postoffice {
   height: 285px;
   position: absolute;
-  left: 50%;
+  left: 19%;
   top: 54.62%;
   width: 251px;
   z-index: 1;
-  transition: none;
-  cursor: pointer;
-  transform: translateX(-50%);
+  transition: all 0.3s ease;
   filter: none;
-  animation: none;
+  animation: float 3s ease-in-out infinite;
 }
 
 .home-page .postoffice:active {
-  animation: none;
+  animation: glow 1.5s ease-in-out infinite;
+  transform: scale(0.95);
 }
 
 /* 물결 효과를 위한 가상 요소 */
@@ -96,28 +95,44 @@
   left: 50%;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
   transform: translate(-50%, -50%) scale(0);
   opacity: 0;
   pointer-events: none;
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
 }
 
 .home-page .postoffice:active::after {
-  animation: ripple 1.2s ease-out;
+  animation: ripple 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes ripple {
   0% {
     transform: translate(-50%, -50%) scale(0);
-    opacity: 0.9;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.5);
-    opacity: 0.5;
+    opacity: 0.8;
   }
   100% {
-    transform: translate(-50%, -50%) scale(2.5);
+    transform: translate(-50%, -50%) scale(2);
     opacity: 0;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translate(-50%, 0);
+  }
+  50% {
+    transform: translate(-50%, -10px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    filter: brightness(1) drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+  }
+  50% {
+    filter: brightness(1.2) drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
   }
 }
 
@@ -131,14 +146,11 @@
 }
 
 @keyframes float {
-  0% {
-    transform: translateY(0px) rotate(0deg);
+  0%, 100% {
+    transform: translateY(0);
   }
   50% {
-    transform: translateY(-6px) rotate(2deg);
-  }
-  100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translateY(-15px);
   }
 }
 

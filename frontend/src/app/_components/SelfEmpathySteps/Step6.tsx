@@ -182,7 +182,7 @@ export default function Step6() {
               <div className="modal-desc">
                 표면적으로 느꼈던 감정과 진짜 이유가 다를군요.
                 <br />
-                짜증을 느낀 그 순간으로 돌아가
+                그 감정을 느낀 순간으로 돌아가
                 <br />
                 앞뒤 상황을 생각해볼까요?
               </div>
