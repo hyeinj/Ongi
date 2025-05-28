@@ -1,5 +1,6 @@
 package com.ongi.backend.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,7 +26,7 @@ public class Step5QuestionService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<String> createQuestionFromAnswer(
+    public Map<String, Object> createQuestionFromAnswer(
             String step1Answer,
             String step2Answer,
             String step3Feelings,
@@ -88,7 +90,7 @@ public class Step5QuestionService {
             ObjectNode userMessage = objectMapper.createObjectNode();
             userMessage.put("role", "user");
             userMessage.put("content", String.format("""
-            누군가가 오늘 가장 귀찮았던 일에 대해 설명했어요.
+            누군가가 오늘 가장 인상깊었던 일에 대해 설명했어요.
             아래는 사용자가 자신의 상황과 감정을 설명한 내용이에요:
 
             [Step1 답변 - 인상깊었던 일]
@@ -122,11 +124,11 @@ public class Step5QuestionService {
                     .path("content")
                     .asText();
 
-            // 응답에서 이유 리스트 추출
-            return Arrays.stream(content.split("\n"))
-                    .map(String::trim)
-                    .filter(line -> !line.isEmpty())
-                    .collect(Collectors.toList());
+            // content를 다시 JSON으로 파싱 후 Map으로 변환
+            ObjectNode parsedContent = (ObjectNode) objectMapper.readTree(content);
+            Map<String, Object> result = objectMapper.convertValue(parsedContent, new TypeReference<Map<String, Object>>() {});
+
+            return result;
 
         } catch (Exception e) {
             log.error("OpenAI API 호출 중 오류 발생", e);
