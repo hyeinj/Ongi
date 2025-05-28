@@ -54,10 +54,10 @@ public class Step6QuestionService {
             ObjectNode userMessage = objectMapper.createObjectNode();
             userMessage.put("role", "user");
             userMessage.put("content", String.format("""
-            누군가가 오늘 가장 귀찮았던 일에 대해 설명했어요.
+            누군가가 오늘 가장 인상깊었던 일에 대해 설명했어요.
             아래는 사용자가 자신의 상황과 감정을 설명한 내용이에요:
 
-            [Step1 답변 - 귀찮았던 일]
+            [Step1 답변 - 인상깊었던 일]
             %s
 
             [Step2 답변 - 구체적인 상황 설명]  

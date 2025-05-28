@@ -35,7 +35,7 @@ public class SelfSummaryController {
                 return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
             }
 
-            String generatedQuestion = selfSummaryService.createQuestionFromAnswer(
+            String generatedQuestion = selfSummaryService.createSummaryFromAnswer(
                     summaryRequestDTO.getStep1_answer(), summaryRequestDTO.getStep2_answer(),
                     summaryRequestDTO.getStep3Feelings(), summaryRequestDTO.getStep4_answer(),
                     summaryRequestDTO.getStep5_answer()
@@ -46,6 +46,36 @@ public class SelfSummaryController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
+            error.put("error", "질문 생성 중 오류가 발생했습니다.");
+            return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/category")
+    public ResponseEntity<Map<String, Object>> generateCategory(@RequestBody SelfEmpathyDTO.summaryRequestDTO summaryRequestDTO) {
+        try {
+            // 필수 데이터 검증
+            if (summaryRequestDTO.getStep1_answer() == null || summaryRequestDTO.getStep1_answer().trim().isEmpty() ||
+                    summaryRequestDTO.getStep2_answer() == null || summaryRequestDTO.getStep2_answer().trim().isEmpty() ||
+                    summaryRequestDTO.getStep3Feelings() == null || summaryRequestDTO.getStep3Feelings().trim().isEmpty() ||
+                    summaryRequestDTO.getStep4_answer() == null || summaryRequestDTO.getStep4_answer().trim().isEmpty() ||
+                    summaryRequestDTO.getStep5_answer() == null || summaryRequestDTO.getStep5_answer().trim().isEmpty()) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("error", "필수 데이터가 누락되었습니다.");
+                return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+            }
+
+            Map<String, String> generatedResult = selfSummaryService.createCategory(
+                    summaryRequestDTO.getStep1_answer(), summaryRequestDTO.getStep2_answer(),
+                    summaryRequestDTO.getStep3Feelings(), summaryRequestDTO.getStep4_answer(),
+                    summaryRequestDTO.getStep5_answer()
+            );
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("categoryResult", generatedResult);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
             error.put("error", "질문 생성 중 오류가 발생했습니다.");
             return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
         }

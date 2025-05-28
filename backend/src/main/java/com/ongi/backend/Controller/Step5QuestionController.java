@@ -24,29 +24,29 @@ public class Step5QuestionController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, List<String>>> generateStep5Question(@RequestBody SelfEmpathyDTO.step5RequestDTO step5RequestDTO) {
+    public ResponseEntity<Map<String, Object>> generateStep5Question(@RequestBody SelfEmpathyDTO.step5RequestDTO step5RequestDTO) {
         try {
             // 필수 데이터 검증
             if (step5RequestDTO.getStep1_answer() == null || step5RequestDTO.getStep1_answer().trim().isEmpty() ||
                     step5RequestDTO.getStep2_answer() == null || step5RequestDTO.getStep2_answer().trim().isEmpty() ||
                     step5RequestDTO.getStep3Feelings() == null || step5RequestDTO.getStep3Feelings().trim().isEmpty() ||
                     step5RequestDTO.getStep4_answer() == null || step5RequestDTO.getStep4_answer().trim().isEmpty()) {
-                Map<String, List<String>> error = new HashMap<>();
-                error.put("error", List.of("필수 데이터가 누락되었습니다."));
+                Map<String, Object> error = new HashMap<>();
+                error.put("error", "필수 데이터가 누락되었습니다.");
                 return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
             }
 
-            List<String> generatedQuestion = step5QuestionService.createQuestionFromAnswer(
+            Map<String, Object> generatedResult = step5QuestionService.createQuestionFromAnswer(
                     step5RequestDTO.getStep1_answer(), step5RequestDTO.getStep2_answer(),
                     step5RequestDTO.getStep3Feelings(), step5RequestDTO.getStep4_answer()
             );
 
-            Map<String, List<String>> response = new HashMap<>();
-            response.put("후보 리스트", generatedQuestion);
+            Map<String, Object> response = new HashMap<>();
+            response.put("결과", generatedResult);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            Map<String, List<String>> error = new HashMap<>();
-            error.put("error", List.of("질문 생성 중 오류가 발생했습니다."));
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "질문 생성 중 오류가 발생했습니다.");
             return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
