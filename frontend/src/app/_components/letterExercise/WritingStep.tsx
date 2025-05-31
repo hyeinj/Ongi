@@ -5,13 +5,98 @@ import { useRouter } from 'next/navigation';
 import letterExerciseDotImage from '@/assets/images/letter-exercise-dot-img.png';
 import { useLetter } from '@/ui/hooks/useLetter';
 import paperPlane from '@/assets/icons/paper-plane.png';
+import micIcon from '@/assets/icons/mic.png';
+import micActiveIcon from '@/assets/icons/mic-active.png';
+
+// Web Speech API 타입 정의
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+  resultIndex: number;
+  interpretation: any;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+  message: string;
+}
+
+interface SpeechRecognitionResultList {
+  length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionResult {
+  isFinal: boolean;
+  length: number;
+  item(index: number): SpeechRecognitionAlternative;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onerror: (event: SpeechRecognitionErrorEvent) => void;
+  onend: () => void;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: new () => SpeechRecognition;
+    webkitSpeechRecognition: new () => SpeechRecognition;
+  }
+}
 
 export default function WritingStep() {
   const { saveUserResponse, getLetterData } = useLetter();
   const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [letterContent, setLetterContent] = useState('');
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const router = useRouter();
+
+  // 음성 인식 설정
+  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'ko-KR';
+
+        recognition.onresult = (event: SpeechRecognitionEvent) => {
+          const transcript = Array.from(event.results)
+            .map(result => result[0].transcript)
+            .join('');
+          setLetterContent(transcript);
+        };
+
+        recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+          console.error('Speech recognition error:', event.error);
+          setIsListening(false);
+        };
+
+        recognition.onend = () => {
+          setIsListening(false);
+        };
+
+        setRecognition(recognition);
+      }
+    }
+  }, []);
 
   // 기존 답장 데이터 로드 (한 번만 실행)
   useEffect(() => {
@@ -26,10 +111,24 @@ export default function WritingStep() {
     };
     loadLetterData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentDate, dataLoaded]); // 함수를 의존성에서 제거
+  }, [currentDate, dataLoaded]);
 
   const handleLetterChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setLetterContent(e.target.value);
+  };
+
+  const toggleListening = () => {
+    if (!recognition) {
+      alert('음성 인식이 지원되지 않는 브라우저입니다.');
+      return;
+    }
+
+    if (isListening) {
+      recognition.stop();
+    } else {
+      recognition.start();
+      setIsListening(true);
+    }
   };
 
   const handleSendLetter = async () => {
@@ -76,7 +175,7 @@ export default function WritingStep() {
         <div className="w-full h-full">
           <textarea
             className="w-full h-full min-h-[50vh] bg-transparent text-white placeholder-white/50 resize-none border-none outline-none font-thin overflow-y-auto break-keep"
-            placeholder="※ 가상의 인물에게 보내지는 편지이니, 마음 편히 당신의 이야기를 꺼내보셔도 좋아요."
+            placeholder="※ 가상의 인물에게 보내지는 편지이니, 마음 편히 당신의 이야기를 꺼내보셔도 좋아요. 물론 음성으로 작성해도 좋아요!"
             value={letterContent}
             onChange={handleLetterChange}
           />
@@ -91,6 +190,20 @@ export default function WritingStep() {
               <span className="text-black font-medium">편지 다시보기</span>
             </div>
           </Link>
+
+          <button
+            onClick={toggleListening}
+            className={`w-12 h-12 rounded-full ${isListening ? 'bg-red-500' : 'bg-[#EEEEEE]'} active:bg-[#F4E8D1] shadow-lg transition-all duration-300 flex items-center justify-center`}
+            title={isListening ? '음성 인식 중지' : '음성으로 작성'}
+          >
+            <Image 
+              src={isListening ? micActiveIcon : micIcon} 
+              alt={isListening ? '음성 인식 중지' : '음성으로 작성'} 
+              width={28} 
+              height={28}
+              className="w-12 h-12"
+            />
+          </button>
 
           <button
             onClick={handleSendLetter}

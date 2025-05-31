@@ -78,7 +78,8 @@
   width: 251px;
   z-index: 1;
   transition: all 0.3s ease;
-  filter: none;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15)) 
+          drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
   animation: float 3s ease-in-out infinite;
 }
 
@@ -194,6 +195,10 @@
   left: 22.22%; /* 80/360*100 */
   top: 20.38%; /* 159/780*100 */
   width: 92px;
+  /* 둥둥 떠다니는 효과 */
+  animation: float-gentle 4s ease-in-out infinite, sway-gentle 6s ease-in-out infinite;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15)) 
+          drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
 
 .home-page .growth {
@@ -202,6 +207,10 @@
   height: 133px;
   top: 33.08%; /* 258/780*100 */
   left: 6.39%; /* 23/360*100 */
+  /* 둥둥 떠다니는 효과 - 다른 리듬 */
+  animation: float-gentle 3.5s ease-in-out infinite 0.5s, sway-gentle 5.5s ease-in-out infinite 1s;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15)) 
+          drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
 
 .home-page .relate {
@@ -210,6 +219,10 @@
   height: 124px;
   top: 37.56%; /* 293/780*100 */
   left: 59.44%; /* 214/360*100 */
+  /* 둥둥 떠다니는 효과 - 또 다른 리듬 */
+  animation: float-gentle 4.5s ease-in-out infinite 1s, sway-gentle 6.5s ease-in-out infinite 1.5s;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15)) 
+          drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
 
 .home-page .routine {
@@ -218,6 +231,10 @@
   height: 98px;
   top: 22.95%; /* 179/780*100 */
   left: 63.33%; /* 228/360*100 */
+  /* 둥둥 떠다니는 효과 - 독특한 리듬 */
+  animation: float-gentle 3.8s ease-in-out infinite 1.5s, sway-gentle 5.8s ease-in-out infinite 0.8s;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15)) 
+          drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
 
 .home-page .circle-ellipse {
@@ -267,5 +284,27 @@
   0% { transform: scale(1);}
   50% { transform: scale(1.07);}
   100% { transform: scale(1);}
+}
+
+/* 새로운 애니메이션 키프레임들 */
+@keyframes float-gentle {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-8px); 
+  }
+}
+
+@keyframes sway-gentle {
+  0%, 100% { 
+    transform: rotate(0deg); 
+  }
+  25% { 
+    transform: rotate(0.8deg); 
+  }
+  75% { 
+    transform: rotate(-0.8deg); 
+  }
 }
 
