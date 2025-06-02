@@ -4,12 +4,13 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
-import SkeletonUI from './SkeletonUI';
+import LoadingState from './LoadingState';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import '@/styles/SelfEmpathyModal.css';
 import { useState, useEffect } from 'react';
 import { useEmotion } from '@/ui/hooks/useEmotion';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { useDelayedLoading } from '@/ui/hooks/useDelayedLoading';
 
 export default function Step6() {
   const router = useRouter();
@@ -17,32 +18,34 @@ export default function Step6() {
   const [smallText, setSmallText] = useState('');
   const [largeText, setLargeText] = useState('');
   const [options, setOptions] = useState<string[]>([]);
-  const [textsLoading, setTextsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedButton, setSelectedButton] = useState<'skip' | 'think' | null>(null);
+  const [isGenerating, setIsGenerating] = useState(true);
 
   // 클린 아키텍처를 통한 감정 데이터 관리
   const { isLoading, error, saveStageAnswer, getStageAnswer, generateStep6Texts } = useEmotion();
 
+  // 로딩 완료 후 지연 처리
+  const shouldShowLoading = useDelayedLoading(isLoading || isGenerating);
+
   useEffect(() => {
-    // 이전에 저장된 답변과 텍스트 불러오기
+    let isMounted = true;
+
     const loadPreviousData = async () => {
       try {
-        setTextsLoading(true);
-        
         // 이전에 저장된 답변이 있다면 불러오기
         const savedAnswer = await getStageAnswer('step6');
-        if (savedAnswer) {
+        if (isMounted && savedAnswer) {
           setAnswer(savedAnswer);
         }
 
         // GPT로 텍스트와 선택지 생성
         const textsResult = await generateStep6Texts();
-        if (textsResult.success) {
+        if (isMounted && textsResult.success) {
           setSmallText(textsResult.smallText);
           setLargeText(textsResult.largeText);
           setOptions(textsResult.options || []);
-        } else {
+        } else if (isMounted) {
           // 실패 시 기본 텍스트 사용
           setSmallText('힘든 상황에서 여러 감정을 느끼셨군요.');
           setLargeText('그 감정을 느낀 가장 큰 이유가 무엇인지 생각해보실까요?');
@@ -52,26 +55,33 @@ export default function Step6() {
             '다른 사람의 반응이 걱정되었기 때문'
           ]);
         }
+        if (isMounted) {
+          setIsGenerating(false);
+        }
       } catch (err) {
         console.error('Step6 데이터 로딩 실패:', err);
-        // 에러 시 기본 텍스트 사용
-        setSmallText('힘든 상황에서 여러 감정을 느끼셨군요.');
-        setLargeText('그 감정을 느낀 가장 큰 이유가 무엇인지 생각해보실까요?');
-        setOptions([
-          '상황이 예상과 달랐기 때문',
-          '준비가 부족했다고 느꼈기 때문',
-          '다른 사람의 반응이 걱정되었기 때문'
-        ]);
-      } finally {
-        setTextsLoading(false);
+        if (isMounted) {
+          // 에러 시 기본 텍스트 사용
+          setSmallText('힘든 상황에서 여러 감정을 느끼셨군요.');
+          setLargeText('그 감정을 느낀 가장 큰 이유가 무엇인지 생각해보실까요?');
+          setOptions([
+            '상황이 예상과 달랐기 때문',
+            '준비가 부족했다고 느꼈기 때문',
+            '다른 사람의 반응이 걱정되었기 때문'
+          ]);
+          setIsGenerating(false);
+        }
       }
     };
 
     loadPreviousData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [getStageAnswer, generateStep6Texts]);
 
   const handleAnswerClick = (selectedAnswer: string) => {
-    // 모든 버튼은 바로 답변 설정
     setAnswer(selectedAnswer);
   };
 
@@ -120,15 +130,15 @@ export default function Step6() {
     );
   }
 
-  // 텍스트 로딩 중일 때
-  if (textsLoading) {
+  // 로딩 상태 표시
+  if (shouldShowLoading) {
     return (
       <SelfEmpathyLayout
         currentStep={5}
         totalStep={6}
         onBack={() => router.push('/self-empathy/5')}
       >
-        <SkeletonUI type="card" />
+        <LoadingState type="analyzing" />
       </SelfEmpathyLayout>
     );
   }

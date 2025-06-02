@@ -33,19 +33,18 @@ export const useEmotion = () => {
         setError(null);
 
         const today = getCurrentDate();
-        const question = '오늘, 가장 귀찮게 느껴졌던 건 무엇이었나요?';
+        const question = '오늘 하루, 가장 인상깊었던 일은 무엇이었나요??';
 
         // 1. 답변 저장
         await emotionUseCases.saveEmotionEntry(today, 'step2', question, answer);
 
         // 2. 다음 질문 생성
-        return await emotionUseCases.generateNextQuestion(answer);
+        const nextQuestion = await emotionUseCases.generateNextQuestion(answer);
+        return nextQuestion;
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : '처리에 실패했습니다.';
         setError(errorMessage);
         throw err;
-      } finally {
-        setIsLoading(false);
       }
     },
     [emotionUseCases]
@@ -67,13 +66,12 @@ export const useEmotion = () => {
         const emotionData = await emotionStorage.getByDate(today);
         const step2Answer = emotionData?.entries?.step2?.answer || '';
 
-        return await emotionUseCases.generateNextQuestion(step2Answer, answer);
+        const nextQuestion = await emotionUseCases.generateNextQuestion(step2Answer, answer);
+        return nextQuestion;
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : '처리에 실패했습니다.';
         setError(errorMessage);
         throw err;
-      } finally {
-        setIsLoading(false);
       }
     },
     [emotionUseCases, emotionStorage]
@@ -97,17 +95,16 @@ export const useEmotion = () => {
         const step2Answer = emotionData?.entries?.step2?.answer || '';
         const step3Answer = emotionData?.entries?.step3?.answer || '';
 
-        return await emotionUseCases.generateNextQuestion(
+        const nextQuestion = await emotionUseCases.generateNextQuestion(
           step2Answer,
           step3Answer,
           selectedFeelings
         );
+        return nextQuestion;
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : '처리에 실패했습니다.';
         setError(errorMessage);
         throw err;
-      } finally {
-        setIsLoading(false);
       }
     },
     [emotionUseCases, emotionStorage]
@@ -273,5 +270,6 @@ export const useEmotion = () => {
     generateFinalCardText,
     generateStep6Texts,
     generateStep7Question,
+    setIsLoading, // 로딩 상태를 외부에서 제어할 수 있도록 추가
   };
 };
