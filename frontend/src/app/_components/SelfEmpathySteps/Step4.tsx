@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
-import SkeletonUI from './SkeletonUI';
+import LoadingState from './LoadingState';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import positiveIcon from '@/assets/icons/positive.png';
 import neutralIcon from '@/assets/icons/neutral.png';
@@ -174,7 +174,7 @@ export default function Step4() {
   const { isLoading, error, saveStep4FeelingsAndGenerateStep5, emotionData } = useEmotion();
 
   // 로딩 완료 후 지연 처리
-  const shouldShowSkeleton = useDelayedLoading(isLoading);
+  const shouldShowLoading = useDelayedLoading(isLoading);
 
   useEffect(() => {
     // 이전에 저장된 감정 데이터 불러오기
@@ -248,15 +248,15 @@ export default function Step4() {
     );
   }
 
-  // 로딩 상태 또는 지연 시간 동안 스켈레톤 UI 표시
-  if (shouldShowSkeleton) {
+  // 로딩 상태 표시
+  if (shouldShowLoading) {
     return (
       <SelfEmpathyLayout
         currentStep={3}
         totalStep={6}
         onBack={() => router.push('/self-empathy/3')}
       >
-        <SkeletonUI type="card" />
+        <LoadingState type="analyzing" />
       </SelfEmpathyLayout>
     );
   }

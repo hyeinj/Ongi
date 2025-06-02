@@ -65,7 +65,7 @@ export default function SumUpStep() {
       <div className="w-full absolute bottom-10 px-4 flex justify-center">
         <Link
           href="/"
-          className={`w-full rounded-full py-4 bg-[#EEEEEE] text-center shadow active:bg-[#D2D2D2] transition-opacity duration-500 ease-in-out ${
+          className={`w-full rounded-full py-4 bg-[#EEEEEE] text-center text-black shadow active:bg-[#D2D2D2] transition-opacity duration-500 ease-in-out ${
             visibleLines >= textLines.length ? 'opacity-100' : 'opacity-0'
           }`}
         >
