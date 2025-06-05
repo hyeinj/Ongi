@@ -19,6 +19,10 @@ export default function Step6() {
   const [largeText, setLargeText] = useState('');
   const [options, setOptions] = useState<string[]>([]);
   const [showModal, setShowModal] = useState(false);
+<<<<<<< HEAD
+=======
+  const [selectedButton, setSelectedButton] = useState<'skip' | 'think' | null>(null);
+>>>>>>> main
   const [isGenerating, setIsGenerating] = useState(true);
 
   // 클린 아키텍처를 통한 감정 데이터 관리
@@ -35,7 +39,11 @@ export default function Step6() {
         // 이전에 저장된 답변이 있다면 불러오기
         const savedAnswer = await getStageAnswer('step6');
         if (isMounted && savedAnswer) {
+<<<<<<< HEAD
           setAnswer(Array.isArray(savedAnswer) ? savedAnswer : [savedAnswer]);
+=======
+          setAnswer(savedAnswer);
+>>>>>>> main
         }
 
         // GPT로 텍스트와 선택지 생성
@@ -81,6 +89,7 @@ export default function Step6() {
   }, [getStageAnswer, generateStep6Texts]);
 
   const handleAnswerClick = (selectedAnswer: string) => {
+<<<<<<< HEAD
     setAnswer(prev => {
       if (prev.includes(selectedAnswer)) {
         // 이미 선택된 답변이면 제거
@@ -90,6 +99,9 @@ export default function Step6() {
         return [...prev, selectedAnswer];
       }
     });
+=======
+    setAnswer(selectedAnswer);
+>>>>>>> main
   };
 
   const handleConfirm = () => {
@@ -139,7 +151,11 @@ export default function Step6() {
         totalStep={5}
         onBack={() => router.push('/self-empathy/5')}
       >
+<<<<<<< HEAD
         <LoadingState type="question" />
+=======
+        <LoadingState type="analyzing" />
+>>>>>>> main
       </SelfEmpathyLayout>
     );
   }

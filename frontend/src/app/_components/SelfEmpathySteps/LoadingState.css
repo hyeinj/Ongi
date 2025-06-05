@@ -4,7 +4,11 @@
   justify-content: center;
   min-height: 400px;
   width: 100%;
+<<<<<<< HEAD
   padding: 5rem 1.25rem 2.5rem;
+=======
+  padding: 40px 20px;
+>>>>>>> main
   opacity: 0;
   animation: fadeIn 0.3s ease-out forwards;
 }
@@ -13,6 +17,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+<<<<<<< HEAD
   text-align: center;
 }
 
@@ -38,31 +43,94 @@
   }
   50% {
     transform: translateY(-1.25rem);
+=======
+  gap: 24px;
+  text-align: center;
+}
+
+/* 스피너 애니메이션 */
+.loading-spinner {
+  position: relative;
+  width: 60px;
+  height: 60px;
+}
+
+.spinner-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 60px;
+  border: 3px solid transparent;
+  border-top: 3px solid #8B5CF6;
+  border-radius: 50%;
+  animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.spinner-ring:nth-child(1) {
+  animation-delay: -0.45s;
+}
+
+.spinner-ring:nth-child(2) {
+  animation-delay: -0.3s;
+  border-top-color: #A78BFA;
+}
+
+.spinner-ring:nth-child(3) {
+  animation-delay: -0.15s;
+  border-top-color: #C4B5FD;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+>>>>>>> main
   }
 }
 
 /* 로딩 메시지 */
 .loading-message {
   color: #374151;
+<<<<<<< HEAD
   font-size: 1rem;
   font-weight: 500;
   margin-bottom: 1.5rem;
+=======
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+>>>>>>> main
   letter-spacing: -0.02em;
 }
 
 /* 점 애니메이션 */
 .loading-dots {
   display: flex;
+<<<<<<< HEAD
   gap: 0.25rem;
+=======
+  gap: 4px;
+>>>>>>> main
   align-items: center;
 }
 
 .loading-dots span {
+<<<<<<< HEAD
   width: 0.375rem;
   height: 0.375rem;
   background-color: #5971fa;
   border-radius: 50%;
   animation: dots 1.4s ease-in-out infinite both;
+=======
+  width: 6px;
+  height: 6px;
+  background-color: #8B5CF6;
+  border-radius: 50%;
+  animation: bounce 1.4s ease-in-out infinite both;
+>>>>>>> main
 }
 
 .loading-dots span:nth-child(1) {

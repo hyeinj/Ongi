@@ -79,7 +79,7 @@ export default function Step2() {
         onBack={() => router.push('/self-empathy')}
       >
         <LoadingState 
-          type="question" 
+          type="question"
         />
       </SelfEmpathyLayout>
     );
