@@ -75,19 +75,18 @@ export default function Step2() {
     return (
       <SelfEmpathyLayout
         currentStep={1}
-        totalStep={6}
+        totalStep={5}
         onBack={() => router.push('/self-empathy')}
       >
         <LoadingState 
           type="question" 
-          message="답변을 분석하고 다음 질문을 준비하고 있어요..." 
         />
       </SelfEmpathyLayout>
     );
   }
 
   return (
-    <SelfEmpathyLayout currentStep={1} totalStep={6} onBack={() => router.push('/self-empathy/1')}>
+    <SelfEmpathyLayout currentStep={1} totalStep={5} onBack={() => router.push('/self-empathy/1')}>
       <SelfEmpathyQuestion
         numbering={1}
         smallText="무지님의 하루가 궁금해요."

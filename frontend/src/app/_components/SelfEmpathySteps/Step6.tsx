@@ -19,7 +19,6 @@ export default function Step6() {
   const [largeText, setLargeText] = useState('');
   const [options, setOptions] = useState<string[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [selectedButton, setSelectedButton] = useState<'skip' | 'think' | null>(null);
   const [isGenerating, setIsGenerating] = useState(true);
 
   // 클린 아키텍처를 통한 감정 데이터 관리
@@ -93,12 +92,11 @@ export default function Step6() {
     });
   };
 
-  const handleConfirm = (buttonType: 'skip' | 'think') => {
-    setSelectedButton(buttonType);
+  const handleConfirm = () => {
     setShowModal(false);
     // 모달에서 선택 후 다음 단계로 이동
     setTimeout(() => {
-      router.push('/self-empathy/7');
+      router.push('/self-empathy/8');
     }, 300);
   };
 
@@ -106,11 +104,11 @@ export default function Step6() {
     if (answer.length === 0) return;
 
     try {
-      await saveStageAnswer('step6', largeText || '감정의 원인에 대한 질문', answer);
+      // 배열을 문자열로 변환하여 저장
+      await saveStageAnswer('step6', largeText || '감정의 원인에 대한 질문', answer.join(', '));
       
       // 모든 버튼 클릭 시 모달 표시
       setShowModal(true);
-      setSelectedButton(null);
     } catch (err) {
       console.error('Step6 처리 실패:', err);
       alert('오류가 발생했습니다. 다시 시도해주세요.');
@@ -122,7 +120,7 @@ export default function Step6() {
     return (
       <SelfEmpathyLayout
         currentStep={5}
-        totalStep={6}
+        totalStep={5}
         onBack={() => router.push('/self-empathy/5')}
       >
         <div className="error-message">
@@ -138,7 +136,7 @@ export default function Step6() {
     return (
       <SelfEmpathyLayout
         currentStep={5}
-        totalStep={6}
+        totalStep={5}
         onBack={() => router.push('/self-empathy/5')}
       >
         <LoadingState type="question" />
@@ -180,7 +178,7 @@ export default function Step6() {
             type="button"
             disabled={isLoading}
           >
-            내 마음 속 말은 다른 것 같아요.
+            다른 이유인 것 같아요.
           </button>
         </div>
 
@@ -191,7 +189,7 @@ export default function Step6() {
               <button className="modal-close" onClick={() => setShowModal(false)}>
                 ×
               </button>
-              <div className="modal-title">내 마음의 이유 찾아보기</div>
+              <div className="modal-title">내 마음 속 말 들여다보기</div>
               <div className="modal-desc">
                 표면적으로 느꼈던 감정과 진짜 이유가 다를군요.
                 <br />
@@ -202,7 +200,7 @@ export default function Step6() {
               <div className="modal-btn-group">
                 <button
                   className="modal-btn"
-                  onClick={() => handleConfirm('think')}
+                  onClick={handleConfirm}
                 >
                   오늘의 나의 감정 되돌아보기
                 </button>

@@ -28,13 +28,37 @@ export default function Step9() {
 
   return (
     <SelfEmpathyLayout onBack={() => router.push('/self-empathy/8')}>
-      <span className="next-text">
-        무지님의 소중한 오늘을 살펴보았어요.
+      <div className="next-text">
+        지금 솔직한 마음을 들려줘서 정말 고마워요.
         <br />
         <br />
-        이제 무지님과 닮은 마음에
-        <br /> 조심스런 답장을 건네러 가볼까요?
-      </span>
+        다음 단계에서는 비슷한 감정을 겪은
+        <br />
+        누군가가 남긴 편지를 보여드릴게요.
+        <br />
+        <br />
+        &apos;나만 이런 게 아니구나&apos;,
+        <br />
+        &apos;다른 사람도 이렇게 마음을 털어놓았구나&apos; 하고
+        <br />
+        천천히 공감하며 읽어보세요.
+        <br />
+        <br />
+        그리고 그 마음을 받아들여,
+        <br />
+        마치 가장 가까운 친구에게 편지를 쓰듯
+        <br />
+        나에게 답장을 써보면 어떨까요?
+        <br />
+        <br />
+        조금 낯설더라도,
+        <br />
+        놓쳤던 말과 감정을
+        <br />
+        따뜻하게 적어보세요.
+        <br />
+        👋💌
+      </div>
       <button
         className="bottom-button final-button"
         onClick={() => router.push('/letter-exercise/1')}
@@ -45,3 +69,4 @@ export default function Step9() {
     </SelfEmpathyLayout>
   );
 }
+

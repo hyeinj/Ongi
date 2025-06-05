@@ -237,7 +237,7 @@ export default function Step4() {
     return (
       <SelfEmpathyLayout
         currentStep={3}
-        totalStep={6}
+        totalStep={5}
         onBack={() => router.push('/self-empathy/3')}
       >
         <div className="error-message">
@@ -253,7 +253,7 @@ export default function Step4() {
     return (
       <SelfEmpathyLayout
         currentStep={3}
-        totalStep={6}
+        totalStep={5}
         onBack={() => router.push('/self-empathy/3')}
       >
         <LoadingState type="question" />

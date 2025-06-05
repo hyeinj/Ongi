@@ -10,7 +10,7 @@ interface LoadingStateProps {
 }
 
 export default function LoadingState({ 
-  message = "로딩 중...", 
+  message = "오늘의 감정이 전달되고 있어요", 
   type = 'default' 
 }: LoadingStateProps) {
   

@@ -31,7 +31,7 @@ const SelfEmpathyPage: React.FC = () => {
           <p className="text-line line3">어떤 감정이든 있는 그대로 괜찮아요.</p>
           <br />
           <p className="text-line line4">잠시 발걸음을 멈추고</p>
-          <p className="text-line line5">6가지 질문과 함께</p>
+          <p className="text-line line5">5가지 질문과 함께</p>
           <p className="text-line line6">오늘의 나를 만나볼까요?</p>
         </div>
         <button
