@@ -256,7 +256,7 @@ export default function Step4() {
         totalStep={6}
         onBack={() => router.push('/self-empathy/3')}
       >
-        <LoadingState type="analyzing" />
+        <LoadingState type="question" />
       </SelfEmpathyLayout>
     );
   }
