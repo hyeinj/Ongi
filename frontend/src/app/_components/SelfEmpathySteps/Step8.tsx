@@ -95,11 +95,7 @@ export default function Step8() {
         totalStep={6}
         onBack={() => router.push('/self-empathy/7')}
       >
-<<<<<<< HEAD
         <LoadingState type="default" />
-=======
-        <LoadingState type="analyzing" />
->>>>>>> main
       </SelfEmpathyLayout>
     );
   }
