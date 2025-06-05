@@ -18,7 +18,7 @@ export default function Step5() {
   // URL 파라미터의 질문을 smallText와 largeText로 분리
   const urlQuestion = searchParams.get('question');
   const [smallText, setSmallText] = useState('');
-  const [largeText, setLargeText] = useState('짜증남의 느낌이 들었던 무지님의 속마음을 조금 더 말해주실 수 있나요?');
+  const [largeText, setLargeText] = useState("앞선 감정이 들었던 무지님의 속마음을 조금 더 말해주실 수 있나요?");
   const [answer, setAnswer] = useState('');
 
   // 클린 아키텍처를 통한 감정 데이터 관리
@@ -78,7 +78,7 @@ export default function Step5() {
     return (
       <SelfEmpathyLayout
         currentStep={4}
-        totalStep={6}
+        totalStep={5}
         onBack={() => router.push('/self-empathy/4')}
       >
         <div className="error-message">
@@ -94,10 +94,10 @@ export default function Step5() {
     return (
       <SelfEmpathyLayout
         currentStep={4}
-        totalStep={6}
+        totalStep={5}
         onBack={() => router.push('/self-empathy/4')}
       >
-        <LoadingState type="default" />
+        <LoadingState type="question" />
       </SelfEmpathyLayout>
     );
   }

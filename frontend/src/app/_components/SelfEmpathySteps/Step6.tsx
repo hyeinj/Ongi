@@ -14,12 +14,11 @@ import { useDelayedLoading } from '@/ui/hooks/useDelayedLoading';
 
 export default function Step6() {
   const router = useRouter();
-  const [answer, setAnswer] = useState<'yes' | 'no' | string | null>(null);
+  const [answer, setAnswer] = useState<string[]>([]);
   const [smallText, setSmallText] = useState('');
   const [largeText, setLargeText] = useState('');
   const [options, setOptions] = useState<string[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [selectedButton, setSelectedButton] = useState<'skip' | 'think' | null>(null);
   const [isGenerating, setIsGenerating] = useState(true);
 
   // 클린 아키텍처를 통한 감정 데이터 관리
@@ -36,7 +35,7 @@ export default function Step6() {
         // 이전에 저장된 답변이 있다면 불러오기
         const savedAnswer = await getStageAnswer('step6');
         if (isMounted && savedAnswer) {
-          setAnswer(savedAnswer);
+          setAnswer(Array.isArray(savedAnswer) ? savedAnswer : [savedAnswer]);
         }
 
         // GPT로 텍스트와 선택지 생성
@@ -82,32 +81,34 @@ export default function Step6() {
   }, [getStageAnswer, generateStep6Texts]);
 
   const handleAnswerClick = (selectedAnswer: string) => {
-    setAnswer(selectedAnswer);
+    setAnswer(prev => {
+      if (prev.includes(selectedAnswer)) {
+        // 이미 선택된 답변이면 제거
+        return prev.filter(item => item !== selectedAnswer);
+      } else {
+        // 새로운 답변이면 추가
+        return [...prev, selectedAnswer];
+      }
+    });
   };
 
-  const handleConfirm = (buttonType: 'skip' | 'think') => {
-    setSelectedButton(buttonType);
+  const handleConfirm = () => {
     setShowModal(false);
     // 모달에서 선택 후 다음 단계로 이동
     setTimeout(() => {
-      router.push('/self-empathy/7');
+      router.push('/self-empathy/8');
     }, 300);
   };
 
   const handleNext = async () => {
-    if (!answer) return;
+    if (answer.length === 0) return;
 
     try {
-      await saveStageAnswer('step6', largeText || '감정의 원인에 대한 질문', answer);
+      // 배열을 문자열로 변환하여 저장
+      await saveStageAnswer('step6', largeText || '감정의 원인에 대한 질문', answer.join(', '));
       
-      // "다른 이유인 것 같아요" 선택 시만 모달 표시
-      if (answer === 'no') {
-        setShowModal(true);
-        setSelectedButton(null);
-      } else {
-        // "네 맞아요" 및 GPT 생성 선택지들은 바로 다음 단계로
-        router.push('/self-empathy/7');
-      }
+      // 모든 버튼 클릭 시 모달 표시
+      setShowModal(true);
     } catch (err) {
       console.error('Step6 처리 실패:', err);
       alert('오류가 발생했습니다. 다시 시도해주세요.');
@@ -119,7 +120,7 @@ export default function Step6() {
     return (
       <SelfEmpathyLayout
         currentStep={5}
-        totalStep={6}
+        totalStep={5}
         onBack={() => router.push('/self-empathy/5')}
       >
         <div className="error-message">
@@ -135,10 +136,10 @@ export default function Step6() {
     return (
       <SelfEmpathyLayout
         currentStep={5}
-        totalStep={6}
+        totalStep={5}
         onBack={() => router.push('/self-empathy/5')}
       >
-        <LoadingState type="analyzing" />
+        <LoadingState type="question" />
       </SelfEmpathyLayout>
     );
   }
@@ -149,7 +150,7 @@ export default function Step6() {
         <div className="yesno-btn-group2">
           {/* 네 맞아요 버튼 */}
           <button
-            className={`yesno-btn2 ${answer === 'yes' ? ' selected' : ''}`}
+            className={`yesno-btn2 ${answer.includes('yes') ? ' selected' : ''}`}
             onClick={() => handleAnswerClick('yes')}
             type="button"
             disabled={isLoading}
@@ -161,7 +162,7 @@ export default function Step6() {
           {options.map((option, index) => (
             <button
               key={index}
-              className={`yesno-btn2${answer === option ? ' selected' : ''}`}
+              className={`yesno-btn2${answer.includes(option) ? ' selected' : ''}`}
               onClick={() => handleAnswerClick(option)}
               type="button"
               disabled={isLoading}
@@ -172,7 +173,7 @@ export default function Step6() {
           
           {/* 다른 이유 버튼 */}
           <button
-            className={`yesno-btn2${answer === 'no' ? ' selected' : ''}`}
+            className={`yesno-btn2${answer.includes('no') ? ' selected' : ''}`}
             onClick={() => handleAnswerClick('no')}
             type="button"
             disabled={isLoading}
@@ -188,7 +189,7 @@ export default function Step6() {
               <button className="modal-close" onClick={() => setShowModal(false)}>
                 ×
               </button>
-              <div className="modal-title">내 마음의 이유 찾아보기</div>
+              <div className="modal-title">내 마음 속 말 들여다보기</div>
               <div className="modal-desc">
                 표면적으로 느꼈던 감정과 진짜 이유가 다를군요.
                 <br />
@@ -198,23 +199,17 @@ export default function Step6() {
               </div>
               <div className="modal-btn-group">
                 <button
-                  className={`modal-btn${selectedButton === 'skip' ? ' active' : ''}`}
-                  onClick={() => handleConfirm('skip')}
+                  className="modal-btn"
+                  onClick={handleConfirm}
                 >
-                  넘어갈래요
-                </button>
-                <button
-                  className={`modal-btn${selectedButton === 'think' ? ' active' : ''}`}
-                  onClick={() => handleConfirm('think')}
-                >
-                  충분히 생각해 본 것 같아요
+                  오늘의 나의 감정 되돌아보기
                 </button>
               </div>
             </div>
           </div>
         )}
         
-        <button className="next-button" onClick={handleNext} disabled={isLoading || !answer}>
+        <button className="next-button" onClick={handleNext} disabled={isLoading || answer.length === 0}>
           {isLoading ? <LoadingSpinner size="large" color="white" /> : <Image src={nextArrow} alt="다음" />}
         </button>
       </SelfEmpathyQuestion>
