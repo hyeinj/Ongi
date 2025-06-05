@@ -180,7 +180,7 @@ export default function Step6() {
             type="button"
             disabled={isLoading}
           >
-            다른 이유인 것 같아요.
+            내 마음 속 말은 다른 것 같아요.
           </button>
         </div>
 
@@ -201,16 +201,10 @@ export default function Step6() {
               </div>
               <div className="modal-btn-group">
                 <button
-                  className={`modal-btn${selectedButton === 'skip' ? ' active' : ''}`}
-                  onClick={() => handleConfirm('skip')}
-                >
-                  넘어갈래요
-                </button>
-                <button
-                  className={`modal-btn${selectedButton === 'think' ? ' active' : ''}`}
+                  className="modal-btn"
                   onClick={() => handleConfirm('think')}
                 >
-                  충분히 생각해 본 것 같아요
+                  오늘의 나의 감정 되돌아보기
                 </button>
               </div>
             </div>

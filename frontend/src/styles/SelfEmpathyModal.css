@@ -41,27 +41,31 @@
 
 .confirm-modal .modal-btn-group {
     display: flex;
-    gap: 12px;
     justify-content: center;
 }
 
 .confirm-modal .modal-btn {
-    background: #E3E7E9;
-    color: #222;
+    background: #7dbcff;
+    color: white;
     border: none;
     border-radius: 25px;
-    padding: 15px 15px;
-    font-size: 13px;
+    padding: 15px 30px;
+    font-size: 14px;
     font-weight: 500;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     transition: all 0.2s ease;
     white-space: nowrap;
+    min-width: 200px;
 }
 
-.confirm-modal .modal-btn.active {
-    background: #c2dfff;
-    color: white;
-    transform: scale(0.98);
+.confirm-modal .modal-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.confirm-modal .modal-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .confirm-modal .modal-close {
