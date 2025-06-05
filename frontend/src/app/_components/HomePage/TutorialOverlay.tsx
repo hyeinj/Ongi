@@ -7,11 +7,7 @@ interface TutorialOverlayProps {
 
 const steps = [
   {
-<<<<<<< HEAD
     message: '이 온기섬을 누르면 \n 오늘의 기록을 시작할 수 있어요',
-=======
-    message: '이  섬을 누르면 \n 오늘의 기록을 시작할 수 있어요',
->>>>>>> main
     spotlight: { x: '50%', y: '68%', r: 150 },
     tooltip: { left: '50%', top: '30%' },
   },
