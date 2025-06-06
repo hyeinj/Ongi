@@ -9,47 +9,58 @@ import { useState, useEffect } from 'react';
 import { useEmotion } from '@/ui/hooks/useEmotion';
 import paperPlane from '@/assets/icons/paper-plane.png';
 import LoadingSpinner from '../common/LoadingSpinner';
-import SkeletonUI from './SkeletonUI';
+import LoadingState from './LoadingState';
+import { useDelayedLoading } from '@/ui/hooks/useDelayedLoading';
 
 export default function Step7() {
   const router = useRouter();
   const [answer, setAnswer] = useState('');
   const [generatedQuestion, setGeneratedQuestion] = useState('');
-  const [questionLoading, setQuestionLoading] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(true);
 
   // 클린 아키텍처를 통한 감정 데이터 관리
   const { isLoading, error, saveStageAnswer, getStageAnswer, generateStep7Question } = useEmotion();
 
+  // 로딩 완료 후 지연 처리
+  const shouldShowLoading = useDelayedLoading(isLoading || isGenerating);
+
   useEffect(() => {
-    // 이전에 저장된 답변과 질문 불러오기
+    let isMounted = true;
+
     const loadPreviousData = async () => {
       try {
-        setQuestionLoading(true);
-        
         // 이전에 저장된 답변이 있다면 불러오기
         const savedAnswer = await getStageAnswer('step7');
-        if (savedAnswer) {
+        if (isMounted && savedAnswer) {
           setAnswer(savedAnswer);
         }
 
         // GPT로 질문 생성
         const questionResult = await generateStep7Question();
-        if (questionResult.success) {
+        if (isMounted && questionResult.success) {
           setGeneratedQuestion(questionResult.question);
-        } else {
+        } else if (isMounted) {
           // 실패 시 기본 질문 사용
           setGeneratedQuestion('충분히 감정을 되짚으며 짜증의 진짜 이유를 바라본 오늘이, 무지님에게 어떤 하루로 기억될까요?');
         }
+        if (isMounted) {
+          setIsGenerating(false);
+        }
       } catch (err) {
         console.error('Step7 데이터 로딩 실패:', err);
-        // 에러 시 기본 질문 사용
-        setGeneratedQuestion('충분히 감정을 되짚으며 짜증의 진짜 이유를 바라본 오늘이, 무지님에게 어떤 하루로 기억될까요?');
-      } finally {
-        setQuestionLoading(false);
+        if (isMounted) {
+          // 에러 시 기본 질문 사용
+          setGeneratedQuestion('충분히 감정을 되짚으며 짜증의 진짜 이유를 바라본 오늘이, 무지님에게 어떤 하루로 기억될까요?');
+          setIsGenerating(false);
+        }
       }
     };
 
     loadPreviousData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [getStageAnswer, generateStep7Question]);
 
   const handleNext = async () => {
@@ -80,15 +91,15 @@ export default function Step7() {
     );
   }
 
-    // 텍스트 로딩 중일 때
-  if (questionLoading) {
+  // 로딩 상태 표시
+  if (shouldShowLoading) {
     return (
       <SelfEmpathyLayout
         currentStep={6}
         totalStep={6}
         onBack={() => router.push('/self-empathy/6')}
       >
-        <SkeletonUI type="card" />
+        <LoadingState type="question" />
       </SelfEmpathyLayout>
     );
   }
@@ -104,12 +115,12 @@ export default function Step7() {
           placeholder="답변을 입력해주세요"
           value={answer}
           onChange={(e) => setAnswer(e.target.value)}
-          disabled={isLoading || questionLoading}
+          disabled={isLoading}
         />
         <button 
           className="bottom-button" 
           onClick={handleNext} 
-          disabled={isLoading || questionLoading || !answer.trim()}
+          disabled={isLoading || !answer.trim()}
         >
           {isLoading ? <LoadingSpinner size="large" color="white" /> : <Image src={bottomButton} alt="완료" />}
           <span className="button-text">

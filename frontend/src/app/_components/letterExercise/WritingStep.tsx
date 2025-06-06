@@ -12,7 +12,7 @@ import micActiveIcon from '@/assets/icons/mic-active.png';
 interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
   resultIndex: number;
-  interpretation: any;
+  interpretation: Record<string, unknown>;
 }
 
 interface SpeechRecognitionErrorEvent extends Event {

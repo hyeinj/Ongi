@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
-import SkeletonUI from './SkeletonUI';
+import LoadingState from './LoadingState';
 import LoadingSpinner from '../common/LoadingSpinner';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import { useState, useEffect } from 'react';
@@ -16,10 +16,10 @@ export default function Step2() {
   const [answer, setAnswer] = useState('');
 
   // 클린 아키텍처를 통한 감정 데이터 관리
-  const { isLoading, error, saveStep2AndGenerateStep3, getStageAnswer } = useEmotion();
+  const { isLoading, error, saveStep2AndGenerateStep3, getStageAnswer, setIsLoading } = useEmotion();
 
   // 로딩 완료 후 지연 처리
-  const shouldShowSkeleton = useDelayedLoading(isLoading);
+  const shouldShowLoading = useDelayedLoading(isLoading);
 
   useEffect(() => {
     // 이전에 저장된 답변이 있다면 불러오기
@@ -43,12 +43,14 @@ export default function Step2() {
       if (nextQuestion) {
         // URL에 질문을 포함하여 다음 페이지로 이동
         router.push(`/self-empathy/3?question=${encodeURIComponent(nextQuestion)}`);
-      } else {
-        throw new Error('질문 생성에 실패했습니다.');
+        // 페이지 전환이 시작되면 로딩 상태 유지
+        return;
       }
+      throw new Error('질문 생성에 실패했습니다.');
     } catch (err) {
       console.error('Step2 처리 실패:', err);
       alert('오류가 발생했습니다. 다시 시도해주세요.');
+      setIsLoading(false);
     }
   };
 
@@ -68,21 +70,23 @@ export default function Step2() {
     );
   }
 
-  // 로딩 상태 또는 지연 시간 동안 스켈레톤 UI 표시
-  if (shouldShowSkeleton) {
+  // 로딩 상태 표시
+  if (shouldShowLoading) {
     return (
       <SelfEmpathyLayout
         currentStep={1}
-        totalStep={6}
-        onBack={() => router.push('/self-empathy/1')}
+        totalStep={5}
+        onBack={() => router.push('/self-empathy')}
       >
-        <SkeletonUI type="card" />
+        <LoadingState 
+          type="question"
+        />
       </SelfEmpathyLayout>
     );
   }
 
   return (
-    <SelfEmpathyLayout currentStep={1} totalStep={6} onBack={() => router.push('/self-empathy/1')}>
+    <SelfEmpathyLayout currentStep={1} totalStep={5} onBack={() => router.push('/self-empathy/1')}>
       <SelfEmpathyQuestion
         numbering={1}
         smallText="무지님의 하루가 궁금해요."

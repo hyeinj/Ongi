@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
-import SkeletonUI from './SkeletonUI';
+import LoadingState from './LoadingState';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import { useState, useEffect } from 'react';
 import { useEmotion } from '@/ui/hooks/useEmotion';
@@ -21,10 +21,10 @@ export default function Step3() {
   const [question, setQuestion] = useState(urlQuestion || '질문을 불러올 수 없습니다.');
 
   // 클린 아키텍처를 통한 감정 데이터 관리
-  const { isLoading, error, saveStep3AndGenerateStep4, getStageAnswer } = useEmotion();
+  const { isLoading, error, saveStep3AndGenerateStep4, getStageAnswer, setIsLoading } = useEmotion();
 
   // 로딩 완료 후 지연 처리
-  const shouldShowSkeleton = useDelayedLoading(isLoading);
+  const shouldShowLoading = useDelayedLoading(isLoading);
 
   useEffect(() => {
     // 이전에 저장된 답변이 있다면 불러오기
@@ -52,12 +52,14 @@ export default function Step3() {
 
       if (nextQuestion) {
         router.push(`/self-empathy/4?question=${encodeURIComponent(nextQuestion)}`);
-      } else {
-        throw new Error('질문 생성에 실패했습니다.');
+        // 페이지 전환이 시작되면 로딩 상태 유지
+        return;
       }
+      throw new Error('질문 생성에 실패했습니다.');
     } catch (err) {
       console.error('Step3 처리 실패:', err);
       alert('오류가 발생했습니다. 다시 시도해주세요.');
+      setIsLoading(false);
     }
   };
 
@@ -66,7 +68,7 @@ export default function Step3() {
     return (
       <SelfEmpathyLayout
         currentStep={2}
-        totalStep={6}
+        totalStep={5}
         onBack={() => router.push('/self-empathy/2')}
       >
         <div className="error-message">
@@ -77,15 +79,15 @@ export default function Step3() {
     );
   }
 
-  // 로딩 상태 또는 지연 시간 동안 스켈레톤 UI 표시
-  if (shouldShowSkeleton) {
+  // 로딩 상태 표시
+  if (shouldShowLoading) {
     return (
       <SelfEmpathyLayout
         currentStep={2}
-        totalStep={6}
+        totalStep={5}
         onBack={() => router.push('/self-empathy/2')}
       >
-        <SkeletonUI type="card" />
+        <LoadingState type="question" />
       </SelfEmpathyLayout>
     );
   }

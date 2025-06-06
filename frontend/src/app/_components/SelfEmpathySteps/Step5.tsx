@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
-import SkeletonUI from './SkeletonUI';
+import LoadingState from './LoadingState';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import { useState, useEffect } from 'react';
 import { useEmotion } from '@/ui/hooks/useEmotion';
@@ -18,20 +18,22 @@ export default function Step5() {
   // URL 파라미터의 질문을 smallText와 largeText로 분리
   const urlQuestion = searchParams.get('question');
   const [smallText, setSmallText] = useState('');
-  const [largeText, setLargeText] = useState('짜증남의 느낌이 들었던 무지님의 속마음을 조금 더 말해주실 수 있나요?');
+  const [largeText, setLargeText] = useState("앞선 감정이 들었던 무지님의 속마음을 조금 더 말해주실 수 있나요?");
   const [answer, setAnswer] = useState('');
 
   // 클린 아키텍처를 통한 감정 데이터 관리
   const { isLoading, error, saveStageAnswer, getStageAnswer } = useEmotion();
 
   // 로딩 완료 후 지연 처리
-  const shouldShowSkeleton = useDelayedLoading(isLoading);
+  const shouldShowLoading = useDelayedLoading(isLoading);
 
   useEffect(() => {
+    let isMounted = true;
+
     // 이전에 저장된 답변이 있다면 불러오기
     const loadPreviousAnswer = async () => {
       const savedAnswer = await getStageAnswer('step5');
-      if (savedAnswer) {
+      if (isMounted && savedAnswer) {
         setAnswer(savedAnswer);
       }
     };
@@ -41,14 +43,20 @@ export default function Step5() {
     // URL 파라미터로 전달된 질문을 smallText와 largeText로 분리
     if (urlQuestion) {
       const sentences = urlQuestion.split('\n').filter((s: string) => s.trim());
-      if (sentences.length >= 2) {
-        setSmallText(sentences[0]);
-        setLargeText(sentences[1]);
-      } else if (sentences.length === 1) {
-        setSmallText(sentences[0]);
-        setLargeText('무지님의 속마음을 조금 더 말해주실 수 있나요?');
+      if (isMounted) {
+        if (sentences.length >= 2) {
+          setSmallText(sentences[0]);
+          setLargeText(sentences[1]);
+        } else if (sentences.length === 1) {
+          setSmallText(sentences[0]);
+          setLargeText('무지님의 속마음을 조금 더 말해주실 수 있나요?');
+        }
       }
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [urlQuestion, getStageAnswer]);
 
   const handleNext = async () => {
@@ -70,7 +78,7 @@ export default function Step5() {
     return (
       <SelfEmpathyLayout
         currentStep={4}
-        totalStep={6}
+        totalStep={5}
         onBack={() => router.push('/self-empathy/4')}
       >
         <div className="error-message">
@@ -81,15 +89,15 @@ export default function Step5() {
     );
   }
 
-  // 로딩 상태 또는 지연 시간 동안 스켈레톤 UI 표시
-  if (shouldShowSkeleton) {
+  // 로딩 상태 표시
+  if (shouldShowLoading) {
     return (
       <SelfEmpathyLayout
         currentStep={4}
-        totalStep={6}
+        totalStep={5}
         onBack={() => router.push('/self-empathy/4')}
       >
-        <SkeletonUI type="card" />
+        <LoadingState type="question" />
       </SelfEmpathyLayout>
     );
   }

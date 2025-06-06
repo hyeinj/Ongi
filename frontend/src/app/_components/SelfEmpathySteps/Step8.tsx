@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
-import SkeletonUI from './SkeletonUI';
+import LoadingState from './LoadingState';
 import mailBox from '@/assets/images/mailbox.png';
 import '@/styles/SelfEmpathyFinal.css';
 import nextArrow from '@/assets/icons/next-arrow.png';
@@ -13,16 +13,18 @@ import { useDelayedLoading } from '@/ui/hooks/useDelayedLoading';
 
 export default function Step8() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
   const [finalCardText, setFinalCardText] = useState('');
+  const [isGenerating, setIsGenerating] = useState(true);
 
   // 클린 아키텍처를 통한 감정 데이터 관리
-  const { error, analyzeAndSaveEmotionAndCategory, generateFinalCardText } = useEmotion();
+  const { isLoading, error, analyzeAndSaveEmotionAndCategory, generateFinalCardText } = useEmotion();
 
   // 로딩 완료 후 지연 처리
-  const shouldShowSkeleton = useDelayedLoading(isLoading);
+  const shouldShowLoading = useDelayedLoading(isLoading || isGenerating);
 
   useEffect(() => {
+    let isMounted = true;
+
     const performAnalysis = async () => {
       try {
         // 로딩 시간 동안 감정 분석 및 저장 수행
@@ -32,36 +34,45 @@ export default function Step8() {
         // 최소 2초 대기와 감정 분석 병렬 실행
         const [analysisResult] = await Promise.all([analysisPromise, timerPromise]);
 
-        if (analysisResult) {
+        if (isMounted && analysisResult) {
           console.log('감정 분석 완료:', analysisResult);
 
           // 감정 분석 완료 후 final card text 생성
           const finalTextResult = await generateFinalCardText();
-          if (finalTextResult && finalTextResult.success) {
+          if (isMounted && finalTextResult && finalTextResult.success) {
             setFinalCardText(finalTextResult.finalText);
-          } else {
+          } else if (isMounted) {
             // 실패 시 기본 텍스트 사용
             setFinalCardText(
               '오늘 하루 감정을 되돌아보며 자신을 더 이해하게 되는 소중한 시간이었어요.'
             );
           }
-        } else {
+          if (isMounted) {
+            setIsGenerating(false);
+          }
+        } else if (isMounted) {
           console.warn('감정 분석 실패, 기본값으로 진행');
           setFinalCardText(
             '오늘 하루 감정을 되돌아보며 자신을 더 이해하게 되는 소중한 시간이었어요.'
           );
+          setIsGenerating(false);
         }
       } catch (err) {
         console.error('감정 분석 중 오류:', err);
-        setFinalCardText(
-          '오늘 하루 감정을 되돌아보며 자신을 더 이해하게 되는 소중한 시간이었어요.'
-        );
-      } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setFinalCardText(
+            '오늘 하루 감정을 되돌아보며 자신을 더 이해하게 되는 소중한 시간이었어요.'
+          );
+          setIsGenerating(false);
+        }
       }
     };
 
     performAnalysis();
+
+    return () => {
+      isMounted = false;
+    };
   }, [analyzeAndSaveEmotionAndCategory, generateFinalCardText]);
 
   // 에러 상태 처리
@@ -76,10 +87,15 @@ export default function Step8() {
     );
   }
 
-  if (shouldShowSkeleton) {
+  // 로딩 상태 표시
+  if (shouldShowLoading) {
     return (
-      <SelfEmpathyLayout onBack={() => router.push('/self-empathy/7')}>
-        <SkeletonUI type="card" />
+      <SelfEmpathyLayout
+        currentStep={6}
+        totalStep={6}
+        onBack={() => router.push('/self-empathy/7')}
+      >
+        <LoadingState type="default" />
       </SelfEmpathyLayout>
     );
   }
