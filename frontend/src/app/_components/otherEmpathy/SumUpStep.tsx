@@ -1,7 +1,9 @@
 'use client';
 
-import Link from 'next/link';
+// import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { IslandStorage } from '@/services/storage/islandStorage'
 
 export default function SumUpStep() {
   // 표시할 텍스트 줄들을 배열로 정의
@@ -41,6 +43,23 @@ export default function SumUpStep() {
     return () => clearInterval(timer);
   }, [textLines.length]);
 
+  const router = useRouter();
+  const handleGoToIsland = async () => {
+    const islandStorage = new IslandStorage();
+    const today = new Date().toISOString().split('T')[0]; // ex. '2025-06-01'
+    const category = await islandStorage.getCategoryForDate(today);
+    
+    console.log('sumup - 클릭 시 오늘 날짜:', today);
+    console.log('sumup - 클릭 시 찾은 카테고리:', category);
+
+    if (category) {
+      router.push(`/island/${category}`);
+    } else {
+      console.warn('카테고리를 찾지 못함 → 홈으로 이동');
+      router.push('/');
+    }
+  };
+
   return (
     <div className="relative flex flex-col items-center justify-center h-full w-full overflow-hidden">
       {/* 메인 텍스트 */}
@@ -63,14 +82,14 @@ export default function SumUpStep() {
 
       {/* 하단 버튼 */}
       <div className="w-full absolute bottom-10 px-4 flex justify-center">
-        <Link
-          href="/"
+        <button
+          onClick={handleGoToIsland}
           className={`w-full rounded-full py-4 bg-[#EEEEEE] text-center shadow active:bg-[#D2D2D2] transition-opacity duration-500 ease-in-out ${
             visibleLines >= textLines.length ? 'opacity-100' : 'opacity-0'
           }`}
         >
           오늘의 마음을 온기섬에 남길게요
-        </Link>
+        </button>
       </div>
     </div>
   );

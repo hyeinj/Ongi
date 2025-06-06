@@ -15,8 +15,8 @@ import relate from '@/assets/images/relate.png';
 import navigateBefore from '@/assets/icons/navigate_before.svg'
 import navigateNext from '@/assets/icons/navigate_next.svg'
 import calendar from '@/assets/icons/calendar.svg'
-import { useLetterDateRange } from '@/presentation/hooks/useLetterDateRange';
-import { useDateNavigator } from '@/presentation/hooks/useDateNavigator';
+import { useLetterDateRange } from '@/ui/hooks/useLetterDateRange';
+import { useDateNavigator } from '@/ui/hooks/useDateNavigator';
 import LetterVisualization from '@/app/_components/island/LetterVisualization';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -105,6 +105,7 @@ const IslandPage = () => {
             <LetterVisualization
                 letterDates={letterDates}
                 total={total}
+                category={type}
         />)}
             
 

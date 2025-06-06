@@ -138,14 +138,14 @@ export default function Step6() {
       <SelfEmpathyQuestion numbering={5} smallText={smallText} largeText={largeText}>
         <div className="yesno-btn-group2">
           {/* 네 맞아요 버튼 */}
-          <button
+          {/* <button
             className={`yesno-btn2 ${answer === 'yes' ? ' selected' : ''}`}
             onClick={() => handleAnswerClick('yes')}
             type="button"
             disabled={isLoading}
           >
             네 맞아요!
-          </button>
+          </button> */}
           
           {/* GPT 생성 선택지들 */}
           {options.map((option, index) => (
@@ -167,7 +167,7 @@ export default function Step6() {
             type="button"
             disabled={isLoading}
           >
-            다른 이유인 것 같아요.
+            내 마음 속 말은 다른 것 같아요.
           </button>
         </div>
 

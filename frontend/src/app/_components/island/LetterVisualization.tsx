@@ -1,12 +1,15 @@
 import React, { useMemo } from 'react';
 import LetterClosed from '@/app/_components/icons/Letter';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   letterDates: string[];
   total: number;
+  category: string; // 현재 섬 종류 ('self', 'growth'...)
 }
 
-const LetterVisualization = ({ letterDates, total }: Props) => {
+const LetterVisualization = ({ letterDates, total, category }: Props) => {
+  const router = useRouter();
   const rowCounts = [5, 5, total - 10];
 
   const randomAngles = useMemo(() => {
@@ -53,6 +56,7 @@ const LetterVisualization = ({ letterDates, total }: Props) => {
                 style={{
                   animation: 'letterFloat 4s ease-in-out infinite',
                 }}
+                onClick={() => router.push(`/island/${category}/date/${date}`)}
               >
                 <LetterClosed width={48} height={31} date={new Date(date).getDate()}/>
               </div>
