@@ -17,6 +17,7 @@
   to   { opacity: 1; transform: translateY(0);}
 }
 
+
 .loading-page {
     display: flex;
     flex-direction: column;
@@ -130,9 +131,9 @@
 
 .next-text {
     display: block;
-    margin-top: 15vh;   
+    margin-top: 13vh;   
     max-width: auto;
-    font-size: 16px;
+    font-size: 15px;
     color: #222;
     font-weight: 400;
     line-height: 1.7;
@@ -143,58 +144,6 @@
     animation-delay: 0.5s;
   }
 
-@media screen and (max-width: 360px) {
-    .final-message {
-        top: 13vh;
-    }
-    
-    .final-card {
-        top: 23vh;
-        left: 4vw;
-        right: 4vw;
-    }
-    
-    .final-card-text {
-        padding: 3vh 3vw;
-    }
-    
-    .mail-box {
-        top: 70vh;
-    }
-    
-    .final-bottom-ment {
-        top: 60vh;
-    }
-    
-    .next-text {
-        margin-top: 28vh;
-    }
-}
-
-@media screen and (min-width: 768px) {
-    .final-message {
-        top: 17vh;
-    }
-    
-    .final-card {
-        top: 27vh;
-        left: 6vw;
-        right: 6vw;
-    }
-    
-    .final-card-text {
-        padding: 5vh 5vw;
-    }
-    
-    .mail-box {
-        top: 80vh;
-    }
-    
-    .final-bottom-ment {
-        top: 70vh;
-    }
-    
-    .next-text {
-        margin-top: 32vh;
-    }
+.glow-text {
+  color: #385eafa2;
 }

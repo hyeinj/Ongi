@@ -20,6 +20,7 @@ export default function Step6() {
   const [options, setOptions] = useState<string[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [isGenerating, setIsGenerating] = useState(true);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   // 클린 아키텍처를 통한 감정 데이터 관리
   const { isLoading, error, saveStageAnswer, getStageAnswer, generateStep6Texts } = useEmotion();
@@ -31,6 +32,8 @@ export default function Step6() {
     let isMounted = true;
 
     const loadPreviousData = async () => {
+      if (isDataLoaded) return; // 이미 데이터가 로드되었다면 실행하지 않음
+
       try {
         // 이전에 저장된 답변이 있다면 불러오기
         const savedAnswer = await getStageAnswer('step6');
@@ -56,6 +59,7 @@ export default function Step6() {
         }
         if (isMounted) {
           setIsGenerating(false);
+          setIsDataLoaded(true); // 데이터 로드 완료 표시
         }
       } catch (err) {
         console.error('Step6 데이터 로딩 실패:', err);
@@ -69,6 +73,7 @@ export default function Step6() {
             '다른 사람의 반응이 걱정되었기 때문'
           ]);
           setIsGenerating(false);
+          setIsDataLoaded(true); // 에러 시에도 데이터 로드 완료 표시
         }
       }
     };
@@ -78,7 +83,7 @@ export default function Step6() {
     return () => {
       isMounted = false;
     };
-  }, [getStageAnswer, generateStep6Texts]);
+  }, []); // 의존성 배열을 비워서 컴포넌트 마운트 시 한 번만 실행
 
   const handleAnswerClick = (selectedAnswer: string) => {
     setAnswer(prev => {
@@ -145,7 +150,7 @@ export default function Step6() {
   }
 
   return (
-    <SelfEmpathyLayout currentStep={5} totalStep={6} onBack={() => router.push('/self-empathy/5')}>
+    <SelfEmpathyLayout currentStep={5} totalStep={5} onBack={() => router.push('/self-empathy/5')}>
       <SelfEmpathyQuestion numbering={5} smallText={smallText} largeText={largeText}>
         <div className="yesno-btn-group2">
           {/* 네 맞아요 버튼 */}
@@ -186,23 +191,25 @@ export default function Step6() {
         {showModal && (
           <div className="confirm-modal">
             <div className="modal-content">
-              <button className="modal-close" onClick={() => setShowModal(false)}>
+              {/* <button className="modal-close" onClick={() => setShowModal(false)}>
                 ×
-              </button>
+              </button> */}
               <div className="modal-title">내 마음 속 말 들여다보기</div>
               <div className="modal-desc">
-                표면적으로 느꼈던 감정과 진짜 이유가 다를군요.
+                이 말이 당신에게 어떤 의미로 다가오는지,
                 <br />
-                그 감정을 느낀 순간으로 돌아가
+                조심스레 생각해볼까요?
                 <br />
-                앞뒤 상황을 생각해볼까요?
+                평소 자주 떠올리는 말일 수도, 나에게 힘이 되는 말일 수도, 
+                <br />
+                아직은 어색하지만 어딘가 마음에 닿는 말일 수도 있어요.
               </div>
               <div className="modal-btn-group">
                 <button
                   className="modal-btn"
                   onClick={handleConfirm}
                 >
-                  오늘의 나의 감정 되돌아보기
+                  충분히 생각해보았어요
                 </button>
               </div>
             </div>

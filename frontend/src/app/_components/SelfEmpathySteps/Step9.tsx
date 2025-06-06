@@ -29,35 +29,40 @@ export default function Step9() {
   return (
     <SelfEmpathyLayout onBack={() => router.push('/self-empathy/8')}>
       <div className="next-text">
-        지금 솔직한 마음을 들려줘서 정말 고마워요.
+        솔직한 마음을 들려줘서 고마워요.
         <br />
         <br />
-        다음 단계에서는 비슷한 감정을 겪은
+        <strong className="glow-text">이제 당신의 감정과 닮은,</strong>
         <br />
-        누군가가 남긴 편지를 보여드릴게요.
-        <br />
-        <br />
-        &apos;나만 이런 게 아니구나&apos;,
-        <br />
-        &apos;다른 사람도 이렇게 마음을 털어놓았구나&apos; 하고
-        <br />
-        천천히 공감하며 읽어보세요.
+        <strong className="glow-text">누군가가 남긴 고민 편지를 읽어볼 거예요.</strong>
         <br />
         <br />
-        그리고 그 마음을 받아들여,
+        지금 내 안에 머무는 감정이 어떻든,
         <br />
-        마치 가장 가까운 친구에게 편지를 쓰듯
+        &ldquo;<em>나와 비슷한 마음을 겪은 사람이 있었구나</em>&rdquo; 혹은
         <br />
-        나에게 답장을 써보면 어떨까요?
+        &ldquo;<em>내 따뜻함이 누군가에게 작은 숨결이 될 수 있겠구나</em>&rdquo;
+        <br />
+        라는 생각으로, 천천히 공감하며 읽어보세요.
         <br />
         <br />
-        조금 낯설더라도,
+        무지님의 편지가 실제로 보내지는 건 아니에요.
         <br />
-        놓쳤던 말과 감정을
         <br />
-        따뜻하게 적어보세요.
+        다만, 누군가의 마음에 조심스레 말을 건네 보고,
         <br />
-        👋💌
+        그 마음에 답장을 써 보는 경험은
+        <br />
+        오히려 내 마음을 더 깊이 들여다볼 수 있는
+        <br />
+        작은 연습이 되어 줄 거예요.
+        <br />
+        <br />
+        잘 쓰려고 애쓰지 않아도 괜찮아요.
+        <br />
+        <strong className="glow-text">지금 느낀 감정을 따라</strong>
+        <br />
+        <strong className="glow-text">천천히, 진심을 담아 적어보세요.</strong>
       </div>
       <button
         className="bottom-button final-button"
@@ -69,4 +74,5 @@ export default function Step9() {
     </SelfEmpathyLayout>
   );
 }
+
 

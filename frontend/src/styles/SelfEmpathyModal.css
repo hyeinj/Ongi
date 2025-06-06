@@ -1,41 +1,43 @@
 .confirm-modal {
     position: fixed;
     top: 0;
-    left: 0;
+    left: 0vw;
     width: 100vw;
     height: 100vh;
     z-index: 1000;
-    background: rgba(20, 20, 20, 0.7);
+    background: rgba(20, 20, 20, 0.4);
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding-top: 39vh;
+    padding-top: 67vh;
+    overflow: hidden;
 }
   
 .confirm-modal .modal-content {
     background: #f5f5f5;
-    border-radius: 20px;
-    padding: 32px 20px 24px 20px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    border-radius: 4vh 4vh 0 0;
+    padding: 5vh 2vw 5vh 2vw;
+    box-shadow: 0 0.8vh 3.2vh rgba(0,0,0,0.18);
     text-align: center;
     line-height: 1.5;
-    min-width: 280px;
-    max-width: 90vw;
+    min-width: 100%;
     position: relative;
+    max-height: 100%;
+    overflow: hidden;
 }
 
 .confirm-modal .modal-title {
     font-size: 16px;
     font-weight: bold;
     color: black;
-    margin-bottom: 25px;
+    margin-bottom: 2.5vh;
 }
 
 .confirm-modal .modal-desc {
     font-size: 14px;
     color: #444;
-    margin-bottom: 28px;
-    line-height: 1.5;
+    margin-bottom: 2.3vh;
+    line-height: 1.7;
     white-space: pre-line;
 }
 
@@ -45,29 +47,29 @@
 }
 
 .confirm-modal .modal-btn {
-    background: #7dbcff;
-    color: white;
+    background: #E3E7E9;
+    color: rgb(0, 0, 0);
     border: none;
-    border-radius: 25px;
-    padding: 15px 30px;
+    border-radius: 2.5vh;
+    padding: 1.5vh 3vw;
     font-size: 14px;
     font-weight: 500;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 0.2vh 0.8vh rgba(0,0,0,0.1);
     transition: all 0.2s ease;
     white-space: nowrap;
-    min-width: 200px;
+    min-width: 20vw;
 }
 
 .confirm-modal .modal-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-0.1vh);
+    box-shadow: 0 0.4vh 1.2vh rgba(0,0,0,0.15);
 }
 
 .confirm-modal .modal-btn:active {
     transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 0.2vh 0.8vh rgba(0,0,0,0.1);
 }
-
+/* 
 .confirm-modal .modal-close {
     position: absolute;
     top: 16px;
@@ -76,7 +78,7 @@
     border: none;
     font-size: 22px;
     color: #bbb;
-}
+} */
 
 @media screen and (max-width: 360px) {
     .confirm-modal {
@@ -103,14 +105,14 @@
 .yesno-btn-group2 {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1.2vh;
   width: 100%;
 }
 
 .yesno-btn2 {
   width: 100%;
   padding: 1.5vh 0;
-  border-radius: 30px;
+  border-radius: 3vh;
   border: none;
   background: #eeeeee;
   color: black;
@@ -127,7 +129,7 @@
 }
 
 .yesno-btn2.selected {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0.4vh 1.2vh rgba(0, 0, 0, 0.4);
 }
 
 .yesno-btn2:disabled {
@@ -139,14 +141,14 @@
 .yesno-btn-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1.2vh;
   width: 100%;
 }
 
 .yesno-btn {
   width: 100%;
   padding: 1.5vh 0;
-  border-radius: 30px;
+  border-radius: 3vh;
   border: none;
   background: #eeeeee;
   color: black;
@@ -163,7 +165,7 @@
 }
 
 .yesno-btn.selected {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0.4vh 1.2vh rgba(0, 0, 0, 0.4);
 }
 
 .yesno-btn:disabled {
