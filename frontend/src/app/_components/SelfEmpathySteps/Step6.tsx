@@ -191,9 +191,9 @@ export default function Step6() {
         {showModal && (
           <div className="confirm-modal">
             <div className="modal-content">
-              <button className="modal-close" onClick={() => setShowModal(false)}>
+              {/* <button className="modal-close" onClick={() => setShowModal(false)}>
                 ×
-              </button>
+              </button> */}
               <div className="modal-title">내 마음 속 말 들여다보기</div>
               <div className="modal-desc">
                 이 말이 당신에게 어떤 의미로 다가오는지,
