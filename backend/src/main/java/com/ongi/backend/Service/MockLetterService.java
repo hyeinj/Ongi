@@ -8,9 +8,11 @@ import com.ongi.backend.DTO.ResponseDTO;
 import com.ongi.backend.Entity.MockLetter;
 import com.ongi.backend.Entity.RealStory;
 import com.ongi.backend.Entity.Report;
+import com.ongi.backend.Entity.SelfEmpathy;
 import com.ongi.backend.Repository.MockLetterRepository;
 import com.ongi.backend.Repository.RealStoryRepository;
 import com.ongi.backend.Repository.ReportRepository;
+import com.ongi.backend.Repository.SelfEmpathyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
 public class MockLetterService {
+    private final SelfEmpathyRepository selfEmpathyRepository;
     @Value("${openai.api.key}")
     private String apiKey;
 
@@ -514,8 +517,9 @@ public class MockLetterService {
 
         MockLetter savedMockLetter = mockLetterRepository.save(mockLetter);
 
+        Optional<SelfEmpathy> selfEmpathy = selfEmpathyRepository.findById(request.getSelfempathyId());
         // 기존 Report 찾아서 업데이트
-        Report report = reportRepository.findBySelfempathyId(request.getSelfempathyId())
+        Report report = reportRepository.findBySelfEmpathy(selfEmpathy)
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("해당 자기공감에 대한 리포트를 찾을 수 없습니다."));

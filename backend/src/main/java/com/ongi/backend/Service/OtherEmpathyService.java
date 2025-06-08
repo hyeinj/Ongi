@@ -3,14 +3,8 @@ package com.ongi.backend.Service;
 import com.ongi.backend.DTO.OtherEmpathyDTO;
 import com.ongi.backend.DTO.RealStoryDTO;
 import com.ongi.backend.DTO.ResponseDTO;
-import com.ongi.backend.Entity.Highlights;
-import com.ongi.backend.Entity.OtherEmpathy;
-import com.ongi.backend.Entity.RealStory;
-import com.ongi.backend.Entity.Report;
-import com.ongi.backend.Repository.HighlightsRepository;
-import com.ongi.backend.Repository.OtherEmpathyRepository;
-import com.ongi.backend.Repository.RealStoryRepository;
-import com.ongi.backend.Repository.ReportRepository;
+import com.ongi.backend.Entity.*;
+import com.ongi.backend.Repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,16 +21,17 @@ import java.util.Optional;
 public class OtherEmpathyService {
     private final OtherEmpathyRepository otherEmpathyRepository;
     private final ReportRepository reportRepository;
-    private final RealStoryRepository realStoryRepository;
     private final HighlightsRepository highlightsRepository;
+    private final SelfEmpathyRepository selfEmpathyRepository;
 
     // 타인공감 저장 및 Report 업데이트
     public ResponseDTO<OtherEmpathyDTO.otherEmpathyResponseDTO> saveOtherEmpathy(OtherEmpathyDTO.otherEmpathyRequestDTO request) {
         // 타인공감 저장
         OtherEmpathy otherEmpathy = new OtherEmpathy();
 
+        Optional<SelfEmpathy> selfEmpathy = selfEmpathyRepository.findById(request.getSelfempathyId());
         // 기존 Report 찾아서 업데이트
-        Report report = reportRepository.findBySelfempathyId(request.getSelfempathyId())
+        Report report = reportRepository.findBySelfEmpathy(selfEmpathy)
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("해당 자기공감에 대한 리포트를 찾을 수 없습니다."));
