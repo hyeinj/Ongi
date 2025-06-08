@@ -512,12 +512,23 @@ public class MockLetterService {
         mockLetter.setFeedback3Content(request.getFeedback3Content());
         mockLetter.setReview(request.getReview()); // 선택사항
 
-        Optional<RealStory> realStory = realStoryRepository.findById(request.getRealstoryId());
-        mockLetter.setRealStory(realStory.get());
+        Optional<SelfEmpathy> selfEmpathyOpt = selfEmpathyRepository.findById(request.getSelfempathyId());
+        if (selfEmpathyOpt.isEmpty()) {
+            throw new RuntimeException("해당 자기공감 기록을 찾을 수 없습니다.");
+        }
+        SelfEmpathy selfEmpathy = selfEmpathyOpt.get();
+
+        // category와 emotion이 같은 RealStory 찾기
+        Optional<RealStory> realStoryOpt = realStoryRepository
+                .findFirstByCategoryAndEmotion(selfEmpathy.getCategory(), selfEmpathy.getEmotion());
+
+        if (realStoryOpt.isEmpty()) {
+            throw new RuntimeException("해당 조건에 맞는 RealStory가 존재하지 않습니다.");
+        }
+        mockLetter.setRealStory(realStoryOpt.get());
 
         MockLetter savedMockLetter = mockLetterRepository.save(mockLetter);
 
-        Optional<SelfEmpathy> selfEmpathy = selfEmpathyRepository.findById(request.getSelfempathyId());
         // 기존 Report 찾아서 업데이트
         Report report = reportRepository.findBySelfEmpathy(selfEmpathy)
                 .stream()

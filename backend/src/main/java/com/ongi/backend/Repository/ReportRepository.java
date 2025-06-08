@@ -10,5 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
-    List<Report> findBySelfEmpathy(Optional<SelfEmpathy> selfEmpathy);
+    List<Report> findBySelfEmpathy(SelfEmpathy selfEmpathy);
 }

@@ -21,6 +21,8 @@ public class RealStoryService {
         RealStory realStory = new RealStory();
         realStory.setLetter(request.getLetter());
         realStory.setResponse(request.getResponse());
+        realStory.setCategory(request.getCategory());
+        realStory.setEmotion(request.getEmotion());
 
         RealStory savedRealStory = realStoryRepository.save(realStory);
 

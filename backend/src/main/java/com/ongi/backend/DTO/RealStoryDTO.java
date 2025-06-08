@@ -13,6 +13,8 @@ public class RealStoryDTO {
     public static class realStoryRequestDTO{
         private String letter;
         private String response;
+        private String category;
+        private String emotion;
     }
 
     @Data

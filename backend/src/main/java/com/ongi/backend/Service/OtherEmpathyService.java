@@ -29,7 +29,11 @@ public class OtherEmpathyService {
         // 타인공감 저장
         OtherEmpathy otherEmpathy = new OtherEmpathy();
 
-        Optional<SelfEmpathy> selfEmpathy = selfEmpathyRepository.findById(request.getSelfempathyId());
+        Optional<SelfEmpathy> selfEmpathyOpt = selfEmpathyRepository.findById(request.getSelfempathyId());
+        if (selfEmpathyOpt.isEmpty()) {
+            throw new RuntimeException("해당 자기공감 기록을 찾을 수 없습니다.");
+        }
+        SelfEmpathy selfEmpathy = selfEmpathyOpt.get();
         // 기존 Report 찾아서 업데이트
         Report report = reportRepository.findBySelfEmpathy(selfEmpathy)
                 .stream()

@@ -41,7 +41,6 @@ public class MockLetterDTO {
         private String feedback2Content;
         private String feedback3Title;
         private String feedback3Content;
-        private Long realstoryId;
         // review는 선택사항
         private String review;
         private Long selfempathyId;

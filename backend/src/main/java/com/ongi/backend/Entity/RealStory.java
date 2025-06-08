@@ -19,4 +19,10 @@ public class RealStory {
 
     @Column(name = "response", columnDefinition = "TEXT")
     private String response;
+
+    @Column(name = "category")
+    private String category;
+
+    @Column(name = "emotion")
+    private String emotion;
 }
