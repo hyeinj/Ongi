@@ -29,7 +29,7 @@ interface LetterParagraph {
 // 기존 정적 데이터는 제거하고 useRealLetter 훅을 사용
 
 export default function LetterContent({ isVisible }: LetterContentProps) {
-  const [activeTab, setActiveTab] = useState<LetterType>('worry');
+  const [activeTab, setActiveTab] = useState<LetterType>('answer');
   const [fadeIn, setFadeIn] = useState(false);
   const [contentChanging, setContentChanging] = useState(false);
   const [hasViewedAnswer, setHasViewedAnswer] = useState(false);
@@ -110,7 +110,7 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
               className={`py-1 px-4 rounded-t-lg text-sm transition-colors ${
                 activeTab === 'worry'
                   ? 'bg-[#FFDB68] text-black font-medium z-10'
-                  : 'bg-[#FFEDB5] text-black active:bg-[#fee9a1]'
+                  : 'bg-[#919191] text-black active:bg-[#fee9a1]'
               }`}
               onClick={() => changeLetterContent('worry')}
               disabled={contentChanging}
@@ -121,7 +121,7 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
               className={`py-1 px-4 rounded-t-lg text-sm transition-colors ${
                 activeTab === 'answer'
                   ? 'bg-[#FFDB68] text-black font-medium z-10'
-                  : 'bg-[#FFEDB5] text-black active:bg-[#fee9a1]'
+                  : 'bg-[#919191] text-black active:bg-[#fee9a1]'
               }`}
               onClick={() => changeLetterContent('answer')}
               disabled={contentChanging}
@@ -139,12 +139,15 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
               width={50}
               height={50}
               priority
-              loading="eager" />
+              loading="eager"
+            />
 
             <h3 className="text-center mt-3 font-medium text-lg text-amber-800 whitespace-pre-line">
               {letterTitle.title}
             </h3>
-            <p className="text-end text-sm text-amber-700 mt-1 w-full">{letterTitle.subtitle}</p>
+            <p className="text-end text-sm text-amber-700 mt-1 w-full animate-pulse">
+              {letterTitle.subtitle}
+            </p>
           </div>
 
           <div className="space-y-4 mt-6 transition-opacity duration-300 ease-in-out">

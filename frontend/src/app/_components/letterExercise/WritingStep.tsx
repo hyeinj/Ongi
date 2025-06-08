@@ -63,10 +63,20 @@ export default function WritingStep() {
   const [letterContent, setLetterContent] = useState('');
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [fadeIn, setFadeIn] = useState(false);
   const router = useRouter();
 
   // 음성 인식 설정
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+
+  useEffect(() => {
+    // 페이드인 효과
+    const timer = setTimeout(() => {
+      setFadeIn(true);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -79,7 +89,7 @@ export default function WritingStep() {
 
         recognition.onresult = (event: SpeechRecognitionEvent) => {
           const transcript = Array.from(event.results)
-            .map(result => result[0].transcript)
+            .map((result) => result[0].transcript)
             .join('');
           setLetterContent(transcript);
         };
@@ -151,7 +161,11 @@ export default function WritingStep() {
   };
 
   return (
-    <div className="flex flex-col h-full w-full py-10 px-6">
+    <div
+      className={`flex flex-col h-full w-full py-10 px-6 transition-opacity duration-1000 ease-in-out ${
+        fadeIn ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
       <h2 className="text-white text-md mb-6">당신의 마음을 담아, 적어볼까요?</h2>
 
       <div className="  mb-8">
@@ -193,13 +207,15 @@ export default function WritingStep() {
 
           <button
             onClick={toggleListening}
-            className={`w-12 h-12 rounded-full ${isListening ? 'bg-red-500' : 'bg-[#EEEEEE]'} active:bg-[#F4E8D1] shadow-lg transition-all duration-300 flex items-center justify-center`}
+            className={`w-12 h-12 rounded-full ${
+              isListening ? 'bg-red-500' : 'bg-[#EEEEEE]'
+            } active:bg-[#F4E8D1] shadow-lg transition-all duration-300 flex items-center justify-center`}
             title={isListening ? '음성 인식 중지' : '음성으로 작성'}
           >
-            <Image 
-              src={isListening ? micActiveIcon : micIcon} 
-              alt={isListening ? '음성 인식 중지' : '음성으로 작성'} 
-              width={28} 
+            <Image
+              src={isListening ? micActiveIcon : micIcon}
+              alt={isListening ? '음성 인식 중지' : '음성으로 작성'}
+              width={28}
               height={28}
               className="w-12 h-12"
             />

@@ -1,19 +1,21 @@
 'use client';
 
 import React from 'react';
-import IntroStep from '@/app/_components/letterExercise/IntroStep';
+import LetterStep from '@/app/_components/letterExercise/LetterStep';
 import WritingStep from '@/app/_components/letterExercise/WritingStep';
 import FeedbackStep from '@/app/_components/letterExercise/FeedbackStep';
 import { useParams } from 'next/navigation';
 import { UIProvider } from '@/ui/contexts/UIContext';
+import InfoStep from '@/app/_components/letterExercise/InfoStep';
 
 // 스텝 컴포넌트들을 매핑합니다.
 const stepComponents: {
   [key: string]: React.ComponentType;
 } = {
-  '1': IntroStep,
+  '1': LetterStep,
   '2': WritingStep,
   '3': FeedbackStep,
+  '4': InfoStep,
 };
 
 export default function LetterExercisePage() {

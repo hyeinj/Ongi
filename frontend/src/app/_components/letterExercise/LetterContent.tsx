@@ -1,0 +1,154 @@
+'use client';
+
+import React, { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
+import postboxIcon from '@/assets/images/postbox-icon.png';
+import { useLetterHighlights } from '@/ui/hooks/useLetterHighlights';
+import { useLetter } from '@/ui/hooks/useLetter';
+import localFont from 'next/font/local';
+
+const garamFont = localFont({
+  src: '../../../assets/fonts/gaRamYeonGgoc.ttf',
+});
+
+interface LetterContentProps {
+  isVisible: boolean;
+}
+
+// 기존 인터페이스와 호환성을 위해 유지
+interface LetterParagraph {
+  id: string;
+  text: string;
+}
+
+export default function LetterContent({ isVisible }: LetterContentProps) {
+  const [fadeIn, setFadeIn] = useState(false);
+  const [mockLetter, setMockLetter] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const currentDate = useMemo(() => new Date().toISOString().split('T')[0], []);
+
+  const { generateMockLetter, getLetterData } = useLetter();
+
+  // 편지 데이터 로드 및 생성
+  useEffect(() => {
+    if (dataLoaded) return;
+
+    const loadOrGenerateLetter = async () => {
+      setIsLoading(true);
+
+      // 먼저 기존 편지 확인
+      const existingLetter = await getLetterData(currentDate);
+      if (existingLetter && existingLetter.mockLetter) {
+        setMockLetter(existingLetter.mockLetter);
+      } else {
+        // 없으면 새로 생성
+        const result = await generateMockLetter(currentDate);
+        if (result?.mockLetter) {
+          setMockLetter(result.mockLetter);
+        }
+      }
+
+      setIsLoading(false);
+      setDataLoaded(true);
+    };
+
+    loadOrGenerateLetter();
+  }, [currentDate, dataLoaded, getLetterData, generateMockLetter]);
+
+  // mockLetter를 파싱해서 편지 내용으로 변환 (메모이제이션)
+  const letterContent: LetterParagraph[] = useMemo(() => {
+    if (!mockLetter) return [];
+
+    // 제목: 부분 제거하고 본문만 추출
+    const content = mockLetter.replace(/^제목: .+\n/, '').trim();
+    const paragraphs = content.split('\n').filter((line) => line.trim() !== '');
+
+    return paragraphs.map((text, index) => ({
+      id: `paragraph-${index}`,
+      text: text.trim(),
+    }));
+  }, [mockLetter]);
+
+  const { renderHighlightedText } = useLetterHighlights({
+    letterType: 'worry',
+    letterContent,
+    date: currentDate,
+  });
+
+  useEffect(() => {
+    if (isVisible) {
+      setFadeIn(true);
+    } else {
+      setFadeIn(false);
+    }
+  }, [isVisible]);
+
+  // 편지 로딩 중일 때 표시
+  if (isLoading) {
+    return (
+      <div
+        className={`absolute inset-0 flex flex-col items-center justify-center w-full h-full transition-opacity duration-500 ease-in-out ${
+          isVisible ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-800 mx-auto mb-4"></div>
+          <p className="text-amber-800">편지를 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`absolute inset-0 flex flex-col items-center justify-center w-full h-full transition-opacity duration-500 ease-in-out ${
+        isVisible && fadeIn ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
+      <div
+        className={`relative w-full h-full flex flex-col items-center justify-center p-4 ${garamFont.className}`}
+      >
+        <div className="w-full flex justify-end pr-3">
+          <div className="flex space-x-[-8px]">
+            <button className="py-1 px-4 rounded-t-lg text-sm bg-[#FFDB68] text-black font-medium z-10">
+              고민편지
+            </button>
+          </div>
+        </div>
+
+        <div className="relative z-20 bg-[#F7F4E6] w-full mx-auto p-6 h-[80vh] transition-opacity duration-300 ease-in-out overflow-y-auto overflow-hidden break-keep">
+          <div className="flex flex-col items-center mb-5 relative">
+            <Image
+              src={postboxIcon}
+              alt="편지함 아이콘"
+              width={50}
+              height={50}
+              priority
+              loading="eager"
+            />
+          </div>
+
+          <div className="space-y-4 mt-6 transition-opacity duration-300 ease-in-out">
+            {letterContent.length > 0 ? (
+              letterContent.map((paragraph) => (
+                <p
+                  id={`paragraph-${paragraph.id}`}
+                  key={paragraph.id}
+                  className=" text-gray-700 cursor-text"
+                >
+                  {renderHighlightedText(paragraph.text, paragraph.id)}
+                </p>
+              ))
+            ) : (
+              <div className="text-center text-gray-500 py-8">
+                <p>편지 내용을 불러올 수 없습니다.</p>
+                <p className="text-sm mt-2">잠시 후 다시 시도해주세요.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
