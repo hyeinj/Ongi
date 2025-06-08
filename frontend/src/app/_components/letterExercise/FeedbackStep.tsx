@@ -108,6 +108,10 @@ export default function FeedbackStep() {
           transition-all duration-800 ease-in-out
           ${isLoading ? 'opacity-0' : 'opacity-100'}
         `}
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(255, 255, 255, 0.3) transparent',
+        }}
         ref={scrollContainerRef}
       >
         <h2 className="text-white text-md mb-0 w-full text-left">
@@ -175,7 +179,7 @@ export default function FeedbackStep() {
         </div>
         {!isOpen && (
           <button onClick={handleChevronClick}>
-            <ChevronDown className="text-white cursor-pointer absolute top-[70vh] left-1/2 -translate-x-1/2" />
+            <ChevronDown className="w-10 h-10 text-white cursor-pointer absolute top-[70vh] left-1/2 -translate-x-1/2 animate-bounce" />
           </button>
         )}
 
@@ -252,11 +256,25 @@ export default function FeedbackStep() {
               계속 이어가볼까요?
             </p>
           </div>
-          <Link href="/other-empathy/1">
-            <button className="bg-white rounded-full px-20 py-3 shadow-md">완료</button>
+          <Link href="/letter-exercise/4">
+            <div className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="black"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </div>
           </Link>
         </div>
-
         <Image
           src={letterExercisePostBox}
           alt="post box"
