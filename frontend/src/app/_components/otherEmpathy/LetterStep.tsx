@@ -2,86 +2,45 @@
 
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
-import letterClosedImg from '@/assets/images/letter-closed.png';
-import letterOpenedImg from '@/assets/images/letter-opened.png';
 import letterOpenedBgImg from '@/assets/images/letter-opened-bg.png';
 import LetterContent from './LetterContent';
 
 export default function LetterStep() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scaleUp, setScaleUp] = useState(false);
   const [showLetterContent, setShowLetterContent] = useState(false);
   const [animating, setAnimating] = useState(false);
   const [showFullContent, setShowFullContent] = useState(false);
+  const [showSecondMessage, setShowSecondMessage] = useState(false);
+  const [fadeFirstMessage, setFadeFirstMessage] = useState(true);
 
   useEffect(() => {
-    // 먼저 확대 애니메이션 시작
-    const scaleTimer = setTimeout(() => {
-      setScaleUp(true);
+    // 바로 애니메이션과 텍스트 표시
+    setAnimating(true);
+    setShowLetterContent(true);
 
-      // 0.8초 후 편지 열림 상태로 변경
-      const openTimer = setTimeout(() => {
-        setIsOpen(true);
+    // 1.5초 후에 첫 번째 메시지 페이드아웃 시작
+    const fadeOutTimer = setTimeout(() => {
+      setFadeFirstMessage(false);
+    }, 1500);
 
-        // 1초 후 편지 내용 화면으로 전환 애니메이션 시작
-        const contentTimer = setTimeout(() => {
-          setAnimating(true);
+    // 2초 후에 두 번째 메시지 표시
+    const secondMessageTimer = setTimeout(() => {
+      setShowSecondMessage(true);
+    }, 2000);
 
-          // 애니메이션 시작 후 100ms 후에 내용 보이기 (자연스러운 전환을 위해)
-          setTimeout(() => {
-            setShowLetterContent(true);
+    // 5초 후에 전체 내용 표시 (두 번째 메시지를 충분히 읽을 시간 제공)
+    const fullContentTimer = setTimeout(() => {
+      setShowFullContent(true);
+    }, 4000);
 
-            // "두 사람의 마음이 오간 기록을 함께 읽어볼까요?" 표시 후 2초 뒤에 전체 내용 표시
-            setTimeout(() => {
-              setShowFullContent(true);
-            }, 2000);
-          }, 100);
-        }, 1000);
-
-        return () => clearTimeout(contentTimer);
-      }, 800);
-
-      return () => clearTimeout(openTimer);
-    }, 1200);
-
-    return () => clearTimeout(scaleTimer);
+    return () => {
+      clearTimeout(fadeOutTimer);
+      clearTimeout(secondMessageTimer);
+      clearTimeout(fullContentTimer);
+    };
   }, []);
 
   return (
     <div className="flex flex-col items-center justify-center h-full w-full">
-      <div
-        className={`flex flex-col items-center ${showLetterContent ? 'opacity-0' : 'opacity-100'}`}
-      >
-        <div
-          className={`absolute top-1/4 w-100 h-100 transition-all duration-1000 ease-in-out ${
-            scaleUp ? 'scale-110' : 'scale-100'
-          }`}
-        >
-          <Image
-            src={letterClosedImg}
-            alt="닫힌 편지"
-            className={`absolute object-contain transition-all duration-1000 ease-in-out ${
-              isOpen ? 'opacity-0 rotate-3' : 'opacity-100 rotate-0'
-            }`}
-            priority
-            loading="eager"
-          />
-
-          <Image
-            src={letterOpenedImg}
-            alt="열린 편지"
-            className={`absolute object-contain transition-all duration-1000 ease-in-out ${
-              isOpen ? 'opacity-100 scale-105' : 'opacity-0 scale-95'
-            }`}
-            priority
-            loading="eager"
-          />
-        </div>
-        <p className="pt-20 text-center text-white text-lg transition-opacity duration-700 ease-in-out">
-          편지가 도착했어요.
-        </p>
-      </div>
-
       <div
         className={`flex flex-col items-center justify-center w-full h-full absolute top-0 left-0 transition-opacity duration-1000 ease-in-out ${
           animating ? 'opacity-100' : 'opacity-0'
@@ -92,11 +51,25 @@ export default function LetterStep() {
             showFullContent ? 'opacity-0' : 'opacity-100'
           }`}
         >
-          <p className="text-lg">
-            두 사람의 마음이 오간 기록을
-            <br />
-            함께 읽어볼까요?
-          </p>
+          {!showSecondMessage ? (
+            <p
+              className={`text-lg transition-opacity duration-500 ease-in-out ${
+                fadeFirstMessage ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              온기우체부의 답장 편지를 열어보았어요.
+            </p>
+          ) : (
+            <p className="text-lg transition-opacity duration-500 ease-in-out opacity-100">
+              이때, 스쳐 지나가기엔 아쉬운 문장을
+              <br />
+              하이라이트 해보아요.
+              <br />
+              나중에 다시 꺼내보며
+              <br />
+              지금의 마음을 떠올릴 수 있어요.
+            </p>
+          )}
         </div>
 
         {/* 새로운 LetterContent 컴포넌트 */}

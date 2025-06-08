@@ -10,7 +10,7 @@ export default function Header({ stage }: { stage: number }) {
   };
 
   return (
-    <div className="flex justify-between items-center p-4 h-15">
+    <div className="flex justify-between items-center p-4 h-15 z-100">
       <IconButton onClick={handleBackClick}>
         <ChevronLeft className="text-white" />
       </IconButton>

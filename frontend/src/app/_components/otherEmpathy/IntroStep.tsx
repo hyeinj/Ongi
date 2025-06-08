@@ -8,7 +8,7 @@ export default function IntroStep() {
     <div className="flex flex-col items-center justify-center h-full w-full">
       {' '}
       <div className="text-center text-white">
-        <p className="text-base">
+        <p className="text-base leading-8">
           이제,
           <br />
           온기 사연자님이 남긴 진심 어린 편지와
@@ -19,10 +19,10 @@ export default function IntroStep() {
           <br />그 온기를 느껴보세요.
         </p>
       </div>
-      <div className="w-full absolute bottom-10 px-4 flex justify-center">
+      <div className="w-full absolute bottom-15 px-4 flex justify-center">
         <Link
           href="/other-empathy/2"
-          className="w-full rounded-full py-4 bg-[#EEEEEE] text-center shadow active:bg-[#D2D2D2]"
+          className="w-full rounded-full py-2 bg-[#EEEEEE] text-center shadow active:bg-[#D2D2D2]"
         >
           마음을 건네받을게요
         </Link>
