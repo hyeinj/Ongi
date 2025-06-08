@@ -3,18 +3,28 @@ package com.ongi.backend.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.ongi.backend.DTO.ResponseDTO;
+import com.ongi.backend.DTO.SelfEmpathyDTO;
+import com.ongi.backend.Entity.Report;
+import com.ongi.backend.Entity.SelfEmpathy;
+import com.ongi.backend.Repository.ReportRepository;
+import com.ongi.backend.Repository.SelfEmpathyRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class SelfSummaryService {
     @Value("${openai.api.key}")
     private String apiKey;
@@ -22,6 +32,8 @@ public class SelfSummaryService {
     private final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final SelfEmpathyRepository selfEmpathyRepository;
+    private final ReportRepository reportRepository;
 
     public String createSummaryFromAnswer(
             String step1Answer,
@@ -206,6 +218,67 @@ public class SelfSummaryService {
         } catch (Exception e) {
             log.error("OpenAI API 호출 중 오류 발생", e);
             throw new RuntimeException("OpenAI API 호출 중 오류 발생", e);
+        }
+    }
+
+    // 자기공감 저장 및 Report 생성
+    public ResponseDTO<?> saveSelfEmpathy(SelfEmpathyDTO.selfEmpathyRequestDTO request) {
+        // SelfEmpathy 저장
+        SelfEmpathy selfEmpathy = new SelfEmpathy();
+        selfEmpathy.setOneQuestion(request.getOneQuestion());
+        selfEmpathy.setOneAnswer(request.getOneAnswer());
+        selfEmpathy.setTwoQuestion(request.getTwoQuestion());
+        selfEmpathy.setTwoAnswer(request.getTwoAnswer());
+        selfEmpathy.setThreeQuestion(request.getThreeQuestion());
+        selfEmpathy.setThreeAnswer(request.getThreeAnswer());
+        selfEmpathy.setFourQuestion(request.getFourQuestion());
+        selfEmpathy.setFourAnswer(request.getFourAnswer());
+        selfEmpathy.setFiveQuestion(request.getFiveQuestion());
+        selfEmpathy.setFiveAnswer(request.getFiveAnswer());
+        selfEmpathy.setSummary(request.getSummary());
+        selfEmpathy.setCategory(request.getCategory());
+        selfEmpathy.setEmotion(request.getEmotion());
+
+        SelfEmpathy savedSelfEmpathy = selfEmpathyRepository.save(selfEmpathy);
+
+        // Report 생성 (자기공감만으로도 생성)
+        Report report = new Report();
+        report.setSelfEmpathy(savedSelfEmpathy);
+        // category에 따른 island 값 설정
+        Integer islandValue = getIslandValueByCategory(request.getCategory());
+        report.setIsland(islandValue);
+
+        Report savedReport = reportRepository.save(report);
+
+        SelfEmpathyDTO.selfEmpathyResponseDTO responseDto;
+        responseDto = new SelfEmpathyDTO.selfEmpathyResponseDTO(
+                savedSelfEmpathy.getSelfempathyId(),
+                savedReport.getReportId(),
+                "자기공감이 성공적으로 저장되었습니다.",
+                savedSelfEmpathy.getCategory(),
+                islandValue
+        );
+
+        return ResponseDTO.success("자기공감 등록 완료", responseDto);
+    }
+
+    // category에 따른 island 값 반환 메서드
+    private Integer getIslandValueByCategory(String category) {
+        if (category == null) {
+            return 1; // 기본값
+        }
+
+        switch (category.toLowerCase()) {
+            case "self":
+                return 1;
+            case "growth":
+                return 2;
+            case "routine":
+                return 3;
+            case "relationship":
+                return 4;
+            default:
+                return 1; // 기본값 (self)
         }
     }
 }

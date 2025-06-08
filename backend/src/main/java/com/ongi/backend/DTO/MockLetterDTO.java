@@ -1,8 +1,6 @@
 package com.ongi.backend.DTO;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor
 @Getter
@@ -31,5 +29,30 @@ public class MockLetterDTO {
         private String step5_answer;
         private String mock_letter;
         private String letter_response;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class mockLetterRequestDTO {
+        private String userResponse;
+        private String feedback1;
+        private String feedback2Title;
+        private String feedback2Content;
+        private String feedback3Title;
+        private String feedback3Content;
+        // review는 선택사항
+        private String review;
+        private Long selfempathyId;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class mockLetterResponseDTO {
+        private Long mockLetterId;
+        private Long reportId;
+        private String message;
+        private String review;
     }
 }

@@ -2,23 +2,44 @@ package com.ongi.backend.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.ongi.backend.DTO.MockLetterDTO;
+import com.ongi.backend.DTO.RealStoryDTO;
+import com.ongi.backend.DTO.ResponseDTO;
+import com.ongi.backend.Entity.MockLetter;
+import com.ongi.backend.Entity.RealStory;
+import com.ongi.backend.Entity.Report;
+import com.ongi.backend.Entity.SelfEmpathy;
+import com.ongi.backend.Repository.MockLetterRepository;
+import com.ongi.backend.Repository.RealStoryRepository;
+import com.ongi.backend.Repository.ReportRepository;
+import com.ongi.backend.Repository.SelfEmpathyRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class MockLetterService {
+    private final SelfEmpathyRepository selfEmpathyRepository;
     @Value("${openai.api.key}")
     private String apiKey;
 
     private final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final MockLetterRepository mockLetterRepository;
+    private final ReportRepository reportRepository;
+    private final RealStoryRepository realStoryRepository;
 
     public String[] generateLetter(
             String step1Answer,
@@ -477,5 +498,54 @@ public class MockLetterService {
             log.error("OpenAI API 호출 중 오류 발생", e);
             throw new RuntimeException("OpenAI API 호출 중 오류 발생", e);
         }
+    }
+
+    // 편지모의쓰기 저장 및 Report 업데이트
+    public ResponseDTO<MockLetterDTO.mockLetterResponseDTO> saveMockLetter(MockLetterDTO.mockLetterRequestDTO request) {
+        // MockLetter 저장
+        MockLetter mockLetter = new MockLetter();
+        mockLetter.setUserResponse(request.getUserResponse());
+        mockLetter.setFeedback1(request.getFeedback1());
+        mockLetter.setFeedback2Title(request.getFeedback2Title());
+        mockLetter.setFeedback2Content(request.getFeedback2Content());
+        mockLetter.setFeedback3Title(request.getFeedback3Title());
+        mockLetter.setFeedback3Content(request.getFeedback3Content());
+        mockLetter.setReview(request.getReview()); // 선택사항
+
+        Optional<SelfEmpathy> selfEmpathyOpt = selfEmpathyRepository.findById(request.getSelfempathyId());
+        if (selfEmpathyOpt.isEmpty()) {
+            throw new RuntimeException("해당 자기공감 기록을 찾을 수 없습니다.");
+        }
+        SelfEmpathy selfEmpathy = selfEmpathyOpt.get();
+
+        // category와 emotion이 같은 RealStory 찾기
+        Optional<RealStory> realStoryOpt = realStoryRepository
+                .findFirstByCategoryAndEmotion(selfEmpathy.getCategory(), selfEmpathy.getEmotion());
+
+        if (realStoryOpt.isEmpty()) {
+            throw new RuntimeException("해당 조건에 맞는 RealStory가 존재하지 않습니다.");
+        }
+        mockLetter.setRealStory(realStoryOpt.get());
+
+        MockLetter savedMockLetter = mockLetterRepository.save(mockLetter);
+
+        // 기존 Report 찾아서 업데이트
+        Report report = reportRepository.findBySelfEmpathy(selfEmpathy)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("해당 자기공감에 대한 리포트를 찾을 수 없습니다."));
+
+        report.setMockLetter(savedMockLetter);
+        reportRepository.save(report);
+
+        MockLetterDTO.mockLetterResponseDTO responseDTO =
+                new MockLetterDTO.mockLetterResponseDTO(
+                        savedMockLetter.getMockletterId(),
+                        report.getReportId(),
+                        "편지모의쓰기가 성공적으로 저장되었습니다.",
+                        savedMockLetter.getReview()
+                );
+
+        return ResponseDTO.success("편지모의쓰기 등록 완료", responseDTO);
     }
 }

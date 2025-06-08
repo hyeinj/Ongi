@@ -1,8 +1,6 @@
 package com.ongi.backend.DTO;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor
 @Getter
@@ -54,5 +52,35 @@ public class SelfEmpathyDTO {
         private String step3Feelings;
         private String step4_answer;
         private String step5_answer;
+    }
+
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class selfEmpathyRequestDTO{
+        private String oneQuestion;
+        private String oneAnswer;
+        private String twoQuestion;
+        private String twoAnswer;
+        private String threeQuestion;
+        private String threeAnswer;
+        private String fourQuestion;
+        private String fourAnswer;
+        private String fiveQuestion;
+        private String fiveAnswer;
+        private String summary;
+        private String category;
+        private String emotion;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class selfEmpathyResponseDTO{
+        private Long selfEmpathyId;
+        private Long reportId;
+        private String message;
+        private String category;
+        private Integer island;
     }
 }

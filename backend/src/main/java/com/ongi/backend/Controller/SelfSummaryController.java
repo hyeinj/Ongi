@@ -1,5 +1,6 @@
 package com.ongi.backend.Controller;
 
+import com.ongi.backend.DTO.ResponseDTO;
 import com.ongi.backend.DTO.SelfEmpathyDTO;
 import com.ongi.backend.Service.SelfSummaryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/self-empathy-summary")
-@CrossOrigin(origins = "http://localhost:3000")
 public class SelfSummaryController {
     private final SelfSummaryService selfSummaryService;
 
@@ -79,5 +79,11 @@ public class SelfSummaryController {
             error.put("error", "질문 생성 중 오류가 발생했습니다.");
             return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // 자기공감 저장 API
+    @PostMapping("/save")
+    public ResponseDTO<?> saveSelfEmpathy(@RequestBody SelfEmpathyDTO.selfEmpathyRequestDTO selfEmpathyRequestDTO) {
+        return selfSummaryService.saveSelfEmpathy(selfEmpathyRequestDTO);
     }
 }

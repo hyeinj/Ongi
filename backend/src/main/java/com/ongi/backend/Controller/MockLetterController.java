@@ -1,6 +1,8 @@
 package com.ongi.backend.Controller;
 
 import com.ongi.backend.DTO.MockLetterDTO;
+import com.ongi.backend.DTO.RealStoryDTO;
+import com.ongi.backend.DTO.ResponseDTO;
 import com.ongi.backend.Service.MockLetterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +14,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/mock-letter")
-@CrossOrigin(origins = "http://localhost:3000")
 public class MockLetterController {
     private MockLetterService mockLetterService;
 
@@ -99,5 +100,11 @@ public class MockLetterController {
             error.put("error", "질문 생성 중 오류가 발생했습니다.");
             return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // 편지모의쓰기 저장 API
+    @PostMapping("/save")
+    public ResponseDTO<?> saveMockLetter(@RequestBody MockLetterDTO.mockLetterRequestDTO request) {
+        return mockLetterService.saveMockLetter(request);
     }
 }
