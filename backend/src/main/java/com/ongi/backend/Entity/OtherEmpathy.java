@@ -21,4 +21,7 @@ public class OtherEmpathy {
     @ManyToOne
     @JoinColumn(name = "highlights_id")
     private Highlights highlights;
+
+    @Column(name = "review")
+    private String review;
 }

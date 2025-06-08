@@ -44,12 +44,6 @@ public class SelfEmpathy {
     @Column(name = "five_answer", columnDefinition = "TEXT")
     private String fiveAnswer;
 
-    @Column(name = "six_question", columnDefinition = "TEXT")
-    private String sixQuestion;
-
-    @Column(name = "six_answer", columnDefinition = "TEXT")
-    private String sixAnswer;
-
     @Column(name = "summary", columnDefinition = "TEXT")
     private String summary;
 

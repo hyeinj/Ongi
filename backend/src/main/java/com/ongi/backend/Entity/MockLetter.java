@@ -14,9 +14,6 @@ public class MockLetter {
     @Column(name = "mockletter_id")
     private Long mockletterId;
 
-    @Column(name = "mockletter", columnDefinition = "TEXT")
-    private String mockletter;
-
     @Column(name = "user_response", columnDefinition = "TEXT")
     private String userResponse;
 
@@ -35,6 +32,10 @@ public class MockLetter {
     @Column(name = "feedback3_content")
     private String feedback3Content;
 
-    @Column(name = "feedback4")
-    private String feedback4;
+    @Column(name = "review")
+    private String review;
+
+    @ManyToOne
+    @JoinColumn(name = "realstory_id")
+    private RealStory realStory;
 }
