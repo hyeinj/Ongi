@@ -13,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/self-empathy-summary")
-@CrossOrigin(origins = "http://localhost:3000")
 public class SelfSummaryController {
     private final SelfSummaryService selfSummaryService;
 

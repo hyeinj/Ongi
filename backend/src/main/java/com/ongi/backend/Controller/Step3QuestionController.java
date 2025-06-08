@@ -11,7 +11,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/step3-question")
-@CrossOrigin(origins = "http://localhost:3000")
 public class Step3QuestionController {
     private final Step3QuestionService step3QuestionService;
 

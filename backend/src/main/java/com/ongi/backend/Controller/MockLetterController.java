@@ -14,7 +14,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/mock-letter")
-@CrossOrigin(origins = "http://localhost:3000")
 public class MockLetterController {
     private MockLetterService mockLetterService;
 

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/other-empathy")
-@CrossOrigin(origins = "http://localhost:3000")
 public class OtherEmpathyController {
     private final OtherEmpathyService otherEmpathyService;
 
