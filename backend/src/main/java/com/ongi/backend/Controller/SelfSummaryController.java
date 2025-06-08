@@ -84,7 +84,7 @@ public class SelfSummaryController {
 
     // 자기공감 저장 API
     @PostMapping("/save")
-    public ResponseDTO<?> generateCategory(@RequestBody SelfEmpathyDTO.selfEmpathyRequestDTO selfEmpathyRequestDTO) {
+    public ResponseDTO<?> saveSelfEmpathy(@RequestBody SelfEmpathyDTO.selfEmpathyRequestDTO selfEmpathyRequestDTO) {
         return selfSummaryService.saveSelfEmpathy(selfEmpathyRequestDTO);
     }
 }
