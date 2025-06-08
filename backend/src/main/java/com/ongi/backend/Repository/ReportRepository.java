@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findBySelfempathyId(Long selfempathyId);
+    List<Report> findByOtherempathyId(Long otherempathyId);
 }

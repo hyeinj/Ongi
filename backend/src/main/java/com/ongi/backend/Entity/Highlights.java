@@ -16,4 +16,8 @@ public class Highlights {
 
     @Column(name = "content")
     private String content;
+
+    @ManyToOne
+    @JoinColumn(name = "otherempathy_id")
+    private OtherEmpathy otherEmpathy;
 }

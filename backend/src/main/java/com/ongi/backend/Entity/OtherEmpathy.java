@@ -18,10 +18,6 @@ public class OtherEmpathy {
     @JoinColumn(name = "realstory_id")
     private RealStory realStory;
 
-    @ManyToOne
-    @JoinColumn(name = "highlights_id")
-    private Highlights highlights;
-
     @Column(name = "review")
     private String review;
 }
