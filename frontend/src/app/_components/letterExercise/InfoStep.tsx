@@ -30,7 +30,7 @@ export default function InfoStep() {
         <p className="text-xl leading-8 mb-6">
           당신이 조심스레 건넨 마음은
           <br />
-          어쩌면, 창선 스스로에게도
+          어쩌면, 당신 스스로에게도
           <br />
           따뜻한 울림으로 돌아왔을지도 몰라요.
         </p>
@@ -38,18 +38,18 @@ export default function InfoStep() {
         <p className="text-xl leading-8 mb-6">
           이번엔, 같은 고민 편지를 마주했던
           <br />
-          온가족세부의 답장을 만나볼 거에요.
+          온기우체부의 답장을 만나볼 거에요.
         </p>
 
         <p className="text-xl leading-8 mb-6">
-          당신의 답장과 닮은 점이 있는 수도,
+          당신의 답장과 닮은 점이 있을 수도,
           <br />
           전혀 다른 시선이 담겨 있을 수도 있어요.
         </p>
 
         <p className="text-xl leading-8 mb-8">
           어떤 이야기든
-          <br />그 안에 담긴 따뜻함을 느껴가 보어요.
+          <br />그 안에 담긴 따뜻함을 느끼며 읽어보아요.
         </p>
       </div>
 
