@@ -83,7 +83,7 @@ export default function Step6() {
     return () => {
       isMounted = false;
     };
-  }, []); // 의존성 배열을 비워서 컴포넌트 마운트 시 한 번만 실행
+  }); // 의존성 배열을 비워서 컴포넌트 마운트 시 한 번만 실행
 
   const handleAnswerClick = (selectedAnswer: string) => {
     setAnswer(prev => {
