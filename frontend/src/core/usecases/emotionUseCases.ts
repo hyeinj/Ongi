@@ -25,6 +25,7 @@ export interface IQuestionService {
 export interface IEmotionStorage {
   getByDate(date: string): Promise<DailyEmotion | null>;
   saveStageEntry(date: string, stage: string, entry: EmotionEntry): Promise<void>;
+  saveAIFeedback(date: string, feedback: string): Promise<void>;
   updateCategoryAndEmotion(date: string, category: Category, emotion: EmotionType): Promise<void>;
 }
 
@@ -145,5 +146,10 @@ export class EmotionUseCases {
     }
 
     return result;
+  }
+
+  // AI 피드백 저장
+  async saveAIFeedback(date: string, feedback: string): Promise<void> {
+    await this.emotionStorage.saveAIFeedback(date, feedback);
   }
 }

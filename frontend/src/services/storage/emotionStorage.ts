@@ -27,6 +27,7 @@ export class EmotionStorage implements IEmotionStorage {
           entries: {},
           category: 'self',
           emotion: 'peace',
+          aiFeedback: '',
         };
       }
 
@@ -34,6 +35,22 @@ export class EmotionStorage implements IEmotionStorage {
       this.saveEmotion(date, dailyEmotion);
     } catch (error) {
       console.error('감정 엔트리 저장 실패:', error);
+      throw error;
+    }
+  }
+
+  // 자기공감 ai 피드백 저장
+  async saveAIFeedback(date: string, feedback: string): Promise<void> {
+    const dailyEmotion = await this.getByDate(date);
+    try {
+      if (!dailyEmotion) {
+        throw new Error('해당 날짜에 감정 데이터가 존재하지 않아 AI 피드백을 저장할 수 없습니다.');
+      }
+
+      dailyEmotion.aiFeedback = feedback; //선택 필드이므로 추가 저장 가능
+      this.saveEmotion(date, dailyEmotion);
+    } catch (error) {
+      console.error('AI 피드백 저장 실패:', error);
       throw error;
     }
   }
