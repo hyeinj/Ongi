@@ -35,6 +35,22 @@ export default function Step6() {
       if (isDataLoaded) return; // 이미 데이터가 로드되었다면 실행하지 않음
 
       try {
+        // Step5에서 저장한 Step6 데이터 불러오기
+        const step6Data = await getStageAnswer('step6');
+        if (isMounted && step6Data) {
+          try {
+            const parsed = JSON.parse(step6Data);
+            setSmallText(parsed.smallText || '');
+            setLargeText(parsed.largeText || '');
+            setOptions(parsed.options || []);
+            setIsGenerating(false);
+            setIsDataLoaded(true);
+            return;
+          } catch {
+            // 파싱 실패 시 아래 로직으로 진행
+          }
+        }
+
         // 이전에 저장된 답변이 있다면 불러오기
         const savedAnswer = await getStageAnswer('step6');
         if (isMounted && savedAnswer) {

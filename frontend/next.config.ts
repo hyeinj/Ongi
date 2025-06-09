@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*", // 프론트엔드에서 /api/로 시작하는 요청을
-        destination: "http://localhost:8080/api/:path*", // 백엔드로 프록시
+        destination: "http://43.202.198.184:8080/api/:path*", // 배포된 백엔드로 프록시
       },
     ];
   },

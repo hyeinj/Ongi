@@ -171,7 +171,7 @@ export default function Step4() {
   const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
 
   // 클린 아키텍처를 통한 감정 데이터 관리
-  const { isLoading, error, saveStep4FeelingsAndGenerateStep5, emotionData } = useEmotion();
+  const { isLoading, error, saveStageAnswer, emotionData, setIsLoading, getStageAnswer } = useEmotion();
 
   // 로딩 완료 후 지연 처리
   const shouldShowLoading = useDelayedLoading(isLoading);
@@ -215,20 +215,41 @@ export default function Step4() {
     if (selectedFeelings.length === 0) return;
 
     try {
-      // 도메인 레이어를 통한 비즈니스 로직 처리
-      const nextQuestion = await saveStep4FeelingsAndGenerateStep5(
-        question,
-        selectedFeelings
-      );
+      setIsLoading(true);
+      
+      const step1Answer = await getStageAnswer('step2');
+      const step2Answer = await getStageAnswer('step3');
+      
+      // 백엔드 API 호출
+      const response = await fetch('/api/step4-question', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          step1_answer: step1Answer || '',
+          step2_answer: step2Answer || '',
+          step3Feelings: selectedFeelings.join(', ')
+        })
+      });
 
-      if (nextQuestion) {
-        router.push(`/self-empathy/5?question=${encodeURIComponent(nextQuestion)}`);
-      } else {
-        throw new Error('질문 생성에 실패했습니다.');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '서버 응답이 올바르지 않습니다.');
       }
+
+      const data = await response.json();
+      
+      // 답변과 질문 모두 로컬스토리지에 저장
+      await saveStageAnswer('step4', question, selectedFeelings.join(', '));
+      await saveStageAnswer('step5', data.question, '');
+      
+      // Step5로 질문을 URL 파라미터로 전달
+      router.push(`/self-empathy/5?question=${encodeURIComponent(data.question)}`);
     } catch (err) {
       console.error('Step4 처리 실패:', err);
-      alert('질문 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+      alert(err instanceof Error ? err.message : '오류가 발생했습니다. 다시 시도해주세요.');
+      setIsLoading(false);
     }
   };
 
