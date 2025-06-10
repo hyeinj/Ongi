@@ -105,7 +105,7 @@ public class Step4QuestionService {
                             .path("content")
                             .asText();
             
-            return getResponse + "\n무지님이 그 감정들을 느낀 데에는 어떤 이유가 있었을까요?" + "\n그 안에 어떤 바람이나 기대가 담겨있었을지도 몰라요.";
+            return getResponse;
                             
         } catch (Exception e) {
             log.error("OpenAI API 호출 중 오류 발생", e);

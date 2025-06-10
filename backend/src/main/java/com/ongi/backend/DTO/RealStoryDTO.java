@@ -11,8 +11,10 @@ public class RealStoryDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class realStoryRequestDTO{
-        private String letter;
-        private String response;
+        private String letterTitle;
+        private String letterContent;
+        private String responseTitle;
+        private String responseContent;
         private String category;
         private String emotion;
     }

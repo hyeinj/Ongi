@@ -19,21 +19,23 @@ public class RealStoryService {
     // 실제 사연 저장
     public ResponseDTO<RealStoryDTO.realStoryResponseDTO> saveRealStory(RealStoryDTO.realStoryRequestDTO request) {
         RealStory realStory = new RealStory();
-        realStory.setLetter(request.getLetter());
-        realStory.setResponse(request.getResponse());
+        realStory.setLetterTitle(request.getLetterTitle());
+        realStory.setLetterContent(request.getLetterContent());
+        realStory.setResponseTitle(request.getResponseTitle());
+        realStory.setResponseContent(request.getResponseContent());
         realStory.setCategory(request.getCategory());
         realStory.setEmotion(request.getEmotion());
 
         RealStory savedRealStory = realStoryRepository.save(realStory);
 
         // 미리보기 텍스트 생성 (200자로 제한)
-        String letterPreview = request.getLetter().length() > 200
-                ? request.getLetter().substring(0, 200) + "..."
-                : request.getLetter();
+        String letterPreview = request.getLetterContent().length() > 200
+                ? request.getLetterContent().substring(0, 200) + "..."
+                : request.getLetterContent();
 
-        String responsePreview = request.getResponse().length() > 200
-                ? request.getResponse().substring(0, 200) + "..."
-                : request.getResponse();
+        String responsePreview = request.getResponseContent().length() > 200
+                ? request.getResponseContent().substring(0, 200) + "..."
+                : request.getResponseContent();
 
         RealStoryDTO.realStoryResponseDTO responseDTO =
                 new RealStoryDTO.realStoryResponseDTO(
