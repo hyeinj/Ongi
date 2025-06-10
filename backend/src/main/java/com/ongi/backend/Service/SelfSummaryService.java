@@ -181,7 +181,7 @@ public class SelfSummaryService {
                         
             카테고리 옵션:
             - self: 자기 자신과 관련된 감정 (자아, 자존감, 개인적 고민)
-            - growth: 성장과 발전과 관련된 감정 (학습, 도전, 개선)
+            - growth: 성장과 발전과 관련된 감정 (학습, 도전, 진로)
             - routine: 일상과 루틴과 관련된 감정 (습관, 반복, 생활패턴)
             - relationship: 인간관계와 관련된 감정 (가족, 친구, 동료, 연인)
                         
