@@ -3,6 +3,8 @@ package com.ongi.backend.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "report")
 @Data
@@ -28,4 +30,11 @@ public class Report {
 
     @Column(name = "island")
     private Integer island;
+
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();  // 저장 직전에 시간 설정
+    }
 }
