@@ -3,6 +3,15 @@ import { ILetterStorage } from '../../core/usecases/letterUseCases';
 
 const LETTER_STORAGE_KEY = 'letters';
 
+// RealLetter 데이터 타입
+interface RealLetterData {
+  worryContent: Array<{ id: string; text: string }>;
+  answerContent: Array<{ id: string; text: string }>;
+  emotion: string;
+  category?: string;
+  selectedAt: string;
+}
+
 // 편지 데이터 스토리지 서비스 (인터페이스 구현)
 export class LetterStorage implements ILetterStorage {
   // 날짜별 편지 데이터 조회
@@ -33,6 +42,38 @@ export class LetterStorage implements ILetterStorage {
     } catch (error) {
       console.error('편지 저장 실패:', error);
       throw error;
+    }
+  }
+
+  // RealLetter 데이터 저장
+  async saveRealLetter(date: string, realLetterData: RealLetterData): Promise<void> {
+    try {
+      await this.saveLetter(date, { realLetterData });
+    } catch (error) {
+      console.error('RealLetter 저장 실패:', error);
+      throw error;
+    }
+  }
+
+  // RealLetter 데이터 조회
+  async getRealLetter(date: string): Promise<RealLetterData | null> {
+    try {
+      const letter = await this.getByDate(date);
+      return letter?.realLetterData || null;
+    } catch (error) {
+      console.error('RealLetter 조회 실패:', error);
+      return null;
+    }
+  }
+
+  // RealLetter 존재 여부 확인
+  async hasRealLetter(date: string): Promise<boolean> {
+    try {
+      const realLetter = await this.getRealLetter(date);
+      return !!realLetter;
+    } catch (error) {
+      console.error('RealLetter 존재 여부 확인 실패:', error);
+      return false;
     }
   }
 
