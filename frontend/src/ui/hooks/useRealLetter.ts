@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { EmotionType, Category } from '../../core/entities/emotion';
 import { mockRealLetters } from '../../core/entities/realLetters';
 import { EmotionStorage } from '../../services/storage/emotionStorage';
+import { LetterStorage } from '../../services/storage/letterStorage';
 import {
   processRealLetter,
   selectRandomLetter,
@@ -13,6 +14,10 @@ import {
 interface LetterTitle {
   title: string;
   subtitle: string;
+}
+
+interface UseRealLetterOptions {
+  shouldSave?: boolean; // letterExercise에서만 true로 설정
 }
 
 interface UseRealLetterReturn {
@@ -28,7 +33,8 @@ interface UseRealLetterReturn {
   userCategory: Category | null;
 }
 
-export const useRealLetter = (): UseRealLetterReturn => {
+export const useRealLetter = (options: UseRealLetterOptions = {}): UseRealLetterReturn => {
+  const { shouldSave = false } = options;
   const [processedLetter, setProcessedLetter] = useState<ProcessedLetter | null>(null);
   const [userEmotion, setUserEmotion] = useState<EmotionType | null>(null);
   const [userCategory, setUserCategory] = useState<Category | null>(null);
@@ -36,48 +42,70 @@ export const useRealLetter = (): UseRealLetterReturn => {
   const [error, setError] = useState<string | null>(null);
 
   const emotionStorage = useMemo(() => new EmotionStorage(), []);
+  const letterStorage = useMemo(() => new LetterStorage(), []);
 
   // 오늘 날짜 가져오기
   const getCurrentDate = () => new Date().toISOString().split('T')[0];
 
   // 오늘 유저의 감정 데이터 가져오기
   useEffect(() => {
-    const fetchTodayEmotion = async () => {
+    const fetchOrCreateLetter = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
         const today = getCurrentDate();
+
+        // 1. 먼저 저장된 RealLetter가 있는지 확인
+        const savedRealLetter = await letterStorage.getRealLetter(today);
+        if (savedRealLetter) {
+          // 저장된 편지가 있으면 재사용
+          const processedFromSaved: ProcessedLetter = {
+            worry: savedRealLetter.worryContent,
+            answer: savedRealLetter.answerContent,
+          };
+          setProcessedLetter(processedFromSaved);
+          setUserEmotion(savedRealLetter.emotion as EmotionType);
+          setUserCategory((savedRealLetter.category as Category) || null);
+          return;
+        }
+
+        // 2. 저장된 편지가 없으면 새로 생성
         const emotionData = await emotionStorage.getByDate(today);
+        let selectedEmotion: EmotionType = 'peace';
+        let selectedCategory: Category | null = null;
 
         if (emotionData?.emotion) {
-          setUserEmotion(emotionData.emotion);
-          setUserCategory(emotionData.category || null);
+          selectedEmotion = emotionData.emotion;
+          selectedCategory = emotionData.category || null;
+        }
 
-          // 해당 감정의 편지 목록에서 랜덤 선택
-          const emotionLetters = mockRealLetters[emotionData.emotion];
-          const selectedLetter = selectRandomLetter(emotionLetters);
+        // 해당 감정의 편지 목록에서 랜덤 선택
+        const emotionLetters = mockRealLetters[selectedEmotion];
+        let selectedLetter = selectRandomLetter(emotionLetters);
 
-          if (selectedLetter) {
-            const processed = processRealLetter(selectedLetter);
-            setProcessedLetter(processed);
-          } else {
-            // 해당 감정의 편지가 없는 경우 기본 감정(peace) 사용
-            const defaultLetters = mockRealLetters.peace;
-            const defaultLetter = selectRandomLetter(defaultLetters);
-            if (defaultLetter) {
-              const processed = processRealLetter(defaultLetter);
-              setProcessedLetter(processed);
-            }
-          }
-        } else {
-          // 오늘 감정 데이터가 없는 경우 기본 편지 사용 (peace)
+        if (!selectedLetter) {
+          // 해당 감정의 편지가 없는 경우 기본 감정(peace) 사용
           const defaultLetters = mockRealLetters.peace;
-          const defaultLetter = selectRandomLetter(defaultLetters);
-          if (defaultLetter) {
-            const processed = processRealLetter(defaultLetter);
-            setProcessedLetter(processed);
-            setUserEmotion('peace');
+          selectedLetter = selectRandomLetter(defaultLetters);
+          selectedEmotion = 'peace';
+        }
+
+        if (selectedLetter) {
+          const processed = processRealLetter(selectedLetter);
+          setProcessedLetter(processed);
+          setUserEmotion(selectedEmotion);
+          setUserCategory(selectedCategory);
+
+          // 3. shouldSave가 true일 때만 저장 (letterExercise에서만)
+          if (shouldSave) {
+            await letterStorage.saveRealLetter(today, {
+              worryContent: processed.worry,
+              answerContent: processed.answer,
+              emotion: selectedEmotion,
+              category: selectedCategory || undefined,
+              selectedAt: new Date().toISOString(),
+            });
           }
         }
       } catch (err) {
@@ -101,8 +129,8 @@ export const useRealLetter = (): UseRealLetterReturn => {
       }
     };
 
-    fetchTodayEmotion();
-  }, [emotionStorage]);
+    fetchOrCreateLetter();
+  }, [emotionStorage, letterStorage, shouldSave]);
 
   // 편지 제목 생성
   const letterTitles = useMemo(() => {

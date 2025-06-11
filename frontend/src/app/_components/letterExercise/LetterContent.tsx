@@ -23,8 +23,8 @@ interface LetterParagraph {
 export default function LetterContent({ isVisible }: LetterContentProps) {
   const [fadeIn, setFadeIn] = useState(false);
 
-  // 실제 편지 데이터 가져오기
-  const { worryContent, isLoading, error } = useRealLetter();
+  // 실제 편지 데이터 가져오기 (letterExercise에서는 저장)
+  const { worryContent, isLoading, error } = useRealLetter({ shouldSave: true });
 
   // worryContent를 기존 인터페이스 형태로 변환 (메모이제이션)
   const letterContent: LetterParagraph[] = useMemo(() => {

@@ -6,6 +6,8 @@ import ChevronDown from '../icons/ChevronDown';
 import localFont from 'next/font/local';
 import letterExerciseBig from '@/assets/images/letter-exercise-bird.png';
 import { useLetter } from '@/ui/hooks/useLetter';
+import { useRealLetter } from '@/ui/hooks/useRealLetter';
+import { LetterStorage } from '@/services/storage/letterStorage';
 import { Letter } from '@/core/entities';
 
 const garamFont = localFont({
@@ -14,6 +16,7 @@ const garamFont = localFont({
 
 export default function FeedbackStep() {
   const { getLetterData, generateFeedback } = useLetter();
+  const { worryContent } = useRealLetter({ shouldSave: true }); // letterExercise와 동일한 옵션 사용
   const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [letterData, setLetterData] = useState<Letter | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -29,39 +32,97 @@ export default function FeedbackStep() {
 
     const loadLetterDataAndGenerateFeedback = async () => {
       try {
+        console.log('🔍 피드백 로드 시작');
+
+        // 중복 실행 방지
+        setDataLoaded(true);
+
         const existingLetter = await getLetterData(currentDate);
+        console.log('📋 기존 편지 데이터:', existingLetter);
+        console.log('🗂️ RealLetter worryContent:', worryContent);
+
+        // 추가: LetterStorage에서 직접 RealLetter 데이터 조회
+        const letterStorage = new LetterStorage();
+        const savedRealLetter = await letterStorage.getRealLetter(currentDate);
+        console.log('🗄️ 저장된 RealLetter 데이터:', savedRealLetter);
 
         if (existingLetter?.feedbackSections || existingLetter?.aiFeedback) {
+          console.log('✅ 이미 피드백이 있음');
           // 이미 피드백이 있는 경우
           setLetterData(existingLetter);
           setTimeout(() => {
             setIsLoading(false);
           }, 2000);
         } else {
+          console.log('🔄 피드백 생성 필요');
           // 피드백이 없는 경우 생성
-          const feedbackResult = await generateFeedback(currentDate);
-          if (feedbackResult?.success) {
-            // 피드백 생성 후 다시 데이터 로드
-            const updatedLetter = await getLetterData(currentDate);
-            setLetterData(updatedLetter);
+
+          let realLetterText = '';
+
+          // 1. useRealLetter에서 worryContent 사용
+          if (worryContent && worryContent.length > 0) {
+            realLetterText = worryContent.map((content) => content.text).join('\n\n');
+            console.log('📝 useRealLetter에서 가져온 텍스트:', realLetterText);
           }
+          // 2. 저장된 RealLetter 데이터 사용 (fallback)
+          else if (savedRealLetter?.worryContent && savedRealLetter.worryContent.length > 0) {
+            realLetterText = savedRealLetter.worryContent
+              .map((content) => content.text)
+              .join('\n\n');
+            console.log('📝 localStorage에서 가져온 텍스트:', realLetterText);
+          }
+
+          if (realLetterText && existingLetter?.userResponse) {
+            console.log('💬 사용자 응답:', existingLetter.userResponse);
+
+            // RealLetter 기반으로 피드백 생성 (수정된 generateFeedback 사용)
+            const feedbackResult = await generateFeedback(
+              realLetterText,
+              existingLetter.userResponse,
+              currentDate
+            );
+
+            console.log('🎯 피드백 생성 결과:', feedbackResult);
+
+            if (feedbackResult?.success) {
+              console.log('✅ 피드백 생성 성공');
+              // 피드백 생성 후 다시 데이터 로드
+              const updatedLetter = await getLetterData(currentDate);
+              console.log('📄 업데이트된 편지 데이터:', updatedLetter);
+              setLetterData(updatedLetter);
+            } else {
+              console.log('❌ 피드백 생성 실패:', feedbackResult?.error);
+            }
+          } else {
+            console.log('⚠️ RealLetter 데이터나 사용자 응답 없음');
+            console.log('realLetterText 존재:', !!realLetterText);
+            console.log('userResponse 존재:', !!existingLetter?.userResponse);
+
+            // RealLetter 데이터나 사용자 응답이 없는 경우 기본 피드백 생성 시도
+            const feedbackResult = await generateFeedback(currentDate);
+            console.log('🔄 기본 피드백 생성 결과:', feedbackResult);
+            if (feedbackResult?.success) {
+              const updatedLetter = await getLetterData(currentDate);
+              setLetterData(updatedLetter);
+            }
+          }
+
           // 최소 로딩 시간 보장 (사용자 경험을 위해)
           setTimeout(() => {
             setIsLoading(false);
           }, 2000);
         }
       } catch (error) {
-        console.error('피드백 로드/생성 실패:', error);
+        console.error('❌ 피드백 로드/생성 실패:', error);
         setTimeout(() => {
           setIsLoading(false);
         }, 2000);
       }
-      setDataLoaded(true);
     };
 
     loadLetterDataAndGenerateFeedback();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentDate, dataLoaded]); // 함수를 의존성에서 제거
+  }, [currentDate]); // worryContent 의존성 제거하여 중복 실행 방지
 
   const handleChevronClick = () => {
     setIsOpen(true);

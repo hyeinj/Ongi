@@ -5,6 +5,14 @@ export interface Letter {
   aiFeedback: string;
   realLetterId: string;
   highlightedParts: string[];
+  // RealLetter 관련 필드 추가
+  realLetterData?: {
+    worryContent: Array<{ id: string; text: string }>;
+    answerContent: Array<{ id: string; text: string }>;
+    emotion: string;
+    category?: string;
+    selectedAt: string; // 언제 선택되었는지
+  };
   // 4개 영역 피드백
   feedbackSections?: {
     emotionConnection?: string; // 1. 감정 연결 피드백

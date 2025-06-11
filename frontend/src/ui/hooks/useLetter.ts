@@ -15,7 +15,7 @@ interface UseLetterReturn {
   // 상태
   isLoading: boolean;
   error: string | null;
-  
+
   // 액션 (기존 인터페이스 호환)
   generateMockLetter: (date?: string) => Promise<{
     success: boolean;
@@ -26,7 +26,11 @@ interface UseLetterReturn {
     letterContent?: string;
   } | null>;
   saveUserResponse: (userResponse: string, date?: string) => Promise<boolean>;
-  generateFeedback: (date?: string) => Promise<{
+  generateFeedback: (
+    dateOrMockLetter?: string,
+    userResponseParam?: string,
+    dateParam?: string
+  ) => Promise<{
     success: boolean;
     error?: string;
     feedback?: string;
@@ -47,7 +51,10 @@ export const useLetter = (): UseLetterReturn => {
   const letterService = useMemo(() => new LetterService(), []);
   const letterStorage = useMemo(() => new LetterStorage(), []);
   const emotionStorage = useMemo(() => new EmotionStorage(), []);
-  const letterUseCases = useMemo(() => new LetterUseCases(letterService, letterStorage), [letterService, letterStorage]);
+  const letterUseCases = useMemo(
+    () => new LetterUseCases(letterService, letterStorage),
+    [letterService, letterStorage]
+  );
 
   // 현재 날짜 가져오기
   const getCurrentDate = () => new Date().toISOString().split('T')[0];
@@ -60,134 +67,174 @@ export const useLetter = (): UseLetterReturn => {
   }, []);
 
   // 기존 인터페이스: 모의 편지 생성
-  const generateMockLetter = useCallback(async (date?: string) => {
-    setIsLoading(true);
-    setError(null);
+  const generateMockLetter = useCallback(
+    async (date?: string) => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const targetDate = date || getCurrentDate();
-      
-      // 감정 데이터 가져오기
-      const emotionData = await emotionStorage.getByDate(targetDate);
-      if (!emotionData?.category || !emotionData?.emotion || !emotionData?.entries) {
-        setError('감정 분석 데이터가 없습니다. 먼저 감정 분석을 완료해주세요.');
+      try {
+        const targetDate = date || getCurrentDate();
+
+        // 감정 데이터 가져오기
+        const emotionData = await emotionStorage.getByDate(targetDate);
+        if (!emotionData?.category || !emotionData?.emotion || !emotionData?.entries) {
+          setError('감정 분석 데이터가 없습니다. 먼저 감정 분석을 완료해주세요.');
+          return null;
+        }
+
+        const emotionContext: EmotionContext = {
+          category: emotionData.category,
+          emotion: emotionData.emotion,
+          answers: Object.fromEntries(
+            Object.entries(emotionData.entries).map(([stage, entry]) => [stage, entry.answer])
+          ),
+        };
+
+        const result = await letterUseCases.generateLetter(targetDate, emotionContext);
+        return result;
+      } catch (err) {
+        handleError(err);
         return null;
+      } finally {
+        setIsLoading(false);
       }
-
-      const emotionContext: EmotionContext = {
-        category: emotionData.category,
-        emotion: emotionData.emotion,
-        answers: Object.fromEntries(
-          Object.entries(emotionData.entries).map(([stage, entry]) => [stage, entry.answer])
-        ),
-      };
-
-      const result = await letterUseCases.generateLetter(targetDate, emotionContext);
-      return result;
-    } catch (err) {
-      handleError(err);
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [letterUseCases, emotionStorage, handleError]);
+    },
+    [letterUseCases, emotionStorage, handleError]
+  );
 
   // 기존 인터페이스: 사용자 응답 저장
-  const saveUserResponse = useCallback(async (userResponse: string, date?: string): Promise<boolean> => {
-    setIsLoading(true);
-    setError(null);
+  const saveUserResponse = useCallback(
+    async (userResponse: string, date?: string): Promise<boolean> => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const targetDate = date || getCurrentDate();
-      await letterUseCases.saveUserResponse(targetDate, userResponse);
-      return true;
-    } catch (err) {
-      handleError(err);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [letterUseCases, handleError]);
-
-  // 기존 인터페이스: 피드백 생성
-  const generateFeedback = useCallback(async (date?: string) => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const targetDate = date || getCurrentDate();
-      
-      // 편지 데이터와 감정 데이터 가져오기
-      const letterData = await letterStorage.getByDate(targetDate);
-      const emotionData = await emotionStorage.getByDate(targetDate);
-      
-      if (!letterData?.mockLetter || !letterData?.userResponse) {
-        setError('편지 데이터가 없습니다.');
-        return null;
+      try {
+        const targetDate = date || getCurrentDate();
+        await letterUseCases.saveUserResponse(targetDate, userResponse);
+        return true;
+      } catch (err) {
+        handleError(err);
+        return false;
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [letterUseCases, handleError]
+  );
 
-      if (!emotionData?.category || !emotionData?.emotion || !emotionData?.entries) {
-        setError('감정 분석 데이터가 없습니다.');
+  // 기존 인터페이스: 피드백 생성 (오버로드)
+  const generateFeedback = useCallback(
+    async (dateOrMockLetter?: string, userResponseParam?: string, dateParam?: string) => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        let targetDate: string;
+        let mockLetter: string;
+        let userResponse: string;
+
+        console.log('🚀 generateFeedback 호출됨');
+
+        // 첫 번째 파라미터가 날짜인지 mockLetter인지 판단
+        if (userResponseParam && dateParam) {
+          // 새로운 방식: generateFeedback(mockLetter, userResponse, date)
+          console.log('🆕 새로운 방식: RealLetter 기반 피드백 생성');
+          mockLetter = dateOrMockLetter || '';
+          userResponse = userResponseParam;
+          targetDate = dateParam;
+        } else {
+          // 기존 방식: generateFeedback(date?)
+          console.log('🔄 기존 방식: localStorage 기반 피드백 생성');
+          targetDate = dateOrMockLetter || getCurrentDate();
+
+          // 편지 데이터 가져오기
+          const letterData = await letterStorage.getByDate(targetDate);
+          if (!letterData?.mockLetter || !letterData?.userResponse) {
+            console.log('❌ 편지 데이터 없음');
+            setError('편지 데이터가 없습니다.');
+            return null;
+          }
+          mockLetter = letterData.mockLetter;
+          userResponse = letterData.userResponse;
+        }
+
+        // 감정 데이터 가져오기
+        const emotionData = await emotionStorage.getByDate(targetDate);
+        if (!emotionData?.category || !emotionData?.emotion || !emotionData?.entries) {
+          console.log('❌ 감정 분석 데이터 없음');
+          setError('감정 분석 데이터가 없습니다.');
+          return null;
+        }
+
+        const emotionContext: EmotionContext = {
+          category: emotionData.category,
+          emotion: emotionData.emotion,
+          answers: Object.fromEntries(
+            Object.entries(emotionData.entries).map(([stage, entry]) => [stage, entry.answer])
+          ),
+        };
+
+        console.log('⚡ letterUseCases.generateFeedback 호출 시작');
+
+        const result = await letterUseCases.generateFeedback(
+          targetDate,
+          mockLetter,
+          userResponse,
+          emotionContext
+        );
+
+        console.log('🎯 letterUseCases 결과:', result);
+        return result;
+      } catch (err) {
+        console.error('❌ generateFeedback 에러:', err);
+        handleError(err);
         return null;
+      } finally {
+        setIsLoading(false);
       }
-
-      const emotionContext: EmotionContext = {
-        category: emotionData.category,
-        emotion: emotionData.emotion,
-        answers: Object.fromEntries(
-          Object.entries(emotionData.entries).map(([stage, entry]) => [stage, entry.answer])
-        ),
-      };
-
-      const result = await letterUseCases.generateFeedback(
-        targetDate,
-        letterData.mockLetter,
-        letterData.userResponse,
-        emotionContext
-      );
-
-      return result;
-    } catch (err) {
-      handleError(err);
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [letterUseCases, letterStorage, emotionStorage, handleError]);
+    },
+    [letterUseCases, letterStorage, emotionStorage, handleError]
+  );
 
   // 기존 인터페이스: 편지 데이터 조회
-  const getLetterData = useCallback(async (date?: string): Promise<Letter | null> => {
-    setIsLoading(true);
-    setError(null);
+  const getLetterData = useCallback(
+    async (date?: string): Promise<Letter | null> => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const targetDate = date || getCurrentDate();
-      const result = await letterUseCases.getLetterData(targetDate);
-      return result;
-    } catch (err) {
-      handleError(err);
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [letterUseCases, handleError]);
+      try {
+        const targetDate = date || getCurrentDate();
+        const result = await letterUseCases.getLetterData(targetDate);
+        return result;
+      } catch (err) {
+        handleError(err);
+        return null;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [letterUseCases, handleError]
+  );
 
   // 기존 인터페이스: 편지 데이터 삭제
-  const deleteLetterData = useCallback(async (date?: string): Promise<boolean> => {
-    setIsLoading(true);
-    setError(null);
+  const deleteLetterData = useCallback(
+    async (date?: string): Promise<boolean> => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const targetDate = date || getCurrentDate();
-      await letterUseCases.deleteLetterData(targetDate);
-      return true;
-    } catch (err) {
-      handleError(err);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [letterUseCases, handleError]);
+      try {
+        const targetDate = date || getCurrentDate();
+        await letterUseCases.deleteLetterData(targetDate);
+        return true;
+      } catch (err) {
+        handleError(err);
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [letterUseCases, handleError]
+  );
 
   // 기존 인터페이스: 모든 편지 조회
   const getAllLetters = useCallback(async (): Promise<Record<string, Letter>> => {
@@ -206,21 +253,24 @@ export const useLetter = (): UseLetterReturn => {
   }, [letterUseCases, handleError]);
 
   // 기존 인터페이스: 하이라이트 저장
-  const saveHighlight = useCallback(async (highlightedParts: string[], date?: string): Promise<boolean> => {
-    setIsLoading(true);
-    setError(null);
+  const saveHighlight = useCallback(
+    async (highlightedParts: string[], date?: string): Promise<boolean> => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const targetDate = date || getCurrentDate();
-      await letterUseCases.saveHighlight(targetDate, highlightedParts);
-      return true;
-    } catch (err) {
-      handleError(err);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [letterUseCases, handleError]);
+      try {
+        const targetDate = date || getCurrentDate();
+        await letterUseCases.saveHighlight(targetDate, highlightedParts);
+        return true;
+      } catch (err) {
+        handleError(err);
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [letterUseCases, handleError]
+  );
 
   return {
     isLoading,
@@ -233,4 +283,4 @@ export const useLetter = (): UseLetterReturn => {
     getAllLetters,
     saveHighlight,
   };
-}; 
+};
