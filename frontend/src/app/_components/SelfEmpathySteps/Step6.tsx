@@ -54,7 +54,7 @@ export default function Step6() {
           setOptions([
             '상황이 예상과 달랐기 때문',
             '준비가 부족했다고 느꼈기 때문',
-            '다른 사람의 반응이 걱정되었기 때문'
+            '다른 사람의 반응이 걱정되었기 때문',
           ]);
         }
         if (isMounted) {
@@ -70,7 +70,7 @@ export default function Step6() {
           setOptions([
             '상황이 예상과 달랐기 때문',
             '준비가 부족했다고 느꼈기 때문',
-            '다른 사람의 반응이 걱정되었기 때문'
+            '다른 사람의 반응이 걱정되었기 때문',
           ]);
           setIsGenerating(false);
           setIsDataLoaded(true); // 에러 시에도 데이터 로드 완료 표시
@@ -83,13 +83,13 @@ export default function Step6() {
     return () => {
       isMounted = false;
     };
-  }); // 의존성 배열을 비워서 컴포넌트 마운트 시 한 번만 실행
+  }, []); // 의존성 배열을 비워서 컴포넌트 마운트 시 한 번만 실행
 
   const handleAnswerClick = (selectedAnswer: string) => {
-    setAnswer(prev => {
+    setAnswer((prev) => {
       if (prev.includes(selectedAnswer)) {
         // 이미 선택된 답변이면 제거
-        return prev.filter(item => item !== selectedAnswer);
+        return prev.filter((item) => item !== selectedAnswer);
       } else {
         // 새로운 답변이면 추가
         return [...prev, selectedAnswer];
@@ -111,7 +111,7 @@ export default function Step6() {
     try {
       // 배열을 문자열로 변환하여 저장
       await saveStageAnswer('step6', largeText || '감정의 원인에 대한 질문', answer.join(', '));
-      
+
       // 모든 버튼 클릭 시 모달 표시
       setShowModal(true);
     } catch (err) {
@@ -162,7 +162,7 @@ export default function Step6() {
           >
             네 맞아요!
           </button> */}
-          
+
           {/* GPT 생성 선택지들 */}
           {options.map((option, index) => (
             <button
@@ -175,7 +175,7 @@ export default function Step6() {
               {option}
             </button>
           ))}
-          
+
           {/* 다른 이유 버튼 */}
           <button
             className={`yesno-btn2${answer.includes('no') ? ' selected' : ''}`}
@@ -200,24 +200,29 @@ export default function Step6() {
                 <br />
                 조심스레 생각해볼까요?
                 <br />
-                평소 자주 떠올리는 말일 수도, 나에게 힘이 되는 말일 수도, 
+                평소 자주 떠올리는 말일 수도, 나에게 힘이 되는 말일 수도,
                 <br />
                 아직은 어색하지만 어딘가 마음에 닿는 말일 수도 있어요.
               </div>
               <div className="modal-btn-group">
-                <button
-                  className="modal-btn"
-                  onClick={handleConfirm}
-                >
+                <button className="modal-btn" onClick={handleConfirm}>
                   충분히 생각해보았어요
                 </button>
               </div>
             </div>
           </div>
         )}
-        
-        <button className="next-button" onClick={handleNext} disabled={isLoading || answer.length === 0}>
-          {isLoading ? <LoadingSpinner size="large" color="white" /> : <Image src={nextArrow} alt="다음" />}
+
+        <button
+          className="next-button"
+          onClick={handleNext}
+          disabled={isLoading || answer.length === 0}
+        >
+          {isLoading ? (
+            <LoadingSpinner size="large" color="white" />
+          ) : (
+            <Image src={nextArrow} alt="다음" />
+          )}
         </button>
       </SelfEmpathyQuestion>
     </SelfEmpathyLayout>

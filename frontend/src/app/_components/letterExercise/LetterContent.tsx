@@ -3,8 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import postboxIcon from '@/assets/images/postbox-icon.png';
-import { useLetterHighlights } from '@/ui/hooks/useLetterHighlights';
-import { useLetter } from '@/ui/hooks/useLetter';
+import { useRealLetter } from '@/ui/hooks/useRealLetter';
 import localFont from 'next/font/local';
 
 const garamFont = localFont({
@@ -23,58 +22,19 @@ interface LetterParagraph {
 
 export default function LetterContent({ isVisible }: LetterContentProps) {
   const [fadeIn, setFadeIn] = useState(false);
-  const [mockLetter, setMockLetter] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [dataLoaded, setDataLoaded] = useState(false);
-  const currentDate = useMemo(() => new Date().toISOString().split('T')[0], []);
 
-  const { generateMockLetter, getLetterData } = useLetter();
+  // 실제 편지 데이터 가져오기
+  const { worryContent, isLoading, error } = useRealLetter();
 
-  // 편지 데이터 로드 및 생성
-  useEffect(() => {
-    if (dataLoaded) return;
-
-    const loadOrGenerateLetter = async () => {
-      setIsLoading(true);
-
-      // 먼저 기존 편지 확인
-      const existingLetter = await getLetterData(currentDate);
-      if (existingLetter && existingLetter.mockLetter) {
-        setMockLetter(existingLetter.mockLetter);
-      } else {
-        // 없으면 새로 생성
-        const result = await generateMockLetter(currentDate);
-        if (result?.mockLetter) {
-          setMockLetter(result.mockLetter);
-        }
-      }
-
-      setIsLoading(false);
-      setDataLoaded(true);
-    };
-
-    loadOrGenerateLetter();
-  }, [currentDate, dataLoaded, getLetterData, generateMockLetter]);
-
-  // mockLetter를 파싱해서 편지 내용으로 변환 (메모이제이션)
+  // worryContent를 기존 인터페이스 형태로 변환 (메모이제이션)
   const letterContent: LetterParagraph[] = useMemo(() => {
-    if (!mockLetter) return [];
+    if (!worryContent || worryContent.length === 0) return [];
 
-    // 제목: 부분 제거하고 본문만 추출
-    const content = mockLetter.replace(/^제목: .+\n/, '').trim();
-    const paragraphs = content.split('\n').filter((line) => line.trim() !== '');
-
-    return paragraphs.map((text, index) => ({
-      id: `paragraph-${index}`,
-      text: text.trim(),
+    return worryContent.map((paragraph, index) => ({
+      id: paragraph.id || `paragraph-${index}`,
+      text: paragraph.text,
     }));
-  }, [mockLetter]);
-
-  const { renderHighlightedText } = useLetterHighlights({
-    letterType: 'worry',
-    letterContent,
-    date: currentDate,
-  });
+  }, [worryContent]);
 
   useEffect(() => {
     if (isVisible) {
@@ -95,6 +55,22 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-800 mx-auto mb-4"></div>
           <p className="text-amber-800">편지를 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 에러 발생 시 표시
+  if (error) {
+    return (
+      <div
+        className={`absolute inset-0 flex flex-col items-center justify-center w-full h-full transition-opacity duration-500 ease-in-out ${
+          isVisible ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <div className="text-center">
+          <p className="text-red-600 mb-2">{error}</p>
+          <p className="text-gray-500 text-sm">잠시 후 다시 시도해주세요.</p>
         </div>
       </div>
     );
@@ -137,7 +113,7 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
                   key={paragraph.id}
                   className=" text-gray-700 cursor-text"
                 >
-                  {renderHighlightedText(paragraph.text, paragraph.id)}
+                  {paragraph.text}
                 </p>
               ))
             ) : (

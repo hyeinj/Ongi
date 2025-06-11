@@ -53,7 +53,7 @@ export async function generateMockLetter(emotionContext: {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -115,7 +115,7 @@ ${answersText}
     let mockLetter = '';
     let letterTitle = '';
     let letterContent = '';
-    
+
     try {
       const result = JSON.parse(content);
       if (Array.isArray(result) && result.length >= 2) {
@@ -182,7 +182,7 @@ export async function generateFeedback(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -350,7 +350,7 @@ async function generateEmotionConnection(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -414,7 +414,7 @@ async function generateEmpathyReflection(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -499,7 +499,7 @@ async function generateImprovementSuggestion(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -591,7 +591,7 @@ async function generateOverallComment(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
