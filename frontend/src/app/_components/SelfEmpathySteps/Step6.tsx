@@ -7,7 +7,7 @@ import SelfEmpathyQuestion from './SelfEmpathyQuestion';
 import LoadingState from './LoadingState';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import '@/styles/SelfEmpathyModal.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useEmotion } from '@/ui/hooks/useEmotion';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useDelayedLoading } from '@/ui/hooks/useDelayedLoading';
@@ -66,9 +66,9 @@ export default function Step6() {
     };
 
     loadStep6Data();
-  }, [searchParams, getStageAnswer]);
+  }, [searchParams, getStageAnswer, isDataLoaded]);
 
-  const handleAnswerClick = (selectedAnswer: string) => {
+  const handleAnswerClick = useCallback((selectedAnswer: string) => {
     setAnswer(prev => {
       if (prev.includes(selectedAnswer)) {
         // 이미 선택된 답변이면 제거
@@ -78,17 +78,17 @@ export default function Step6() {
         return [...prev, selectedAnswer];
       }
     });
-  };
+  }, []);
 
-  const handleConfirm = () => {
+  const handleConfirm = useCallback(() => {
     setShowModal(false);
     // 모달에서 선택 후 다음 단계로 이동
     setTimeout(() => {
       router.push('/self-empathy/8');
     }, 300);
-  };
+  }, [router]);
 
-  const handleNext = async () => {
+  const handleNext = useCallback(async () => {
     if (answer.length === 0) return;
 
     try {
@@ -101,7 +101,7 @@ export default function Step6() {
       console.error('Step6 처리 실패:', err);
       alert('오류가 발생했습니다. 다시 시도해주세요.');
     }
-  };
+  }, [answer, smallText, saveStageAnswer, setShowModal]);
 
   // 에러 상태 처리
   if (error) {
@@ -165,9 +165,6 @@ export default function Step6() {
         {showModal && (
           <div className="confirm-modal">
             <div className="modal-content">
-              {/* <button className="modal-close" onClick={() => setShowModal(false)}>
-                ×
-              </button> */}
               <div className="modal-title">내 마음 속 말 들여다보기</div>
               <div className="modal-desc">
                 이 말이 당신에게 어떤 의미로 다가오는지,
