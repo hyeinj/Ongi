@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import SelfEmpathyQuestion from './SelfEmpathyQuestion';
@@ -14,6 +14,7 @@ import { useDelayedLoading } from '@/ui/hooks/useDelayedLoading';
 
 export default function Step6() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [answer, setAnswer] = useState<string[]>([]);
   const [smallText, setSmallText] = useState('');
   const [largeText, setLargeText] = useState('');
@@ -32,38 +33,26 @@ export default function Step6() {
     const loadStep6Data = async () => {
       if (isDataLoaded) return;
       try {
-        // 이전 단계 답변 불러오기
-        const step2Answer = await getStageAnswer('step2');
-        const step3Answer = await getStageAnswer('step3');
-        const step4Answer = await getStageAnswer('step4');
-        const step5Answer = await getStageAnswer('step5');
+        // URL 파라미터에서 데이터 가져오기
+        const urlSmallText = searchParams.get('smallText');
+        const urlLargeText = searchParams.get('largeText');
+        const urlOptions = searchParams.get('options');
 
-        // 백엔드 API 호출
-        const response = await fetch('/api/step5-question', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            step1_answer: step2Answer || '',
-            step2_answer: step3Answer || '',
-            step3Feelings: step4Answer || '',
-            step4_answer: step5Answer || ''
-          })
-        });
-
-        if (!response.ok) {
-          setSmallText('질문을 불러오지 못했습니다.');
-          setLargeText('다시 시도해 주세요.');
-          setOptions([]);
-          setIsGenerating(false);
-          setIsDataLoaded(true);
-          return;
+        if (urlSmallText && urlLargeText && urlOptions) {
+          setSmallText(urlSmallText);
+          setLargeText(urlLargeText);
+          setOptions(JSON.parse(urlOptions));
+        } else {
+          // URL 파라미터가 없는 경우 (직접 접근 등) localStorage에서 데이터 가져오기
+          const savedData = await getStageAnswer('step6');
+          if (savedData) {
+            const parsedData = JSON.parse(savedData);
+            setSmallText(parsedData.smallText || '');
+            setLargeText(parsedData.largeText || '');
+            setOptions(parsedData.options || []);
+          }
         }
 
-        const data = await response.json();
-        const result = data.결과 || {};
-        setSmallText(result.smallText || '');
-        setLargeText(result.largeText || '');
-        setOptions(result.options || []);
         setIsGenerating(false);
         setIsDataLoaded(true);
       } catch (err) {
@@ -77,7 +66,7 @@ export default function Step6() {
     };
 
     loadStep6Data();
-  }, []);
+  }, [searchParams, getStageAnswer]);
 
   const handleAnswerClick = (selectedAnswer: string) => {
     setAnswer(prev => {
@@ -147,15 +136,6 @@ export default function Step6() {
     <SelfEmpathyLayout currentStep={5} totalStep={5} onBack={() => router.push('/self-empathy/5')}>
       <SelfEmpathyQuestion numbering={5} smallText={smallText} largeText={largeText}>
         <div className="yesno-btn-group2">
-          {/* 네 맞아요 버튼 */}
-          {/* <button
-            className={`yesno-btn2 ${answer === 'yes' ? ' selected' : ''}`}
-            onClick={() => handleAnswerClick('yes')}
-            type="button"
-            disabled={isLoading}
-          >
-            네 맞아요!
-          </button> */}
           
           {/* GPT 생성 선택지들 */}
           {options.map((option, index) => (

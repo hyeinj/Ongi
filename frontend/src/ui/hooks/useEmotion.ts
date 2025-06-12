@@ -5,6 +5,7 @@ import { QuestionService } from '../../services/api/questionService';
 import { EmotionStorage } from '../../services/storage/emotionStorage';
 import { IslandStorage } from '../../services/storage/islandStorage';
 import { DailyEmotion, EmotionEntry } from '../../core/entities';
+import { Category, EmotionType } from '../../core/entities';
 
 // 기존 인터페이스와 호환되는 감정 훅
 export const useEmotion = () => {
@@ -256,6 +257,23 @@ export const useEmotion = () => {
     }
   }, [emotionStorage, emotionUseCases]);
 
+  const updateCategoryAndEmotion = useCallback(async (category: Category, emotion: EmotionType) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const today = getCurrentDate();
+      await emotionStorage.updateCategoryAndEmotion(today, category, emotion);
+      const data = await emotionStorage.getByDate(today);
+      setEmotionData(data);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '카테고리/감정 업데이트에 실패했습니다.';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [emotionStorage]);
+
   return {
     isLoading,
     error,
@@ -270,6 +288,7 @@ export const useEmotion = () => {
     generateFinalCardText,
     generateStep6Texts,
     generateStep7Question,
+    updateCategoryAndEmotion,
     setIsLoading, // 로딩 상태를 외부에서 제어할 수 있도록 추가
   };
 };

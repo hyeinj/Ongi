@@ -98,7 +98,13 @@ export default function Step5() {
       
       // 도메인 레이어를 통한 비즈니스 로직 처리
       await saveStageAnswer('step5', smallText, answer);
-      router.push('/self-empathy/6');
+      // URL 파라미터로 데이터 전달
+      const queryParams = new URLSearchParams({
+        smallText: data.결과?.smallText || '',
+        largeText: data.결과?.largeText || '',
+        options: JSON.stringify(data.결과?.options || [])
+      });
+      router.push(`/self-empathy/6?${queryParams.toString()}`);
     } catch (err) {
       console.error('Step5 처리 실패:', err);
       alert(err instanceof Error ? err.message : '오류가 발생했습니다. 다시 시도해주세요.');

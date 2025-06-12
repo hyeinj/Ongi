@@ -15,9 +15,10 @@ export default function Step8() {
   const router = useRouter();
   const [finalCardText, setFinalCardText] = useState('');
   const [isGenerating, setIsGenerating] = useState(true);
+  const [error, setError] = useState(null);
 
   // 클린 아키텍처를 통한 감정 데이터 관리
-  const { isLoading, error, getStageAnswer } = useEmotion();
+  const { isLoading, getStageAnswer, updateCategoryAndEmotion } = useEmotion();
 
   // 로딩 완료 후 지연 처리
   const shouldShowLoading = useDelayedLoading(isLoading || isGenerating);
@@ -55,6 +56,26 @@ export default function Step8() {
         const data = await response.json();
         setFinalCardText(data.summary || '요약을 불러오지 못했습니다.');
         setIsGenerating(false);
+
+        // 카테고리/감정 결과를 받아서 localStorage에 저장
+        const categoryResponse = await fetch('/api/self-emapthy-summary/category', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            step1_answer: step2Answer || '',
+            step2_answer: step3Answer || '',
+            step3Feelings: step4Answer || '',
+            step4_answer: step5Answer || '',
+            step5_answer: step6Answer || ''
+          })
+        });
+
+        if (categoryResponse.ok) {
+          const categoryData = await categoryResponse.json();
+          if (categoryData.categoryResult) {
+            await updateCategoryAndEmotion(categoryData.categoryResult.category, categoryData.categoryResult.emotion);
+          }
+        }
       } catch (err) {
         console.error('감정 요약 중 오류:', err);
         setFinalCardText('요약을 불러오지 못했습니다. 다시 시도해 주세요.');
@@ -63,7 +84,7 @@ export default function Step8() {
     };
 
     performSummary();
-  }, [getStageAnswer]);
+  }, [getStageAnswer, updateCategoryAndEmotion, setIsGenerating, setFinalCardText, router, setError]);
 
   // 에러 상태 처리
   if (error) {
