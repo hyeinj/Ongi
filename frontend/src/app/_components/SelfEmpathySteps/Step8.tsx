@@ -17,63 +17,53 @@ export default function Step8() {
   const [isGenerating, setIsGenerating] = useState(true);
 
   // 클린 아키텍처를 통한 감정 데이터 관리
-  const { isLoading, error, analyzeAndSaveEmotionAndCategory, generateFinalCardText } = useEmotion();
+  const { isLoading, error, getStageAnswer } = useEmotion();
 
   // 로딩 완료 후 지연 처리
   const shouldShowLoading = useDelayedLoading(isLoading || isGenerating);
 
   useEffect(() => {
-    let isMounted = true;
-
-    const performAnalysis = async () => {
+    const performSummary = async () => {
       try {
-        // 로딩 시간 동안 감정 분석 및 저장 수행
-        const analysisPromise = analyzeAndSaveEmotionAndCategory();
-        const timerPromise = new Promise((resolve) => setTimeout(resolve, 2000));
+        // 이전 단계 답변 불러오기
+        const step2Answer = await getStageAnswer('step2');
+        const step3Answer = await getStageAnswer('step3');
+        const step4Answer = await getStageAnswer('step4');
+        const step5Answer = await getStageAnswer('step5');
+        const step6Answer = await getStageAnswer('step6');
 
-        // 최소 2초 대기와 감정 분석 병렬 실행
-        const [analysisResult] = await Promise.all([analysisPromise, timerPromise]);
+        // step4는 감정들, step5는 이유, step6은 마음 속 말(선택지)일 수 있음
+        // step3Feelings는 step4의 답변, step4_answer는 step5의 답변, step5_answer는 step6의 답변
+        const response = await fetch('/api/self-emapthy-summary', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            step1_answer: step2Answer || '',
+            step2_answer: step3Answer || '',
+            step3Feelings: step4Answer || '',
+            step4_answer: step5Answer || '',
+            step5_answer: step6Answer || ''
+          })
+        });
 
-        if (isMounted && analysisResult) {
-          console.log('감정 분석 완료:', analysisResult);
-
-          // 감정 분석 완료 후 final card text 생성
-          const finalTextResult = await generateFinalCardText();
-          if (isMounted && finalTextResult && finalTextResult.success) {
-            setFinalCardText(finalTextResult.finalText);
-          } else if (isMounted) {
-            // 실패 시 기본 텍스트 사용
-            setFinalCardText(
-              '오늘 하루 감정을 되돌아보며 자신을 더 이해하게 되는 소중한 시간이었어요.'
-            );
-          }
-          if (isMounted) {
-            setIsGenerating(false);
-          }
-        } else if (isMounted) {
-          console.warn('감정 분석 실패, 기본값으로 진행');
-          setFinalCardText(
-            '오늘 하루 감정을 되돌아보며 자신을 더 이해하게 되는 소중한 시간이었어요.'
-          );
+        if (!response.ok) {
+          setFinalCardText('요약을 불러오지 못했습니다. 다시 시도해 주세요.');
           setIsGenerating(false);
+          return;
         }
+
+        const data = await response.json();
+        setFinalCardText(data.summary || '요약을 불러오지 못했습니다.');
+        setIsGenerating(false);
       } catch (err) {
-        console.error('감정 분석 중 오류:', err);
-        if (isMounted) {
-          setFinalCardText(
-            '오늘 하루 감정을 되돌아보며 자신을 더 이해하게 되는 소중한 시간이었어요.'
-          );
-          setIsGenerating(false);
-        }
+        console.error('감정 요약 중 오류:', err);
+        setFinalCardText('요약을 불러오지 못했습니다. 다시 시도해 주세요.');
+        setIsGenerating(false);
       }
     };
 
-    performAnalysis();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [analyzeAndSaveEmotionAndCategory, generateFinalCardText]);
+    performSummary();
+  }, [getStageAnswer]);
 
   // 에러 상태 처리
   if (error) {
