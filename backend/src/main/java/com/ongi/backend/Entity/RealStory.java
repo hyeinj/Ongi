@@ -14,11 +14,17 @@ public class RealStory {
     @Column(name = "realstory_id")
     private Long realstoryId;
 
-    @Column(name = "letter", columnDefinition = "TEXT")
-    private String letter;
+    @Column(name = "letter_title", columnDefinition = "TEXT")
+    private String letterTitle;
 
-    @Column(name = "response", columnDefinition = "TEXT")
-    private String response;
+    @Column(name = "letter_content", columnDefinition = "TEXT")
+    private String letterContent;
+
+    @Column(name = "response_title", columnDefinition = "TEXT")
+    private String responseTitle;
+
+    @Column(name = "response_content", columnDefinition = "TEXT")
+    private String responseContent;
 
     @Column(name = "category")
     private String category;

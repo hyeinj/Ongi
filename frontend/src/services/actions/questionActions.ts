@@ -44,13 +44,13 @@ export async function generateStep3Question(answer: string): Promise<QuestionRes
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
             content: `당신은 공감 능력이 뛰어난 상담사입니다. 
       사용자의 답변을 바탕으로 공감과 감정을 담은 한 문장으로 응답하세요. 
-      응답은 반드시 "~셨군요"로 끝나야 하며, 따옴표(")는 절대 사용하지 마세요.`
+      응답은 반드시 "~셨군요"로 끝나야 하며, 따옴표(")는 절대 사용하지 마세요.`,
           },
           {
             role: 'user',
@@ -74,7 +74,7 @@ export async function generateStep3Question(answer: string): Promise<QuestionRes
       출력: 해질녘 아름다운 하늘이 무지님에게 인상 깊으셨군요
       
       다음 입력에 대해 공감 문장을 생성해주세요:  
-      ${answer}`
+      ${answer}`,
           },
         ],
         max_tokens: 200,
@@ -87,7 +87,8 @@ export async function generateStep3Question(answer: string): Promise<QuestionRes
     }
 
     const data = await response.json();
-    const question = '솔직하게 나눠주셔서 감사해요\n' + data.choices[0]?.message?.content?.trim() || '';
+    const question =
+      '솔직하게 나눠주셔서 감사해요\n' + data.choices[0]?.message?.content?.trim() || '';
 
     return {
       question,
@@ -123,14 +124,14 @@ export async function generateStep4Question(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
             content: `당신은 공감 능력이 뛰어난 상담사입니다.
       사용자의 경험에 담백하고 따뜻하게 공감하는 문장을 생성하세요.
       응답은 반드시 **두 문장 이내**, **정중한 말투(~요)**로 끝나야 하며,
-      지나친 위로나 감정 과잉 표현은 피해주세요.`
+      지나친 위로나 감정 과잉 표현은 피해주세요.`,
           },
           {
             role: 'user',
@@ -143,7 +144,7 @@ export async function generateStep4Question(
       
       → 출력:  
       잠시 멍하니 바라본 하늘이 무지님에게 깊은 인상을 남겼군요.  
-      그 순간의 고요함이 오래 기억에 남을 것 같아요.`
+      그 순간의 고요함이 오래 기억에 남을 것 같아요.`,
           },
           {
             role: 'user',
@@ -155,7 +156,7 @@ export async function generateStep4Question(
       요즘 자주 못 뵀는데, 오늘은 느긋하게 둘이서 밥 먹으면서 이런저런 이야기를 했어요
       
       → 출력:  
-      오랜만에 아버지와 느긋한 식사 시간을 보내셨군요. 그 대화들이 마음에 오래 남으셨을 것 같아요.`
+      오랜만에 아버지와 느긋한 식사 시간을 보내셨군요. 그 대화들이 마음에 오래 남으셨을 것 같아요.`,
           },
           {
             role: 'user',
@@ -179,7 +180,9 @@ export async function generateStep4Question(
     }
 
     const data = await response.json();
-    const question = data.choices[0]?.message?.content?.trim() + "\n그럼, 우리 한 발짝 물러나서 감정을 살펴볼게요" || '';
+    const question =
+      data.choices[0]?.message?.content?.trim() +
+        '\n그럼, 우리 한 발짝 물러나서 감정을 살펴볼게요' || '';
 
     console.log(question);
     return {
@@ -217,7 +220,7 @@ export async function generateStep5Question(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -246,7 +249,7 @@ export async function generateStep5Question(
 
 → 출력:  
 노을을 바라보며 멈춰 선 그 시간이 무지님에게 평온하고 감동적인 순간이었을 것 같아요.  
-평온함과 감동의 느낌이 들었던 무지님의 속 마음을 조금 더 말해주실 수 있나요?`
+평온함과 감동의 느낌이 들었던 무지님의 속 마음을 조금 더 말해주실 수 있나요?`,
           },
           {
             role: 'user',
@@ -258,7 +261,7 @@ export async function generateStep5Question(
 
 → 출력:  
 친구와 오랜만에 마주 앉아 편안하게 나눈 대화가 무지님에게 따뜻하게 다가왔을 것 같아요.  
-반가움과 따뜻함, 그리고 편안함의 감정이 어우러졌던 무지님의 속 마음을 조금 더 들려주실 수 있나요?`
+반가움과 따뜻함, 그리고 편안함의 감정이 어우러졌던 무지님의 속 마음을 조금 더 들려주실 수 있나요?`,
           },
           {
             role: 'user',
@@ -269,7 +272,7 @@ export async function generateStep5Question(
 
 → 출력:  
 준비한 발표를 무사히 마치고 칭찬까지 받았던 경험이 무지님에게 뿌듯하면서도 안도되는 순간이었을 것 같아요.  
-긴장됨과 뿌듯함, 그리고 안도감의 감정이 섞여 있었던 무지님의 속 마음을 조금 더 말해주실 수 있나요?`
+긴장됨과 뿌듯함, 그리고 안도감의 감정이 섞여 있었던 무지님의 속 마음을 조금 더 말해주실 수 있나요?`,
           },
           {
             role: 'user',
@@ -279,8 +282,8 @@ export async function generateStep5Question(
         [Step3] ${step3Answer}  
         [Step4] ${step4Feelings.join(', ')}
         
-        → 출력:`
-          }
+        → 출력:`,
+          },
         ],
         max_tokens: 200,
         temperature: 0.7,
@@ -293,7 +296,7 @@ export async function generateStep5Question(
 
     const data = await response.json();
     const fullResponse = data.choices[0]?.message?.content?.trim() || '';
-    
+
     // 두 문장을 분리
     const sentences = fullResponse.split('\n').filter((s: string) => s.trim());
     const smallText = sentences[0] || '';
@@ -341,7 +344,7 @@ export async function generateNextQuestion(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -418,7 +421,7 @@ export async function analyzeEmotionAndCategory(allAnswers: {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -536,7 +539,7 @@ export async function generateFinalCardText(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -546,10 +549,12 @@ export async function generateFinalCardText(
 [구성]
 
 1. 오늘 사용자가 어떤 상황에서 어떤 감정을 느꼈고, 왜 그런 감정을 느꼈는지를 요약해주세요.  
-2. 사용자가 그 감정을 따라가며 떠올린 내면의 말들, 그리고 그 말들을 어떻게 받아들였는지 표현해주세요.  
+2. 내면의 말이 따옴표 안에 나열되는 식의 표현은 피하고, 말과 말 사이의 흐름이나 감정의 전개를 함께 설명해주세요.
+   - 예: ‘처음에는 낯설었지만’, ‘그 말이 다른 말로 이어졌고’, ‘그러다 문득 이런 생각도 들었어요’ 등으로 하나의 정서 흐름으로 연결해주세요.
+3. 사용자가 그 감정을 따라가며 떠올린 내면의 말들, 그리고 그 말들을 어떻게 받아들였는지 표현해주세요.  
    - 내면의 말이 조심스럽거나 익숙하지 않은 말이라면, 그 말에 다가가는 태도나 질문을 표현해주세요.  
-   - 내면의 말이 힘이 되었거나 나를 지지해주는 말이라면, 그 말을 받아들이거나 따뜻하게 확인하는 마음을 표현해주세요.  
-3. 자기공감의 여정을 마무리하며, 오늘의 자신을 다정하게 바라보는 문장으로 끝내주세요.
+   - 내면의 말이 긍정적이거나 힘이 되었거나 나를 지지해주는 말이라면, 그 말을 받아들이거나 따뜻하게 확인하는 마음을 표현해주세요.  
+4. 자기공감의 여정을 마무리하며, 오늘의 자신을 다정하게 바라보는 문장으로 끝내주세요.
 
 [작성 지침]
 
@@ -559,7 +564,7 @@ export async function generateFinalCardText(
 - 감정 단어는 자연스럽게 문장에 녹여서 포함해주세요.
 - 감정이나 내면의 말에 따라 자연스럽게 조화를 이루는 태도를 표현해주세요:
    - 조심스러운 말일 땐, 유보하거나 질문하는 마음
-   - 나를 지지하는 말일 땐, 받아들이거나 다정하게 강화하는 마음
+   - 나를 지지하거나 긍정적인 말일 땐, 받아들이거나 다정하게 강화하는 마음
 - 마무리 문장은 다음 중 어울리는 톤으로 1~2줄로 구성해주세요:
    - 오늘의 나는, 불안한 마음 속에서도 나를 이해하려고 애쓰고 있었어요.
    - 오늘의 나는, 내 안에서 반복되던 말들을 조용히 바라보며, 그 말들 너머의 나를 이해하려고 애쓰고 있었어요.
@@ -650,12 +655,13 @@ export async function generateStep6Texts(allAnswers: {
 
     const answersText = Object.entries(allAnswers)
       .map(([stage, answer]) => {
-        const stageName = {
-          step2: '가장 인상 깊었던 일',
-          step3: '구체적인 상황 설명',
-          step4: '느낀 감정들',
-          step5: '감정에 대한 자세한 설명'
-        }[stage] || stage;
+        const stageName =
+          {
+            step2: '가장 인상 깊었던 일',
+            step3: '구체적인 상황 설명',
+            step4: '느낀 감정들',
+            step5: '감정에 대한 자세한 설명',
+          }[stage] || stage;
         return `[${stageName}]\n${answer}`;
       })
       .join('\n\n');
@@ -667,7 +673,7 @@ export async function generateStep6Texts(allAnswers: {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -875,7 +881,7 @@ export async function generateStep7Question(allAnswers: {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',

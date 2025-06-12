@@ -187,7 +187,14 @@ export const useEmotion = () => {
         allAnswers[stage] = (entry as EmotionEntry).answer;
       });
 
-      return await emotionUseCases.generateFinalText(allAnswers, data.category, data.emotion);
+      // aiFeedback 저장 추가
+      const result = await emotionUseCases.generateFinalText(allAnswers, data.category, data.emotion);
+
+      if (result.success) {
+        await emotionUseCases.saveAIFeedback(today, result.finalText); 
+      }
+
+      return result;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '텍스트 생성에 실패했습니다.';
       setError(errorMessage);

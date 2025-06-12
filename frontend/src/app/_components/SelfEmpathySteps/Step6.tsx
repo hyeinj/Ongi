@@ -72,7 +72,7 @@ export default function Step6() {
     setAnswer(prev => {
       if (prev.includes(selectedAnswer)) {
         // 이미 선택된 답변이면 제거
-        return prev.filter(item => item !== selectedAnswer);
+        return prev.filter((item) => item !== selectedAnswer);
       } else {
         // 새로운 답변이면 추가
         return [...prev, selectedAnswer];
@@ -94,7 +94,6 @@ export default function Step6() {
     try {
       // 배열을 문자열로 변환하여 저장
       await saveStageAnswer('step6', smallText, answer.join(', '));
-      
       // 모든 버튼 클릭 시 모달 표시
       setShowModal(true);
     } catch (err) {
@@ -136,7 +135,6 @@ export default function Step6() {
     <SelfEmpathyLayout currentStep={5} totalStep={5} onBack={() => router.push('/self-empathy/5')}>
       <SelfEmpathyQuestion numbering={5} smallText={smallText} largeText={largeText}>
         <div className="yesno-btn-group2">
-          
           {/* GPT 생성 선택지들 */}
           {options.map((option, index) => (
             <button
@@ -149,7 +147,7 @@ export default function Step6() {
               {option}
             </button>
           ))}
-          
+
           {/* 다른 이유 버튼 */}
           <button
             className={`yesno-btn2${answer.includes('no') ? ' selected' : ''}`}
@@ -171,24 +169,29 @@ export default function Step6() {
                 <br />
                 조심스레 생각해볼까요?
                 <br />
-                평소 자주 떠올리는 말일 수도, 나에게 힘이 되는 말일 수도, 
+                평소 자주 떠올리는 말일 수도, 나에게 힘이 되는 말일 수도,
                 <br />
                 아직은 어색하지만 어딘가 마음에 닿는 말일 수도 있어요.
               </div>
               <div className="modal-btn-group">
-                <button
-                  className="modal-btn"
-                  onClick={handleConfirm}
-                >
+                <button className="modal-btn" onClick={handleConfirm}>
                   충분히 생각해보았어요
                 </button>
               </div>
             </div>
           </div>
         )}
-        
-        <button className="next-button" onClick={handleNext} disabled={isLoading || answer.length === 0}>
-          {isLoading ? <LoadingSpinner size="large" color="white" /> : <Image src={nextArrow} alt="다음" />}
+
+        <button
+          className="next-button"
+          onClick={handleNext}
+          disabled={isLoading || answer.length === 0}
+        >
+          {isLoading ? (
+            <LoadingSpinner size="large" color="white" />
+          ) : (
+            <Image src={nextArrow} alt="다음" />
+          )}
         </button>
       </SelfEmpathyQuestion>
     </SelfEmpathyLayout>

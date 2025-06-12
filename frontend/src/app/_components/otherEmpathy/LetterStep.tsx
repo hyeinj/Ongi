@@ -30,7 +30,7 @@ export default function LetterStep() {
     // 5초 후에 전체 내용 표시 (두 번째 메시지를 충분히 읽을 시간 제공)
     const fullContentTimer = setTimeout(() => {
       setShowFullContent(true);
-    }, 4000);
+    }, 5000);
 
     return () => {
       clearTimeout(fadeOutTimer);
