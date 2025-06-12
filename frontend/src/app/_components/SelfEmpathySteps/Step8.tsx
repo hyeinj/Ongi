@@ -32,7 +32,7 @@ export default function Step8() {
         const step5Answer = await getStageAnswer('step5');
         const step6Answer = await getStageAnswer('step6');
 
-        // step4는 감정들, step5는 이유, step6은 마음 속 말(선택지)일 수 있음
+        // step4는 감정들, step5는 이유, step6은 마음 속 말(선택지)
         // step3Feelings는 step4의 답변, step4_answer는 step5의 답변, step5_answer는 step6의 답변
         const response = await fetch('/api/self-emapthy-summary', {
           method: 'POST',
