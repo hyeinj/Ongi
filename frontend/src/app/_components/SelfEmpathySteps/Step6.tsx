@@ -23,83 +23,61 @@ export default function Step6() {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   // 클린 아키텍처를 통한 감정 데이터 관리
-  const { isLoading, error, saveStageAnswer, getStageAnswer, generateStep6Texts } = useEmotion();
+  const { isLoading, error, saveStageAnswer, getStageAnswer } = useEmotion();
 
   // 로딩 완료 후 지연 처리
   const shouldShowLoading = useDelayedLoading(isLoading || isGenerating);
 
   useEffect(() => {
-    let isMounted = true;
-
-    const loadPreviousData = async () => {
-      if (isDataLoaded) return; // 이미 데이터가 로드되었다면 실행하지 않음
-
+    const loadStep6Data = async () => {
+      if (isDataLoaded) return;
       try {
-        // Step5에서 저장한 Step6 데이터 불러오기
-        const step6Data = await getStageAnswer('step6');
-        if (isMounted && step6Data) {
-          try {
-            const parsed = JSON.parse(step6Data);
-            setSmallText(parsed.smallText || '');
-            setLargeText(parsed.largeText || '');
-            setOptions(parsed.options || []);
-            setIsGenerating(false);
-            setIsDataLoaded(true);
-            return;
-          } catch {
-            // 파싱 실패 시 아래 로직으로 진행
-          }
-        }
+        // 이전 단계 답변 불러오기
+        const step2Answer = await getStageAnswer('step2');
+        const step3Answer = await getStageAnswer('step3');
+        const step4Answer = await getStageAnswer('step4');
+        const step5Answer = await getStageAnswer('step5');
 
-        // 이전에 저장된 답변이 있다면 불러오기
-        const savedAnswer = await getStageAnswer('step6');
-        if (isMounted && savedAnswer) {
-          setAnswer(Array.isArray(savedAnswer) ? savedAnswer : [savedAnswer]);
-        }
+        // 백엔드 API 호출
+        const response = await fetch('/api/step5-question', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            step1_answer: step2Answer || '',
+            step2_answer: step3Answer || '',
+            step3Feelings: step4Answer || '',
+            step4_answer: step5Answer || ''
+          })
+        });
 
-        // GPT로 텍스트와 선택지 생성
-        const textsResult = await generateStep6Texts();
-        if (isMounted && textsResult.success) {
-          setSmallText(textsResult.smallText);
-          setLargeText(textsResult.largeText);
-          setOptions(textsResult.options || []);
-        } else if (isMounted) {
-          // 실패 시 기본 텍스트 사용
-          setSmallText('힘든 상황에서 여러 감정을 느끼셨군요.');
-          setLargeText('그 감정을 느낀 가장 큰 이유가 무엇인지 생각해보실까요?');
-          setOptions([
-            '상황이 예상과 달랐기 때문',
-            '준비가 부족했다고 느꼈기 때문',
-            '다른 사람의 반응이 걱정되었기 때문'
-          ]);
-        }
-        if (isMounted) {
+        if (!response.ok) {
+          setSmallText('질문을 불러오지 못했습니다.');
+          setLargeText('다시 시도해 주세요.');
+          setOptions([]);
           setIsGenerating(false);
-          setIsDataLoaded(true); // 데이터 로드 완료 표시
+          setIsDataLoaded(true);
+          return;
         }
+
+        const data = await response.json();
+        const result = data.결과 || {};
+        setSmallText(result.smallText || '');
+        setLargeText(result.largeText || '');
+        setOptions(result.options || []);
+        setIsGenerating(false);
+        setIsDataLoaded(true);
       } catch (err) {
         console.error('Step6 데이터 로딩 실패:', err);
-        if (isMounted) {
-          // 에러 시 기본 텍스트 사용
-          setSmallText('힘든 상황에서 여러 감정을 느끼셨군요.');
-          setLargeText('그 감정을 느낀 가장 큰 이유가 무엇인지 생각해보실까요?');
-          setOptions([
-            '상황이 예상과 달랐기 때문',
-            '준비가 부족했다고 느꼈기 때문',
-            '다른 사람의 반응이 걱정되었기 때문'
-          ]);
-          setIsGenerating(false);
-          setIsDataLoaded(true); // 에러 시에도 데이터 로드 완료 표시
-        }
+        setSmallText('질문을 불러오지 못했습니다.');
+        setLargeText('다시 시도해 주세요.');
+        setOptions([]);
+        setIsGenerating(false);
+        setIsDataLoaded(true);
       }
     };
 
-    loadPreviousData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []); // 의존성 배열을 비워서 컴포넌트 마운트 시 한 번만 실행
+    loadStep6Data();
+  }, []);
 
   const handleAnswerClick = (selectedAnswer: string) => {
     setAnswer(prev => {
@@ -126,7 +104,7 @@ export default function Step6() {
 
     try {
       // 배열을 문자열로 변환하여 저장
-      await saveStageAnswer('step6', largeText || '감정의 원인에 대한 질문', answer.join(', '));
+      await saveStageAnswer('step6', smallText, answer.join(', '));
       
       // 모든 버튼 클릭 시 모달 표시
       setShowModal(true);

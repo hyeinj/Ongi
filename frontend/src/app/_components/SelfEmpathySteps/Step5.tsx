@@ -47,7 +47,7 @@ export default function Step5() {
       if (isMounted) {
         if (sentences.length === 1) {
           setSmallText(sentences[0]);
-          setLargeText('n무지님이 그 감정들을 느낀 데에는 어떤 이유가 있었을까요?\n 그 안에 어떤 바람이나 기대가 담겨있었을지도 몰라요');
+          setLargeText('무지님이 그 감정들을 느낀 데에는 어떤 이유가 있었을까요? 그 안에 어떤 바람이나 기대가 담겨있었을지도 몰라요');
         }
       }
     }
@@ -97,7 +97,7 @@ export default function Step5() {
       }), '');
       
       // 도메인 레이어를 통한 비즈니스 로직 처리
-      await saveStageAnswer('step5', '', answer);
+      await saveStageAnswer('step5', smallText, answer);
       router.push('/self-empathy/6');
     } catch (err) {
       console.error('Step5 처리 실패:', err);

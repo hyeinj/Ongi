@@ -188,6 +188,7 @@
   color: black;
   margin: 1.2vh 0 2vh;
   opacity: 0;
+  white-space: pre-line;
   animation: fadeInUp 1s ease-out forwards 0.7s;
   text-align: left;
 }
