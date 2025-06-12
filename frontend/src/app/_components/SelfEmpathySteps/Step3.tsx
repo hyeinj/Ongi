@@ -21,7 +21,7 @@ export default function Step3() {
   const [question, setQuestion] = useState(urlQuestion || '질문을 불러올 수 없습니다.');
 
   // 클린 아키텍처를 통한 감정 데이터 관리
-  const { isLoading, error, saveStep3AndGenerateStep4, getStageAnswer, setIsLoading } = useEmotion();
+  const { isLoading, error, getStageAnswer, setIsLoading, saveStageAnswer } = useEmotion();
 
   // 로딩 완료 후 지연 처리
   const shouldShowLoading = useDelayedLoading(isLoading);
@@ -47,18 +47,39 @@ export default function Step3() {
     if (!answer.trim()) return;
 
     try {
-      // 도메인 레이어를 통한 비즈니스 로직 처리
-      const nextQuestion = await saveStep3AndGenerateStep4(question, answer);
+      setIsLoading(true);
+      
+      // localStorage에서 step2의 답변 가져오기
+      const step2Answer = await getStageAnswer('step2');
+      
+      // 백엔드 API 호출
+      const response = await fetch('/api/step3-question', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          step1_answer: step2Answer || '',
+          step2_answer: answer
+        })
+      });
 
-      if (nextQuestion) {
-        router.push(`/self-empathy/4?question=${encodeURIComponent(nextQuestion)}`);
-        // 페이지 전환이 시작되면 로딩 상태 유지
-        return;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '서버 응답이 올바르지 않습니다.');
       }
-      throw new Error('질문 생성에 실패했습니다.');
+
+      const data = await response.json();
+      
+      // 답변과 질문 모두 로컬스토리지에 저장
+      await saveStageAnswer('step3', question, answer);
+      await saveStageAnswer('step4', data.question, '');
+      
+      // Step4로 질문을 URL 파라미터로 전달
+      router.push(`/self-empathy/4?question=${encodeURIComponent(data.question)}`);
     } catch (err) {
       console.error('Step3 처리 실패:', err);
-      alert('오류가 발생했습니다. 다시 시도해주세요.');
+      alert(err instanceof Error ? err.message : '오류가 발생했습니다. 다시 시도해주세요.');
       setIsLoading(false);
     }
   };
