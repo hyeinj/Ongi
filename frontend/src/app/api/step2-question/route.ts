@@ -15,6 +15,7 @@ export async function POST(request: Request) {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
+    console.error('Step2 API 처리 실패:', error);
     return NextResponse.json(
       { error: 'Failed to fetch from backend' },
       { status: 500 }
