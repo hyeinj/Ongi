@@ -26,6 +26,8 @@ export default function FeedbackStep() {
   const extraRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  const [myLetter, setMyLetter] = useState('');
+
   // 편지 데이터 로드 및 피드백 생성 (한 번만 실행)
   useEffect(() => {
     if (dataLoaded) return;
@@ -287,13 +289,16 @@ export default function FeedbackStep() {
               </div>
             )}
 
-            <p className="text-white mb-6">나와 타인의 이야기가 맞닿은 지금,
-              <br/>이 답장 편지가 나에게 왔다면 <br/>나는 어떤 표정으로 읽게 되었을까요?</p>
-              <textarea
-                className="w-full h-full min-h-[10vh] bg-[#FFFBEC]  text-sm  resize-none border-none outline-none overflow-y-auto break-keep rounded-xl p-3"
-                placeholder="꼭 적지 않아도 괜찮아요. 한 번 생각해보는 것만으로도 충분하니까요."
-                // value 넣기 
-              />
+            <p className="text-white mb-6">
+              나와 타인의 이야기가 맞닿은 지금,
+              <br/>이 답장 편지가 나에게 왔다면 <br/>나는 어떤 표정으로 읽게 되었을까요?
+            </p>
+            <textarea
+              className={`w-full h-full min-h-[10vh] bg-[#FFFBEC] text-sm resize-none border-none outline-none overflow-y-auto break-keep rounded-xl p-3 transition-colors duration-200 whitespace-pre-line ${myLetter ? 'text-[#222]' : 'text-[#555]'}`}
+              placeholder={`꼭 적지 않아도 괜찮아요.\n한 번 생각해보는 것만으로도 충분하니까요.`}
+              value={myLetter}
+              onChange={e => setMyLetter(e.target.value)}
+            />
           </div>
         </div>
 
