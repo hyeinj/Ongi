@@ -287,15 +287,13 @@ export default function FeedbackStep() {
               </div>
             )}
 
-            <p className="text-white mb-6">오늘 무지님의 편지는 …</p>
-
-            <div className="bg-[#FFFBEC]/80 rounded-xl p-3">
-              <p className="text-gray-800 text-sm leading-6 whitespace-pre-wrap">
-                {letterData?.feedbackSections?.overallComment +
-                  '\n그 마음이 이 여정의 끝에서 더 오래 머물 수 있길 바라요.' ||
-                  '따뜻했고, 다정했고, 무엇보다 스스로에게도 다시 돌아올 수 있는 말이었어요. 그 마음이 이 여정의 끝에서 오래 머물 수 있길 바라요.'}
-              </p>
-            </div>
+            <p className="text-white mb-6">나와 타인의 이야기가 맞닿은 지금,
+              <br/>이 답장 편지가 나에게 왔다면 <br/>나는 어떤 표정으로 읽게 되었을까요?</p>
+              <textarea
+                className="w-full h-full min-h-[10vh] bg-[#FFFBEC]  text-sm  resize-none border-none outline-none overflow-y-auto break-keep rounded-xl p-3"
+                placeholder="꼭 적지 않아도 괜찮아요. 한 번 생각해보는 것만으로도 충분하니까요."
+                // value 넣기 
+              />
           </div>
         </div>
 

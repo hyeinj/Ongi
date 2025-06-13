@@ -150,6 +150,7 @@ export class EmotionUseCases {
 
   // AI 피드백 저장
   async saveAIFeedback(date: string, feedback: string): Promise<void> {
+    console.log("this.emotionStorage is", this.emotionStorage);
     await this.emotionStorage.saveAIFeedback(date, feedback);
   }
 }
