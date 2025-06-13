@@ -18,7 +18,7 @@ export default function Step8() {
   const [error, setError] = useState(null);
 
   // 클린 아키텍처를 통한 감정 데이터 관리
-  const { isLoading, getStageAnswer, updateCategoryAndEmotion } = useEmotion();
+  const { isLoading, getStageAnswer, updateCategoryAndEmotion, saveAIFeedback } = useEmotion();
 
   // 로딩 완료 후 지연 처리
   const shouldShowLoading = useDelayedLoading(isLoading || isGenerating);
@@ -75,6 +75,12 @@ export default function Step8() {
           if (categoryData.categoryResult) {
             await updateCategoryAndEmotion(categoryData.categoryResult.category, categoryData.categoryResult.emotion);
           }
+
+          // aiFeedback 저장
+          const today = new Date().toISOString().split('T')[0];
+          if (data.summary) {
+            await saveAIFeedback(today, data.summary);
+          }
         }
       } catch (err) {
         console.error('감정 요약 중 오류:', err);
@@ -84,7 +90,7 @@ export default function Step8() {
     };
 
     performSummary();
-  }, [getStageAnswer, updateCategoryAndEmotion, setIsGenerating, setFinalCardText, router, setError]);
+  }, [getStageAnswer, updateCategoryAndEmotion, saveAIFeedback, setIsGenerating, setFinalCardText, router, setError]);
 
   // 에러 상태 처리
   if (error) {

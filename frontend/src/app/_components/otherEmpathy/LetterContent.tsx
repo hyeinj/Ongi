@@ -177,7 +177,7 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
 
         {hasViewedAnswer && (
           <div className="absolute bottom-8 right-8 z-40">
-            <Link href="/other-empathy/3">
+            <Link href="/other-empathy/2">
               <div
                 className=" p-4.5 rounded-full bg-[#FFEDB5] active:bg-[#fee9a1] cursor-pointer"
                 style={{ boxShadow: '0 0 10px 1px rgba(0, 0, 0, 0.3)' }}

@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import IntroStep from '@/app/_components/otherEmpathy/IntroStep';
 import LetterStep from '@/app/_components/otherEmpathy/LetterStep';
 import SumUpStep from '@/app/_components/otherEmpathy/SumUpStep';
 import { useParams } from 'next/navigation';
@@ -10,9 +9,8 @@ import { useParams } from 'next/navigation';
 const stepComponents: {
   [key: string]: React.ComponentType;
 } = {
-  '1': IntroStep,
-  '2': LetterStep,
-  '3': SumUpStep,
+  '1': LetterStep,
+  '2': SumUpStep,
 
   // 필요에 따라 더 많은 스텝을 추가할 수 있습니다.
 };

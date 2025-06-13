@@ -60,7 +60,7 @@ export default function LetterStep() {
               온기우체부의 답장 편지를 열어보았어요.
             </p>
           ) : (
-            <p className="text-lg transition-opacity duration-500 ease-in-out opacity-100">
+            <p className="text-lg transition-opacity duration-800 ease-in-out opacity-100">
               이때, 스쳐 지나가기엔 아쉬운 문장을
               <br />
               하이라이트 해보아요.

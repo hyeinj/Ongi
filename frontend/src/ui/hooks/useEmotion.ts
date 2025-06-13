@@ -153,7 +153,7 @@ export const useEmotion = () => {
 
       const today = getCurrentDate();
       const result = await emotionUseCases.analyzeAndSaveEmotion(today);
-
+      
       if (result.success) {
         const data = await emotionStorage.getByDate(today);
         setEmotionData(data);
@@ -271,6 +271,8 @@ export const useEmotion = () => {
       const today = getCurrentDate();
       await emotionStorage.updateCategoryAndEmotion(today, category, emotion);
       const data = await emotionStorage.getByDate(today);
+      console.log("data emotion:"+ data?.emotion);
+      console.log("data aiFeedback" + data?.aiFeedback);
       setEmotionData(data);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '카테고리/감정 업데이트에 실패했습니다.';
@@ -280,6 +282,13 @@ export const useEmotion = () => {
       setIsLoading(false);
     }
   }, [emotionStorage]);
+
+  const saveAIFeedback = useCallback(
+    async (date: string, feedback: string) => {
+      return await emotionUseCases.saveAIFeedback(date, feedback);
+    },
+    [emotionUseCases]
+  );
 
   return {
     isLoading,
@@ -297,5 +306,6 @@ export const useEmotion = () => {
     generateStep7Question,
     updateCategoryAndEmotion,
     setIsLoading, // 로딩 상태를 외부에서 제어할 수 있도록 추가
+    saveAIFeedback
   };
 };
