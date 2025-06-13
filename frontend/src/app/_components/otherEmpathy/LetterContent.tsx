@@ -32,7 +32,6 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
   const [activeTab, setActiveTab] = useState<LetterType>('answer');
   const [fadeIn, setFadeIn] = useState(false);
   const [contentChanging, setContentChanging] = useState(false);
-  const [hasViewedAnswer, setHasViewedAnswer] = useState(false);
   const currentDate = new Date().toISOString().split('T')[0];
 
   // 실제 편지 데이터 가져오기
@@ -59,10 +58,6 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
 
     setContentChanging(true);
     setFadeIn(false);
-
-    if (type === 'answer') {
-      setHasViewedAnswer(true);
-    }
 
     setTimeout(() => {
       setActiveTab(type);
@@ -175,31 +170,29 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
           </div>
         </div>
 
-        {hasViewedAnswer && (
-          <div className="absolute bottom-8 right-8 z-40">
-            <Link href="/other-empathy/2">
-              <div
-                className=" p-4.5 rounded-full bg-[#FFEDB5] active:bg-[#fee9a1] cursor-pointer"
-                style={{ boxShadow: '0 0 10px 1px rgba(0, 0, 0, 0.3)' }}
+        <div className="absolute bottom-8 right-8 z-40">
+          <Link href="/other-empathy/2">
+            <div
+              className=" p-4.5 rounded-full bg-[#FFEDB5] active:bg-[#fee9a1] cursor-pointer"
+              style={{ boxShadow: '0 0 10px 1px rgba(0, 0, 0, 0.3)' }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="black"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="black"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </div>
-            </Link>
-          </div>
-        )}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </div>
+          </Link>
+        </div>
       </div>
     </div>
   );
