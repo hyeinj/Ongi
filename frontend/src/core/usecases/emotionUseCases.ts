@@ -124,7 +124,7 @@ export class EmotionUseCases {
     return data?.entries?.[stage]?.answer || null;
   }
 
-  // 감정 분석 및 저장
+  // 감정 분석 및 저장 - 삭제
   async analyzeAndSaveEmotion(date: string): Promise<AnalysisResult> {
     const data = await this.emotionStorage.getByDate(date);
 
@@ -146,6 +146,11 @@ export class EmotionUseCases {
     }
 
     return result;
+  }
+
+  async updateCategoryAndEmotion(date: string, category: Category, emotion: EmotionType): Promise<void> {
+    await this.emotionStorage.updateCategoryAndEmotion(date, category, emotion);
+    await this.islandUseCases.addDateToCategory(category, date);
   }
 
   // AI 피드백 저장

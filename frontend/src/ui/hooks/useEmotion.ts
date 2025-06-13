@@ -269,7 +269,8 @@ export const useEmotion = () => {
       setIsLoading(true);
       setError(null);
       const today = getCurrentDate();
-      await emotionStorage.updateCategoryAndEmotion(today, category, emotion);
+      // core의 usecase 단으로 변경 (island 로컬스토리지 addDateToCategory 추가된 상태)
+      await emotionUseCases.updateCategoryAndEmotion(today, category, emotion);
       const data = await emotionStorage.getByDate(today);
       console.log("data emotion:"+ data?.emotion);
       console.log("data aiFeedback" + data?.aiFeedback);
@@ -281,7 +282,7 @@ export const useEmotion = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [emotionStorage]);
+  }, [emotionUseCases, emotionStorage]);
 
   const saveAIFeedback = useCallback(
     async (date: string, feedback: string) => {
