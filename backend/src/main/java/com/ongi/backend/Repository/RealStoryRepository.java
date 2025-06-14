@@ -11,5 +11,5 @@ import java.util.Optional;
 
 @Repository
 public interface RealStoryRepository extends JpaRepository<RealStory, Long> {
-    Optional<RealStory> findFirstByCategoryAndEmotion(String category, String emotion);
+    List<RealStory> findByCategoryAndEmotion(String category, String emotion);
 }

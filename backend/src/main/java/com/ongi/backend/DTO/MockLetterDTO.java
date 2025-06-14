@@ -55,4 +55,21 @@ public class MockLetterDTO {
         private String message;
         private String review;
     }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class getMockLetterDTO {
+        private Long selfempathyId;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class getMockLetterResponseDTO {
+        private Long selfempathyId;
+        private Long mockLetterId;
+        private String letterTitle;
+        private String letterContent;
+    }
 }

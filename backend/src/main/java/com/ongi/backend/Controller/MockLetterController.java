@@ -107,4 +107,10 @@ public class MockLetterController {
     public ResponseDTO<?> saveMockLetter(@RequestBody MockLetterDTO.mockLetterRequestDTO request) {
         return mockLetterService.saveMockLetter(request);
     }
+
+    // 편지조회 API
+    @GetMapping
+    public ResponseDTO<?> getMockLetter(@RequestBody MockLetterDTO.getMockLetterDTO request) {
+        return mockLetterService.getMockLetter(request);
+    }
 }
