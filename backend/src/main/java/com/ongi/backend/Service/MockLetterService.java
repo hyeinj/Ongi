@@ -173,7 +173,7 @@ public class MockLetterService {
             userMessage.put("role", "user");
             userMessage.put("content", String.format("""
 
-            [자기공감 Step1 답변 - 인상깊었던 일]
+            [자기공감 Step1 답변 - 오늘 하루 마음이 무거워졌던 순간]
             %s
 
             [자기공감 Step2 답변 - 구체적인 상황 설명]  
@@ -264,7 +264,7 @@ public class MockLetterService {
             아래는 사용자의 자기공감 기록과, 사연자에게 써준 답장 편지입니다.
             이 중에서 사연자에게 해준 따뜻한 공감 문장을 하나 골라주세요. 그리고 그 말을 무지님 자신에게도 건네주세요.
 
-            [자기공감 Step1 답변 - 인상깊었던 일]
+            [자기공감 Step1 답변 - 오늘 하루 마음이 무거워졌던 순간]
             %s
 
             [자기공감 Step2 답변 - 구체적인 상황 설명]  
@@ -365,7 +365,7 @@ public class MockLetterService {
             userMessage.put("role", "user");
             userMessage.put("content", String.format("""
 
-            [자기공감 Step1 답변 - 인상깊었던 일]
+            [자기공감 Step1 답변 - 오늘 하루 마음이 무거워졌던 순간]
             %s
 
             [자기공감 Step2 답변 - 구체적인 상황 설명]  
@@ -453,7 +453,7 @@ public class MockLetterService {
             userMessage.put("role", "user");
             userMessage.put("content", String.format("""
 
-            [자기공감 Step1 답변 - 인상깊었던 일]
+            [자기공감 Step1 답변 - 오늘 하루 마음이 무거워졌던 순간]
             %s
 
             [자기공감 Step2 답변 - 구체적인 상황 설명]  
