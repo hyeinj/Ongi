@@ -1,5 +1,6 @@
 package com.ongi.backend.Controller;
 
+import com.ongi.backend.DTO.MockLetterDTO;
 import com.ongi.backend.DTO.OtherEmpathyDTO;
 import com.ongi.backend.DTO.RealStoryDTO;
 import com.ongi.backend.DTO.ResponseDTO;
@@ -22,5 +23,11 @@ public class OtherEmpathyController {
     @PostMapping("/save")
     public ResponseDTO<?> saveOtherEmpathy(@RequestBody OtherEmpathyDTO.otherEmpathyRequestDTO requestDTO) {
         return otherEmpathyService.saveOtherEmpathy(requestDTO);
+    }
+
+    // 타인공감 - 실제 답변 편지 조회 API
+    @GetMapping
+    public ResponseDTO<?> getResponseLetter(@RequestBody MockLetterDTO.getMockLetterDTO request) {
+        return otherEmpathyService.getResponseLetter(request);
     }
 }

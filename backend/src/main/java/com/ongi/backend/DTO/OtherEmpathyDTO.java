@@ -26,4 +26,12 @@ public class OtherEmpathyDTO {
         private String message;
         private String review;
     }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class getResponseLetterResponseDTO {
+        private String responseTitle;
+        private String responseContent;
+    }
 }
