@@ -97,6 +97,6 @@ public class OtherEmpathyService {
                 new OtherEmpathyDTO.getResponseLetterResponseDTO(responseTitle, responseContent);
 
 
-        return ResponseDTO.success("추천 편지 조회 및 mockLetter 생성 완료", responseDTO);
+        return ResponseDTO.success("타인공감 답변 편지 조회 완료", responseDTO);
     }
 }
