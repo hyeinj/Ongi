@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -173,7 +173,7 @@ public class MockLetterService {
             userMessage.put("role", "user");
             userMessage.put("content", String.format("""
 
-            [자기공감 Step1 답변 - 인상깊었던 일]
+            [자기공감 Step1 답변 - 오늘 하루 마음이 무거워졌던 순간]
             %s
 
             [자기공감 Step2 답변 - 구체적인 상황 설명]  
@@ -264,7 +264,7 @@ public class MockLetterService {
             아래는 사용자의 자기공감 기록과, 사연자에게 써준 답장 편지입니다.
             이 중에서 사연자에게 해준 따뜻한 공감 문장을 하나 골라주세요. 그리고 그 말을 무지님 자신에게도 건네주세요.
 
-            [자기공감 Step1 답변 - 인상깊었던 일]
+            [자기공감 Step1 답변 - 오늘 하루 마음이 무거워졌던 순간]
             %s
 
             [자기공감 Step2 답변 - 구체적인 상황 설명]  
@@ -365,7 +365,7 @@ public class MockLetterService {
             userMessage.put("role", "user");
             userMessage.put("content", String.format("""
 
-            [자기공감 Step1 답변 - 인상깊었던 일]
+            [자기공감 Step1 답변 - 오늘 하루 마음이 무거워졌던 순간]
             %s
 
             [자기공감 Step2 답변 - 구체적인 상황 설명]  
@@ -453,7 +453,7 @@ public class MockLetterService {
             userMessage.put("role", "user");
             userMessage.put("content", String.format("""
 
-            [자기공감 Step1 답변 - 인상깊었던 일]
+            [자기공감 Step1 답변 - 오늘 하루 마음이 무거워졌던 순간]
             %s
 
             [자기공감 Step2 답변 - 구체적인 상황 설명]  
@@ -502,42 +502,38 @@ public class MockLetterService {
 
     // 편지모의쓰기 저장 및 Report 업데이트
     public ResponseDTO<MockLetterDTO.mockLetterResponseDTO> saveMockLetter(MockLetterDTO.mockLetterRequestDTO request) {
-        // MockLetter 저장
-        MockLetter mockLetter = new MockLetter();
-        mockLetter.setUserResponse(request.getUserResponse());
-        mockLetter.setFeedback1(request.getFeedback1());
-        mockLetter.setFeedback2Title(request.getFeedback2Title());
-        mockLetter.setFeedback2Content(request.getFeedback2Content());
-        mockLetter.setFeedback3Title(request.getFeedback3Title());
-        mockLetter.setFeedback3Content(request.getFeedback3Content());
-        mockLetter.setReview(request.getReview()); // 선택사항
-
+        // 1. 자기공감 가져오기
         Optional<SelfEmpathy> selfEmpathyOpt = selfEmpathyRepository.findById(request.getSelfempathyId());
         if (selfEmpathyOpt.isEmpty()) {
             throw new RuntimeException("해당 자기공감 기록을 찾을 수 없습니다.");
         }
         SelfEmpathy selfEmpathy = selfEmpathyOpt.get();
 
-        // category와 emotion이 같은 RealStory 찾기
-        Optional<RealStory> realStoryOpt = realStoryRepository
-                .findFirstByCategoryAndEmotion(selfEmpathy.getCategory(), selfEmpathy.getEmotion());
-
-        if (realStoryOpt.isEmpty()) {
-            throw new RuntimeException("해당 조건에 맞는 RealStory가 존재하지 않습니다.");
-        }
-        mockLetter.setRealStory(realStoryOpt.get());
-
-        MockLetter savedMockLetter = mockLetterRepository.save(mockLetter);
-
-        // 기존 Report 찾아서 업데이트
+        // 2. Report 가져오기 (해당 자기공감에 연결된 Report)
         Report report = reportRepository.findBySelfEmpathy(selfEmpathy)
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("해당 자기공감에 대한 리포트를 찾을 수 없습니다."));
 
-        report.setMockLetter(savedMockLetter);
-        reportRepository.save(report);
+        // 3. Report에서 기존 mockLetter 가져오기
+        MockLetter mockLetter = report.getMockLetter();
+        if (mockLetter == null) {
+            throw new RuntimeException("해당 Report에 연결된 mockLetter가 존재하지 않습니다.");
+        }
 
+        // 4. mockLetter에 데이터 채워넣기
+        mockLetter.setUserResponse(request.getUserResponse());
+        mockLetter.setFeedback1(request.getFeedback1());
+        mockLetter.setFeedback2Title(request.getFeedback2Title());
+        mockLetter.setFeedback2Content(request.getFeedback2Content());
+        mockLetter.setFeedback3Title(request.getFeedback3Title());
+        mockLetter.setFeedback3Content(request.getFeedback3Content());
+        mockLetter.setReview(request.getReview());
+
+        // 5. 저장
+        MockLetter savedMockLetter = mockLetterRepository.save(mockLetter);
+
+        // 6. 응답 DTO 생성
         MockLetterDTO.mockLetterResponseDTO responseDTO =
                 new MockLetterDTO.mockLetterResponseDTO(
                         savedMockLetter.getMockletterId(),
@@ -547,5 +543,68 @@ public class MockLetterService {
                 );
 
         return ResponseDTO.success("편지모의쓰기 등록 완료", responseDTO);
+    }
+
+    // 추천 편지 조회
+    public ResponseDTO<?> getMockLetter(MockLetterDTO.getMockLetterDTO request) {
+        SelfEmpathy empathy = selfEmpathyRepository.findById(request.getSelfempathyId())
+                .orElseThrow(() -> new RuntimeException("자기공감 데이터 없음"));
+
+        // 1. 필터: 같은 category + emotion
+        List<RealStory> candidates = realStoryRepository.findByCategoryAndEmotion(
+                empathy.getCategory(), empathy.getEmotion());
+
+        // 2. 자기공감 답변들 텍스트 결합
+        String userText = String.join(" ",
+                empathy.getOneAnswer(), empathy.getTwoAnswer(),
+                empathy.getThreeAnswer(), empathy.getFourAnswer(),
+                empathy.getFiveAnswer());
+
+        // 3. 유사도 기반 정렬
+        RealStory bestMatch = candidates.stream()
+                .max(Comparator.comparing(letter ->
+                        similarityScore(userText, letter.getLetterContent())))
+                .orElse(null);
+
+        if (bestMatch == null) {
+            return ResponseDTO.error("추천 편지를 찾을 수 없습니다.");
+        }
+
+        // === 편지모의쓰기 객체 생성 및 저장 ===
+        MockLetter mockLetter = new MockLetter();
+        mockLetter.setRealStory(bestMatch); // RealStory 설정만 해놓음
+
+        SelfEmpathy selfEmpathy = empathy;
+
+        // Report 찾기
+        Report report = reportRepository.findBySelfEmpathy(selfEmpathy)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("해당 자기공감에 대한 리포트를 찾을 수 없습니다."));
+
+        // Report에 연결
+        MockLetter savedMockLetter = mockLetterRepository.save(mockLetter);
+        report.setMockLetter(mockLetter);
+        reportRepository.save(report);
+
+        // 6. DTO 생성
+        MockLetterDTO.getMockLetterResponseDTO responseDTO =
+                new MockLetterDTO.getMockLetterResponseDTO(
+                        selfEmpathy.getSelfempathyId(),
+                        savedMockLetter.getMockletterId(),
+                        bestMatch.getLetterTitle(),
+                        bestMatch.getLetterContent()
+                );
+
+        return ResponseDTO.success("추천 편지 조회 및 mockLetter 생성 완료", responseDTO);
+    }
+
+    // 간단한 유사도 계산 (공통 단어 수 기반)
+    private double similarityScore(String a, String b) {
+        Set<String> aWords = new HashSet<>(Arrays.asList(a.split("\\s+")));
+        Set<String> bWords = new HashSet<>(Arrays.asList(b.split("\\s+")));
+
+        aWords.retainAll(bWords);
+        return (double) aWords.size(); // 간단한 유사도 척도
     }
 }

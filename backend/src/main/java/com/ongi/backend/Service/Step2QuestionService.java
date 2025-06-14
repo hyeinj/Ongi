@@ -42,7 +42,7 @@ public class Step2QuestionService {
             ObjectNode userMessage = objectMapper.createObjectNode();
             userMessage.put("role", "user");
             userMessage.put("content", String.format("""
-              다음 입력은 "오늘 하루, 가장 인상 깊었던 일은 무엇이었나요?"라는 질문에 대한 사용자의 답변입니다.
+              다음 입력은 "오늘, 조용히 마음이 무거워졌던 때가 있다면 어떤 순간이었을까요?"라는 질문에 대한 사용자의 답변입니다.
               이에 대해 공감하고 감정을 담은 문장을 하나 생성해주세요.
              
               응답은 반드시 한 문장으로 작성하며, "~셨군요"로 끝나야 합니다.
@@ -55,11 +55,8 @@ public class Step2QuestionService {
               입력: 산책
               출력: 오늘의 산책이 무지님에게 인상 깊으셨군요
              
-              입력: 친구랑 늦게까지 수다 떨었어요
-              출력: 친구와 늦게까지 이야기 나눈 시간이 무지님에게 인상 깊으셨군요
-             
-              입력: 해질녘 하늘이 너무 예뻤어요 
-              출력: 해질녘 아름다운 하늘이 무지님에게 인상 깊으셨군요
+              입력: 과제가 너무 많았어
+              출력: 과제가 많아 힘든 하루를 보내셨군요
              
               다음 입력에 대해 공감 문장을 생성해주세요: %s
             """, answer));
