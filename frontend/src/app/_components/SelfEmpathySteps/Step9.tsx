@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import SelfEmpathyLayout from './SelfEmpathyLayout';
 import '@/styles/SelfEmpathyFinal.css';
@@ -10,16 +11,99 @@ import { useEmotion } from '@/ui/hooks/useEmotion';
 
 export default function Step9() {
   const router = useRouter();
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // 클린 아키텍처를 통한 에러 상태 확인
   const { error } = useEmotion();
 
+  // 페이지 진입 시 자동으로 데이터 저장
+  useEffect(() => {
+    const saveAllData = async () => {
+      setSaveError(null);
+
+      try {
+        const today = new Date().toISOString().split('T')[0];
+
+        // 이미 저장된 데이터가 있는지 확인
+        const mockLetters = localStorage.getItem('mock-letters');
+        const lettersData = mockLetters ? JSON.parse(mockLetters) : {};
+
+        if (lettersData[today]) {
+          // 이미 데이터가 있으면 API 호출하지 않음
+          return;
+        }
+
+        const storageData = localStorage.getItem('emotion');
+
+        if (!storageData) {
+          throw new Error('감정 데이터를 찾을 수 없습니다.');
+        }
+
+        const emotionStore = JSON.parse(storageData);
+        const todayData = emotionStore[today];
+
+        if (!todayData) {
+          throw new Error('오늘의 감정 데이터를 찾을 수 없습니다.');
+        }
+
+        // 각 단계의 질문과 답변 가져오기
+        const requestBody = {
+          oneQuestion: todayData.entries.step2?.question || '',
+          oneAnswer: todayData.entries.step2?.answer || '',
+          twoQuestion: todayData.entries.step3?.question || '',
+          twoAnswer: todayData.entries.step3?.answer || '',
+          threeQuestion: todayData.entries.step4?.question || '',
+          threeAnswer: todayData.entries.step4?.answer || '',
+          fourQuestion: todayData.entries.step5?.question || '',
+          fourAnswer: todayData.entries.step5?.answer || '',
+          fiveQuestion: todayData.entries.step6?.question || '',
+          fiveAnswer: todayData.entries.step6?.answer || '',
+          summary: todayData.aiFeedback || '',
+          category: todayData.category || 'self',
+          emotion: todayData.emotion || 'peace',
+        };
+
+        // API 호출
+        const response = await fetch('/api/self-emapthy-summary/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+          throw new Error('데이터 저장에 실패했습니다.');
+        }
+
+        const result = await response.json();
+
+        // localStorage에 mock-letters 저장
+        if (result.success) {
+          // success, message, data.message를 제외한 데이터 저장
+          const dataToSave = {
+            selfEmpathyId: result.data.selfEmpathyId,
+            reportId: result.data.reportId,
+            category: result.data.category,
+            island: result.data.island,
+          };
+
+          lettersData[today] = dataToSave;
+          localStorage.setItem('mock-letters', JSON.stringify(lettersData));
+        }
+      } catch (err) {
+        console.error('데이터 저장 중 오류:', err);
+        setSaveError(err instanceof Error ? err.message : '데이터 저장에 실패했습니다.');
+      }
+    };
+
+    saveAllData();
+  }, []);
+
   // 에러 상태 처리
-  if (error) {
+  if (error || saveError) {
     return (
       <SelfEmpathyLayout onBack={() => router.push('/self-empathy/8')}>
         <div className="error-message">
-          오류가 발생했습니다: {error}
+          오류가 발생했습니다: {error || saveError}
           <button onClick={() => window.location.reload()}>다시 시도</button>
         </div>
       </SelfEmpathyLayout>
@@ -46,7 +130,7 @@ export default function Step9() {
         <br />
         무지님의 편지가 실제로 보내지는 건 아니에요.
         <br />
-        다만, 누군가의 마음에 조심스레 말을 건네며
+        다만,누군가의 마음에 조심스레 말을 건네며
         <br />
         그 마음에 답장을 써 보는 이 시간은
         <br />
@@ -71,5 +155,3 @@ export default function Step9() {
     </SelfEmpathyLayout>
   );
 }
-
-
