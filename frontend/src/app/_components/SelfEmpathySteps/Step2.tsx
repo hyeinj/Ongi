@@ -59,7 +59,7 @@ export default function Step2() {
       const data = await response.json();
       
       // 답변과 질문 모두 로컬스토리지에 저장
-      await saveStageAnswer('step2', '오늘 하루, 가장 인상깊었던 일은 무엇이었나요?', answer);
+      await saveStageAnswer('step2', '오늘, 조용히 마음이 무거워졌던 때가 있다면 어떤 순간이었을까요?', answer);
       await saveStageAnswer('step3', data.question, '');
       
       // Step3로 질문을 URL 파라미터로 전달
