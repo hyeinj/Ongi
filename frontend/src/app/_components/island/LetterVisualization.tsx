@@ -30,6 +30,23 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
     fetchStatuses();
   }, [letterDates, category]);
 
+  // 다른 섬으로 이동할 때 문구 맵핑 
+  const getCategoryLabel = (category: string) => {
+  switch (category) {
+    case 'self':
+      return '자아';
+    case 'growth':
+      return '성장';
+    case 'relate':
+      return '관계';
+    case 'routine':
+      return '루틴';
+    default:
+      return category;
+    }
+  };
+
+
   return (
     <div className="letters">
       {rowCounts.map((count, visualRowIndex) => {
@@ -107,11 +124,12 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
       {popupCategory && (
         <div className="popup">
           <p>
-            이 편지는 <strong>{popupCategory === 'self' ? '나' : popupCategory}</strong> 섬에
-            있어요.
+            이 편지는 {getCategoryLabel(popupCategory)}섬에 있어요.
           </p>
-          <button onClick={() => router.push(`/island/${popupCategory}`)}>해당 섬으로 가기</button>
-          <button onClick={() => setPopupCategory(null)}>닫기</button>
+          <div className="button-group">
+          <button className="button goButton" onClick={() => router.push(`/island/${popupCategory}`)}>{getCategoryLabel(popupCategory)}섬으로 가기</button>
+          <button className="button closeButton" onClick={() => setPopupCategory(null)}>닫기</button>
+          </div>
         </div>
       )}
     </div>

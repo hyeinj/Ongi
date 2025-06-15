@@ -164,12 +164,69 @@
   top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: white;
-  border: 1px solid #ccc;
-  padding: 24px;
-  border-radius: 8px;
+  background: #fffdf7;
+  padding: 13% 32px;
+  border-radius: 16px;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+  width: 76%;
+  height: 22%;
+}
+
+.popup p {
+  font-size: 16px;
+  color: #4e3b2c;
+  margin-bottom: 24px;
+}
+
+.popup .button-group {
+  display: flex;
+  justify-content: center;
+  gap: 3%;
+}
+
+.popup button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s ease;
+}
+
+/* 해당 섬으로 가기 버튼 */
+.popup .goButton {
+  background-color: #b28b67;
+  color: white;
+}
+
+.popup .goButton:hover {
+  background-color: #a57d59;
+}
+
+/* 닫기 버튼 */
+.popup .closeButton {
+  background-color: #f2f2f2;
+  color: #6e5d4c;
+}
+
+.popup .closeButton:hover {
+  background-color: #e8e2da;
+}
+
+/* 등장 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
 }
 
 @keyframes letterFloat {
