@@ -17,7 +17,7 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
   const randomAngles = useMemo(() => {
     return Array.from({ length: letterDates.length }, () => Math.random() * 20 - 10);
   }, [letterDates.length]);
-  const [popupCategory, setPopupCategory] = useState<string | null>(null); // 🔹 팝업 상태
+  const [popupCategory, setPopupCategory] = useState<string | null>(null); // 팝업 상태
 
   // emotion으로 날짜가 있는지 확인 
   const [emotionStatuses, setEmotionStatuses] = useState<Record<string, EmotionStatus>>({});
@@ -91,7 +91,7 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
               style={{
                 position: 'absolute',
                 left: `calc(43% + ${x}px)`,
-                top: `calc(190% + ${y}px)`,
+                top: `calc(198% + ${y}px)`,
                 transform: `rotate(${randomAngle}deg)`,
                 transformOrigin: 'center center',
               }}

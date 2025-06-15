@@ -104,7 +104,7 @@ const IslandPage = () => {
         {isMounted && (
             <LetterVisualization
                 letterDates={letterDates}
-                total={total}
+                total={year === 2025 && month === 5 ? 16 : total} // MVP용: 6월만 16개로 고정
                 category={type}
         />)}
             
