@@ -66,6 +66,20 @@ const IslandPage = () => {
     setByCalendar(date);
     setShowCalendar(false);
   };
+  const today = new Date();
+  const isCurrentYear = year === today.getFullYear();
+  const isCurrentMonth = month === today.getMonth();
+  const todayDate = today.getDate();
+  const isJune2025 = year === 2025 && month === 5; // MVP용 6월 예외 처리 
+
+  const isCurrentRange =
+    isCurrentYear &&
+    isCurrentMonth &&
+    (
+      (isFirstHalf && ((isJune2025 && todayDate <= 16) || (!isJune2025 && todayDate <= 15))) ||
+      (!isFirstHalf && todayDate >= (isJune2025 ? 17 : 16))
+    );
+
 
   const router = useRouter();
   const handlePostOfficeClick = () => {
@@ -81,7 +95,11 @@ const IslandPage = () => {
             <div className="select-date-wrapper">
                 <Image className="navigate-button" src={navigateBefore} alt="이전" onClick={movePrev} />
                 <span>{year}년 {month+1}월 {start}~{end}일</span>
-                <Image className="navigate-button" src={navigateNext} alt="이후" onClick={moveNext} />
+                <Image src={navigateNext} alt="이후" 
+                  className={`navigate-button ${isCurrentRange ? 'disabled' : ''}`}
+                  onClick={() => {
+                    if (!isCurrentRange) moveNext(); // 오늘 이후는 막음
+                  }} />
                 <Image className="calendar-button" src={calendar} alt="달력" onClick={() => setShowCalendar(!showCalendar)} />
             </div>
 

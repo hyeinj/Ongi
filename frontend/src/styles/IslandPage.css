@@ -61,6 +61,10 @@
   height: 21px;
 }
 
+.navigate-button.disabled {
+  opacity: 0.3;
+}
+
 .island-page .text-wrapper .calendar-button {
   cursor: pointer;
   display: inline-block;
