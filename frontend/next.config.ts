@@ -1,11 +1,11 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api/:path*", // 프론트엔드에서 /api/로 시작하는 요청을
-        destination: "http://43.202.198.184:8080/api/:path*", // 배포된 백엔드로 프록시
+        source: '/api/:path*', // 프론트엔드에서 /api/로 시작하는 요청을
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`, // 배포된 백엔드로 프록시
       },
     ];
   },

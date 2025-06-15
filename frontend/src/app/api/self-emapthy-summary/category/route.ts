@@ -1,22 +1,29 @@
 import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
-    const body = await request.json();
-    const response = await fetch('http://43.202.198.184:8080/api/self-empathy-summary/category', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/self-empathy-summary/category`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
     if (!response.ok) {
-      return NextResponse.json({ error: '카테고리 요청 실패' }, { status: response.status });
+      const errorData = await response.json();
+      return NextResponse.json(
+        { error: errorData.error || '서버 응답이 올바르지 않습니다.' },
+        { status: response.status }
+      );
     }
 
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error('카테고리 요청 중 오류:', error);
-    return NextResponse.json({ error: '카테고리 요청 중 오류가 발생했습니다.' }, { status: 500 });
+    console.error('Category API 처리 실패:', error);
+    return NextResponse.json({ error: '서버 오류가 발생했습니다.' }, { status: 500 });
   }
-} 
+}

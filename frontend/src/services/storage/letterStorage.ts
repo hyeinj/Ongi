@@ -5,11 +5,14 @@ const LETTER_STORAGE_KEY = 'letters';
 
 // RealLetter 데이터 타입
 interface RealLetterData {
+  letterTitle: string;
   worryContent: Array<{ id: string; text: string }>;
   answerContent: Array<{ id: string; text: string }>;
-  emotion: string;
-  category?: string;
-  selectedAt: string;
+}
+
+interface Review {
+  letterExercise: string;
+  otherEmpathy: string;
 }
 
 // 편지 데이터 스토리지 서비스 (인터페이스 구현)
@@ -30,11 +33,18 @@ export class LetterStorage implements ILetterStorage {
     try {
       const allData = this.getAllLetters();
       const existingLetter = allData[date] || {
-        mockLetter: '',
         userResponse: '',
         aiFeedback: '',
-        realLetterId: '',
+        realLetterData: {
+          letterTitle: '',
+          worryContent: [],
+          answerContent: [],
+        },
         highlightedParts: [],
+        review: {
+          letterExercise: '',
+          otherEmpathy: '',
+        },
       };
 
       allData[date] = { ...existingLetter, ...letter };
@@ -45,12 +55,109 @@ export class LetterStorage implements ILetterStorage {
     }
   }
 
+  async saveReview(date: string, review: Review): Promise<void> {
+    try {
+      await this.saveLetter(date, { review });
+    } catch (error) {
+      console.error('리뷰 저장 실패:', error);
+      throw error;
+    }
+  }
+
   // RealLetter 데이터 저장
   async saveRealLetter(date: string, realLetterData: RealLetterData): Promise<void> {
     try {
       await this.saveLetter(date, { realLetterData });
     } catch (error) {
       console.error('RealLetter 저장 실패:', error);
+      throw error;
+    }
+  }
+
+  async saveLetterExerciseReview(date: string, letterExerciseReview: string): Promise<void> {
+    try {
+      const allData = this.getAllLetters();
+      const existingLetter = allData[date];
+      await this.saveLetter(date, {
+        review: {
+          letterExercise: letterExerciseReview,
+          otherEmpathy: existingLetter?.review?.otherEmpathy || '',
+        },
+      });
+    } catch (error) {
+      console.error('LetterExerciseReview 저장 실패:', error);
+      throw error;
+    }
+  }
+
+  async saveOtherEmpathyReview(date: string, otherEmpathyReview: string): Promise<void> {
+    try {
+      const allData = this.getAllLetters();
+      const existingLetter = allData[date];
+      await this.saveLetter(date, {
+        review: {
+          letterExercise: existingLetter?.review?.letterExercise || '',
+          otherEmpathy: otherEmpathyReview,
+        },
+      });
+    } catch (error) {
+      console.error('LetterExerciseReview 저장 실패:', error);
+      throw error;
+    }
+  }
+
+  async saveRealLetterWorryContent(
+    date: string,
+    worryContent: { id: string; text: string }[]
+  ): Promise<void> {
+    try {
+      const allData = this.getAllLetters();
+      const existingLetter = allData[date];
+      await this.saveLetter(date, {
+        realLetterData: {
+          letterTitle: existingLetter?.realLetterData?.letterTitle || '',
+          worryContent: worryContent,
+          answerContent: existingLetter?.realLetterData?.answerContent || [],
+        },
+      });
+    } catch (error) {
+      console.error('LetterExerciseReview 저장 실패:', error);
+      throw error;
+    }
+  }
+  async saveRealLetterAnswerContent(
+    date: string,
+    answerContent: { id: string; text: string }[]
+  ): Promise<void> {
+    try {
+      const allData = this.getAllLetters();
+      const existingLetter = allData[date];
+      await this.saveLetter(date, {
+        realLetterData: {
+          letterTitle: existingLetter?.realLetterData?.letterTitle || '',
+          worryContent: existingLetter?.realLetterData?.worryContent || [],
+          answerContent: answerContent,
+        },
+      });
+    } catch (error) {
+      console.error('LetterExerciseReview 저장 실패:', error);
+      throw error;
+    }
+  }
+
+  async saveRealLetterTitle(date: string, letterTitle: string): Promise<void> {
+    try {
+      const allData = this.getAllLetters();
+      const existingLetter = allData[date];
+      await this.saveLetter(date, {
+        realLetterData: {
+          letterTitle: letterTitle,
+          worryContent: existingLetter?.realLetterData?.worryContent || [],
+          answerContent: existingLetter?.realLetterData?.answerContent || [],
+        },
+      });
+    } catch (error) {
+      console.error('RealLetterTitle 저장 실패:', error);
       throw error;
     }
   }

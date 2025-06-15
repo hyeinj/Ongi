@@ -1,4 +1,4 @@
-import { Letter, Category, EmotionType } from '../entities';
+import { Letter, Category, EmotionType, RealLetterData } from '../entities';
 
 // 서비스 인터페이스들
 export interface ILetterService {
@@ -17,6 +17,7 @@ export interface ILetterStorage {
   saveHighlights(date: string, highlights: string[]): Promise<void>;
   getAll(): Promise<Record<string, Letter>>;
   deleteByDate(date: string): Promise<void>;
+  saveRealLetter(date: string, data: RealLetterData): Promise<void>;
 }
 
 // 데이터 타입들
@@ -49,24 +50,6 @@ interface FeedbackResult {
 // 편지 관련 비즈니스 로직을 담당하는 클래스
 export class LetterUseCases {
   constructor(private letterService: ILetterService, private letterStorage: ILetterStorage) {}
-
-  // 편지 생성
-  async generateLetter(
-    date: string,
-    emotionContext: EmotionContext
-  ): Promise<LetterGenerationResult> {
-    const result = await this.letterService.generateLetter(emotionContext);
-
-    // 성공시 스토리지에 저장
-    if (result.success && result.mockLetter && result.realLetterId) {
-      await this.letterStorage.saveLetter(date, {
-        mockLetter: result.mockLetter,
-        realLetterId: result.realLetterId,
-      });
-    }
-
-    return result;
-  }
 
   // 사용자 응답 저장
   async saveUserResponse(date: string, response: string): Promise<void> {
@@ -124,5 +107,13 @@ export class LetterUseCases {
   // 편지 데이터 삭제
   async deleteLetterData(date: string): Promise<void> {
     await this.letterStorage.deleteByDate(date);
+  }
+
+  async saveLetterData(date: string, data: Partial<Letter>): Promise<void> {
+    await this.letterStorage.saveLetter(date, data);
+  }
+
+  async saveRealLetter(date: string, data: RealLetterData): Promise<void> {
+    await this.letterStorage.saveRealLetter(date, data);
   }
 }
