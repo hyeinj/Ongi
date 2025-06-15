@@ -1,7 +1,9 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import DatePicker from 'react-datepicker';
 import '@/styles/IslandPage.css';
 import homepageMt from '@/assets/images/homepage-mountain.png';
 import star1 from '@/assets/images/star1.png';
@@ -15,13 +17,12 @@ import relate from '@/assets/images/relate.png';
 import navigateBefore from '@/assets/icons/navigate_before.svg'
 import navigateNext from '@/assets/icons/navigate_next.svg'
 import calendar from '@/assets/icons/calendar.svg'
+
 import { useLetterDateRange } from '@/ui/hooks/useLetterDateRange';
 import { useDateNavigator } from '@/ui/hooks/useDateNavigator';
 import LetterVisualization from '@/app/_components/island/LetterVisualization';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import DatePicker from 'react-datepicker';
-
+import { useDominantEmotions } from "@/ui/hooks/useDominantEmotions";
+import { EmotionType } from "@/core/entities/emotion"
 
 
 const IslandPage = () => {
@@ -80,6 +81,27 @@ const IslandPage = () => {
       (!isFirstHalf && todayDate >= (isJune2025 ? 17 : 16))
     );
 
+  const dominantEmotions = useDominantEmotions(letterDates, type);
+  const emotionColors: Record<EmotionType, string> = {
+    joy: "#FEE191",
+    peace: "#62B067",
+    sadness: "#4F69D2",
+    anger: "#B25A5A",
+    anxiety: "#AB1EB7",
+  };
+
+  const gradientStyle = {
+    background: dominantEmotions.length
+      ? `radial-gradient(circle,
+          ${emotionColors[dominantEmotions[0]]}DD 0%,    /* 중심: 더 진하게 */
+          ${emotionColors[dominantEmotions[0]]}66 40%,   /* 중간: 살짝 흐리게 */
+          ${emotionColors[dominantEmotions[0]]}33 70%,   /* 경계: 거의 연하게 */
+          ${emotionColors[dominantEmotions[0]]}00 100%)` /* 바깥: 완전 투명 */
+      : undefined,
+  };
+
+
+  console.log("gradientStyle", gradientStyle);
 
   const router = useRouter();
   const handlePostOfficeClick = () => {
@@ -88,6 +110,7 @@ const IslandPage = () => {
 
   return (
     <div className="island-page">
+      <div className="gradient-layer" style={gradientStyle} />
       <div className="background">
         {/* 상단 문구 */}
         <div className = "text-wrapper">
@@ -146,8 +169,8 @@ const IslandPage = () => {
             onClick={handlePostOfficeClick}
         />
     </div>
-</div>
-);
+  </div>
+  );
 };
 
 export default IslandPage;

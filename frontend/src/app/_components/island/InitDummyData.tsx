@@ -3,12 +3,11 @@
 import { useEffect } from "react";
 import { EmotionStorage } from "@/services/storage/emotionStorage";
 import { LetterStorage } from "@/services/storage/letterStorage";
+import { Category, EmotionType } from "@/core/entities/emotion"
 import dummyData from "./dummyData.json"; 
 
 const emotionStorage = new EmotionStorage();
 const letterStorage = new LetterStorage();
-type Category = 'self' | 'growth' | 'routine' | 'relationship';
-type EmotionType = 'joy' | 'sadness' | 'anger' | 'anxiety' | 'peace';
 
 const InitDummyData = () => {
   useEffect(() => {
