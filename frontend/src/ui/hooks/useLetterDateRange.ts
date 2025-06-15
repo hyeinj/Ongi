@@ -6,9 +6,10 @@ export const useLetterDateRange = (baseDateParam: Date) => {
   const day = baseDate.getDate();
 
   const lastDay = new Date(year, month + 1, 0).getDate();
-  const isFirstHalf = day <= 15;
 
+  // MVP용
   const isJune2025 = year === 2025 && month === 5;
+  const isFirstHalf = isJune2025 ? day <= 16 : day <= 15; // MVP용
   const start = isFirstHalf ? 1 : (isJune2025 ? 17 : 16);
   const end = isFirstHalf ? (isJune2025 ? 16 : 15) : lastDay;
 
