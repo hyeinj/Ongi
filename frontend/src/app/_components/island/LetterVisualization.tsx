@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import LetterClosed from '@/app/_components/icons/Letter';
 import { useRouter } from 'next/navigation';
 import { getLetterEmotionStatuses, EmotionStatus } from '@/ui/hooks/useLetterEmotionStatus';
+import '@/styles/IslandPage.css'
 
 interface Props {
   letterDates: string[];
@@ -16,6 +17,7 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
   const randomAngles = useMemo(() => {
     return Array.from({ length: letterDates.length }, () => Math.random() * 20 - 10);
   }, [letterDates.length]);
+  const [popupCategory, setPopupCategory] = useState<string | null>(null); // 🔹 팝업 상태
 
   // emotion으로 날짜가 있는지 확인 
   const [emotionStatuses, setEmotionStatuses] = useState<Record<string, EmotionStatus>>({});
@@ -48,6 +50,7 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
             emotion = status.emotion;
           } else if (status?.type === "mismatch") {
             variant = "white";
+            // popupCategory = status.category; // const이므로 바뀔 수 없어서 밑에서 설정 
           } else {
             variant = "dashed";
           }
@@ -81,7 +84,14 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
                 style={{
                   animation: 'letterFloat 4s ease-in-out infinite',
                 }}
-                onClick={() => router.push(`/island/${category}/date/${date}`)}
+                onClick={() => {
+                  if (!status || status.type === "none") return; // 클릭 막음
+                  if (status.type === "mismatch") {
+                    setPopupCategory(status.category); // 해당 섬 팝업 띄우기
+                    return;
+                  }
+                  router.push(`/island/${category}/date/${date}`); // match인 경우 정상 이동
+                }}
               >
                 <LetterClosed width={48} height={31} 
                 date={new Date(date).getDate()} 
@@ -92,6 +102,18 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
           );
         });
       })}
+
+      {/* 팝업: 편지 클릭 시 섬 다를 때 */}
+      {popupCategory && (
+        <div className="popup">
+          <p>
+            이 편지는 <strong>{popupCategory === 'self' ? '나' : popupCategory}</strong> 섬에
+            있어요.
+          </p>
+          <button onClick={() => router.push(`/island/${popupCategory}`)}>해당 섬으로 가기</button>
+          <button onClick={() => setPopupCategory(null)}>닫기</button>
+        </div>
+      )}
     </div>
   );
 };

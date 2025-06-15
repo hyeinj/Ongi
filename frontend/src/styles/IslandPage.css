@@ -158,6 +158,20 @@
   cursor: pointer;
 }
 
+/* LetterVisualization에서 쓰이는 팝업 */
+.popup {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border: 1px solid #ccc;
+  padding: 24px;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
 @keyframes letterFloat {
   0% {
     transform: translateY(0px);

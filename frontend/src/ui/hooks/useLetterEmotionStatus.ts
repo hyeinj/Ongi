@@ -1,47 +1,9 @@
-// import { EmotionStorage } from "@/services/storage/emotionStorage";
-
-// export type EmotionStatus =
-//   | { type: "match"; emotion: "joy" | "peace" | "sadness" | "anger" | "anxiety" }
-//   | { type: "mismatch" }
-//   | { type: "none" };
-
-// const isValidEmotion = (
-//   value: string
-// ): value is EmotionStatus["emotion"] => {
-//   return ["joy", "peace", "sadness", "anger", "anxiety"].includes(value);
-// };
-
-// export const getLetterEmotionStatuses = async (
-//   dates: string[],
-//   currentCategory: string
-// ): Promise<Record<string, EmotionStatus>> => {
-//   const emotionStorage = new EmotionStorage();
-//   const statuses: Record<string, EmotionStatus> = {};
-
-//   for (const date of dates) {
-//     const emotion = await emotionStorage.getByDate(date);
-
-//     if (!emotion) {
-//       statuses[date] = { type: "none" };
-//     } else if (emotion.category === currentCategory && isValidEmotion(emotion.emotion)) {
-//       statuses[date] = {
-//         type: "match",
-//         emotion: emotion.emotion,
-//       };
-//     } else {
-//       statuses[date] = { type: "mismatch" };
-//     }
-//   }
-
-//   return statuses;
-// };
-
 import { EmotionStorage } from "@/services/storage/emotionStorage";
-import type { EmotionType } from "@/core/entities/emotion";
+import type { EmotionType, Category } from "@/core/entities/emotion";
 
 export type EmotionStatus =
   | { type: "match"; emotion: EmotionType }
-  | { type: "mismatch" }
+  | { type: "mismatch"; category: Category}
   | { type: "none" };
 
 export const getLetterEmotionStatuses = async (
@@ -62,7 +24,10 @@ export const getLetterEmotionStatuses = async (
         emotion: emotion.emotion,
       };
     } else {
-      statuses[date] = { type: "mismatch" };
+      statuses[date] = { 
+        type: "mismatch",
+        category: emotion.category, 
+      };
     }
   }
 
