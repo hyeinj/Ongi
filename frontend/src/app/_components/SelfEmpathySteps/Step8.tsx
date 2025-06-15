@@ -10,6 +10,42 @@ import '@/styles/SelfEmpathyFinal.css';
 import nextArrow from '@/assets/icons/next-arrow.png';
 import { useEmotion } from '@/ui/hooks/useEmotion';
 import { useDelayedLoading } from '@/ui/hooks/useDelayedLoading';
+import { Category, EmotionType } from '@/core/entities/emotion';
+
+// 카테고리와 감정 변환 규칙 함수
+function transformCategoryAndEmotion(
+  category: Category,
+  emotion: EmotionType
+): { category: Category; emotion: EmotionType } {
+  let newCategory = category;
+  let newEmotion = emotion;
+
+  // routine일 때 joy 이외 감정은 모두 self로 변환
+  if (category === 'routine' && emotion !== 'joy') {
+    newCategory = 'self';
+  }
+
+  // growth일 때 anxiety, sadness 이외 감정은 모두 self로 변환
+  if (category === 'growth' && emotion !== 'anxiety' && emotion !== 'sadness') {
+    newCategory = 'relationship';
+  }
+
+  // self일 때 joy이면 routine으로 변환
+  if (category === 'self' && emotion === 'joy') {
+    newCategory = 'routine';
+  }
+
+  // self일 때 감정이 peace일 때 relationship이 아니면 모두 relationship으로 변환
+  if (emotion === 'peace' && category !== 'relationship' && category !== 'self') {
+    newCategory = 'self';
+  }
+
+  if (emotion === 'anger') {
+    newEmotion = 'anxiety';
+  }
+
+  return { category: newCategory, emotion: newEmotion };
+}
 
 export default function Step8() {
   const router = useRouter();
@@ -43,8 +79,8 @@ export default function Step8() {
             step2_answer: step3Answer || '',
             step3Feelings: step4Answer || '',
             step4_answer: step5Answer || '',
-            step5_answer: step6Answer || ''
-          })
+            step5_answer: step6Answer || '',
+          }),
         });
 
         if (!response.ok) {
@@ -66,14 +102,19 @@ export default function Step8() {
             step2_answer: step3Answer || '',
             step3Feelings: step4Answer || '',
             step4_answer: step5Answer || '',
-            step5_answer: step6Answer || ''
-          })
+            step5_answer: step6Answer || '',
+          }),
         });
 
         if (categoryResponse.ok) {
           const categoryData = await categoryResponse.json();
           if (categoryData.categoryResult) {
-            await updateCategoryAndEmotion(categoryData.categoryResult.category, categoryData.categoryResult.emotion);
+            // 카테고리와 감정 변환 규칙 적용
+            const transformedResult = transformCategoryAndEmotion(
+              categoryData.categoryResult.category,
+              categoryData.categoryResult.emotion
+            );
+            await updateCategoryAndEmotion(transformedResult.category, transformedResult.emotion);
           }
 
           // aiFeedback 저장
@@ -90,7 +131,15 @@ export default function Step8() {
     };
 
     performSummary();
-  }, [getStageAnswer, updateCategoryAndEmotion, saveAIFeedback, setIsGenerating, setFinalCardText, router, setError]);
+  }, [
+    getStageAnswer,
+    updateCategoryAndEmotion,
+    saveAIFeedback,
+    setIsGenerating,
+    setFinalCardText,
+    router,
+    setError,
+  ]);
 
   // 에러 상태 처리
   if (error) {
