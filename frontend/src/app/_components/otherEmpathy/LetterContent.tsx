@@ -5,7 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import postboxIcon from '@/assets/images/postbox-icon.png';
 import { useLetterHighlights } from '@/ui/hooks/useLetterHighlights';
-import { useRealLetter } from '@/ui/hooks/useRealLetter';
+import { useLetter } from '@/ui/hooks/useLetter';
+import { RealLetterData } from '@/core/entities/letter';
 import localFont from 'next/font/local';
 
 const garamFont = localFont({
@@ -24,27 +25,70 @@ interface LetterParagraph {
   text: string;
 }
 
-// useRealLetter 훅에서 LetterTitle 타입을 사용하므로 여기서는 제거
-
-// 기존 정적 데이터는 제거하고 useRealLetter 훅을 사용
-
 export default function LetterContent({ isVisible }: LetterContentProps) {
   const [activeTab, setActiveTab] = useState<LetterType>('answer');
   const [fadeIn, setFadeIn] = useState(false);
   const [contentChanging, setContentChanging] = useState(false);
+  const [realLetterData, setRealLetterData] = useState<RealLetterData | null>(null);
+  const [showTooltip, setShowTooltip] = useState(false);
   const currentDate = new Date().toISOString().split('T')[0];
 
   // 실제 편지 데이터 가져오기
-  const {
-    worryContent,
-    answerContent,
-    letterTitles: realLetterTitles,
-    isLoading: letterLoading,
-  } = useRealLetter();
+  const { getRealLetter, isLoading: letterLoading } = useLetter();
+
+  // 편지 데이터 로드
+  useEffect(() => {
+    const fetchRealLetter = async () => {
+      try {
+        const letterData = await getRealLetter();
+        if (letterData) {
+          setRealLetterData(letterData);
+        }
+      } catch (error) {
+        console.error('편지 데이터를 가져오는 중 오류가 발생했습니다:', error);
+      }
+    };
+
+    fetchRealLetter();
+  }, [getRealLetter]);
+
+  // 툴팁 표시 로직
+  useEffect(() => {
+    if (realLetterData && isVisible && fadeIn) {
+      // 이미 툴팁을 본 적이 있는지 확인
+      const hasSeenTooltip = localStorage.getItem('otherEmpathy-tooltip-seen');
+
+      if (!hasSeenTooltip) {
+        // 렌더링 완료 후 툴팁 표시
+        const showTimer = setTimeout(() => {
+          setShowTooltip(true);
+        }, 500); // 렌더링 완료 후 0.5초 대기
+
+        // 9초 후 툴팁 숨김
+        const hideTimer = setTimeout(() => {
+          setShowTooltip(false);
+          // 툴팁을 본 것으로 표시
+          localStorage.setItem('otherEmpathy-tooltip-seen', 'true');
+        }, 9500); // 0.5초 대기 + 9초 표시
+
+        return () => {
+          clearTimeout(showTimer);
+          clearTimeout(hideTimer);
+        };
+      }
+    }
+  }, [realLetterData, isVisible, fadeIn]);
 
   // 현재 활성 탭에 따른 편지 내용
-  const letterContent: LetterParagraph[] = activeTab === 'worry' ? worryContent : answerContent;
-  const letterTitle = activeTab === 'worry' ? realLetterTitles.worry : realLetterTitles.answer;
+  const letterContent: LetterParagraph[] =
+    activeTab === 'worry'
+      ? realLetterData?.worryContent || []
+      : realLetterData?.answerContent || [];
+
+  const letterTitle = {
+    title: realLetterData?.letterTitle || '편지를 불러오는 중...',
+    subtitle: activeTab === 'worry' ? '고민을 나눠주신 분께서' : '따뜻한 마음을 전해주신 분께서',
+  };
 
   const { handleTextSelection, renderHighlightedText } = useLetterHighlights({
     letterType: activeTab,
@@ -75,7 +119,7 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
   }, [isVisible]);
 
   // 편지 로딩 중일 때 표시
-  if (letterLoading) {
+  if (letterLoading || !realLetterData) {
     return (
       <div
         className={`absolute inset-0 flex flex-col items-center justify-center w-full h-full transition-opacity duration-500 ease-in-out ${
@@ -136,6 +180,21 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
               priority
               loading="eager"
             />
+
+            {/* 툴팁 말풍선 */}
+            {showTooltip && (
+              <div className="absolute -top-2 right-5 z-50">
+                <div className="relative bg-white rounded-lg px-3 py-2 shadow-lg border border-gray-200 animate-bounce">
+                  <p className="text-sm text-gray-700 whitespace-nowrap font-medium">
+                    마음에 드는 문장을 눌러보세요
+                  </p>
+                  {/* 말풍선 꼬리 */}
+                  <div className="absolute bottom-0 left-4 transform translate-y-full">
+                    <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-white"></div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <h3 className="text-center mt-3 font-medium text-lg text-amber-800 whitespace-pre-line">
               {letterTitle.title}

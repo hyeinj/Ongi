@@ -20,7 +20,6 @@ export default function Step2() {
   // 로딩 완료 후 지연 처리
   const shouldShowLoading = useDelayedLoading(isLoading);
 
-
   useEffect(() => {
     // 이전에 저장된 답변이 있다면 불러오기
     const loadPreviousAnswer = async () => {
@@ -33,13 +32,12 @@ export default function Step2() {
     loadPreviousAnswer();
   }, [getStageAnswer]);
 
-  
   const handleNext = async () => {
     if (!answer.trim()) return;
 
     try {
       setIsLoading(true);
-      
+
       // 백엔드 API 호출
       const response = await fetch('/api/step2-question', {
         method: 'POST',
@@ -47,8 +45,8 @@ export default function Step2() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          step1_answer: answer
-        })
+          step1_answer: answer,
+        }),
       });
 
       if (!response.ok) {
@@ -57,11 +55,15 @@ export default function Step2() {
       }
 
       const data = await response.json();
-      
+
       // 답변과 질문 모두 로컬스토리지에 저장
-      await saveStageAnswer('step2', '오늘, 조용히 마음이 무거워졌던 때가 있다면 어떤 순간이었을까요?', answer);
+      await saveStageAnswer(
+        'step2',
+        '오늘, 조용히 마음이 무거워졌던 때가 있다면 어떤 순간이었을까요?',
+        answer
+      );
       await saveStageAnswer('step3', data.question, '');
-      
+
       // Step3로 질문을 URL 파라미터로 전달
       router.push(`/self-empathy/3?question=${encodeURIComponent(data.question)}`);
     } catch (err) {
@@ -90,14 +92,8 @@ export default function Step2() {
   // 로딩 상태 표시
   if (shouldShowLoading) {
     return (
-      <SelfEmpathyLayout
-        currentStep={1}
-        totalStep={5}
-        onBack={() => router.push('/self-empathy')}
-      >
-        <LoadingState 
-          type="question"
-        />
+      <SelfEmpathyLayout currentStep={1} totalStep={5} onBack={() => router.push('/self-empathy')}>
+        <LoadingState type="question" />
       </SelfEmpathyLayout>
     );
   }
@@ -117,7 +113,11 @@ export default function Step2() {
           disabled={isLoading}
         />
         <button className="next-button" onClick={handleNext} disabled={isLoading || !answer.trim()}>
-          {isLoading ? <LoadingSpinner size="large" color="white" /> : <Image src={nextArrow} alt="다음" />}
+          {isLoading ? (
+            <LoadingSpinner size="large" color="white" />
+          ) : (
+            <Image src={nextArrow} alt="다음" />
+          )}
         </button>
       </SelfEmpathyQuestion>
     </SelfEmpathyLayout>

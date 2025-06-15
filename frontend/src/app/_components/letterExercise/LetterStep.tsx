@@ -7,6 +7,7 @@ import letterOpenedImg from '@/assets/images/letter-opened.png';
 import letterOpenedBgImg from '@/assets/images/letter-opened-bg.png';
 import LetterContent from './LetterContent';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 export default function LetterStep() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,7 +16,18 @@ export default function LetterStep() {
   const [animating, setAnimating] = useState(false);
   const [showFullContent, setShowFullContent] = useState(false);
 
+  const searchParams = useSearchParams();
+
   useEffect(() => {
+    const introStepShown = searchParams.get('introStepShown');
+    if (introStepShown === 'true') {
+      setIsOpen(true);
+      setScaleUp(true);
+      setShowLetterContent(true);
+      setAnimating(true);
+      setShowFullContent(true);
+      return;
+    }
     // 먼저 확대 애니메이션 시작
     const scaleTimer = setTimeout(() => {
       setScaleUp(true);
@@ -46,7 +58,7 @@ export default function LetterStep() {
     }, 1200);
 
     return () => clearTimeout(scaleTimer);
-  }, []);
+  }, [searchParams]);
 
   return (
     <div className="flex flex-col items-center justify-center h-full w-full">

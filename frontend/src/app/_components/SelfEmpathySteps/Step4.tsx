@@ -171,34 +171,27 @@ export default function Step4() {
   const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
 
   // 클린 아키텍처를 통한 감정 데이터 관리
-  const { isLoading, error, saveStageAnswer, emotionData, setIsLoading, getStageAnswer } = useEmotion();
+  const { isLoading, error, saveStageAnswer, setIsLoading, getStageAnswer } = useEmotion();
 
   // 로딩 완료 후 지연 처리
   const shouldShowLoading = useDelayedLoading(isLoading);
 
   useEffect(() => {
-    // 이전에 저장된 감정 데이터 불러오기
-    if (emotionData?.entries.step4) {
-      const step4Data = emotionData.entries.step4.answer;
-      // "감정 유형: positive, 세부 감정: 기쁜, 행복한" 형태에서 파싱
-      const emotionTypeMatch = step4Data.match(/감정 유형: (\w+)/);
-      const feelingsMatch = step4Data.match(/세부 감정: (.+)/);
-
-      if (emotionTypeMatch) {
-        setSelectedEmotion(emotionTypeMatch[1] as 'positive' | 'neutral' | 'negative');
+    // 이전에 저장된 답변이 있다면 불러오기
+    const loadPreviousAnswer = async () => {
+      const savedAnswer = await getStageAnswer('step4');
+      if (savedAnswer) {
+        setSelectedFeelings(savedAnswer.split(', '));
       }
+    };
 
-      if (feelingsMatch) {
-        const feelings = feelingsMatch[1].split(', ').filter((f) => f.trim());
-        setSelectedFeelings(feelings);
-      }
-    }
+    loadPreviousAnswer();
 
     // URL 파라미터로 전달된 질문이 있다면 설정
     if (urlQuestion) {
       setQuestion(urlQuestion);
     }
-  }, [urlQuestion, emotionData]);
+  }, [urlQuestion, getStageAnswer]);
 
   const feelings = EMOTION_LIST[selectedEmotion];
 
@@ -216,10 +209,10 @@ export default function Step4() {
 
     try {
       setIsLoading(true);
-      
+
       const step1Answer = await getStageAnswer('step2');
       const step2Answer = await getStageAnswer('step3');
-      
+
       // 백엔드 API 호출
       const response = await fetch('/api/step4-question', {
         method: 'POST',
@@ -229,8 +222,8 @@ export default function Step4() {
         body: JSON.stringify({
           step1_answer: step1Answer || '',
           step2_answer: step2Answer || '',
-          step3Feelings: selectedFeelings.join(', ')
-        })
+          step3Feelings: selectedFeelings.join(', '),
+        }),
       });
 
       if (!response.ok) {
@@ -239,11 +232,11 @@ export default function Step4() {
       }
 
       const data = await response.json();
-      
+
       // 답변과 질문 모두 로컬스토리지에 저장
       await saveStageAnswer('step4', question, selectedFeelings.join(', '));
       await saveStageAnswer('step5', data.question, '');
-      
+
       // Step5로 질문을 URL 파라미터로 전달
       router.push(`/self-empathy/5?question=${encodeURIComponent(data.question)}`);
     } catch (err) {
@@ -324,7 +317,11 @@ export default function Step4() {
           onClick={handleNext}
           disabled={isLoading || selectedFeelings.length === 0}
         >
-          {isLoading ? <LoadingSpinner size="large" color="white" /> : <Image src={nextArrow} alt="다음" />}
+          {isLoading ? (
+            <LoadingSpinner size="large" color="white" />
+          ) : (
+            <Image src={nextArrow} alt="다음" />
+          )}
         </button>
       </SelfEmpathyQuestion>
     </SelfEmpathyLayout>

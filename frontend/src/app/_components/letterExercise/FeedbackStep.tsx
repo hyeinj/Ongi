@@ -1,130 +1,129 @@
 import React, { useState, useRef, useEffect } from 'react';
 import letterExercisePostBox from '@/assets/images/letter-exercise-post-box.png';
 import Image from 'next/image';
-import Link from 'next/link';
 import ChevronDown from '../icons/ChevronDown';
 import localFont from 'next/font/local';
 import letterExerciseBig from '@/assets/images/letter-exercise-bird.png';
 import { useLetter } from '@/ui/hooks/useLetter';
-import { useRealLetter } from '@/ui/hooks/useRealLetter';
-import { LetterStorage } from '@/services/storage/letterStorage';
 import { Letter } from '@/core/entities';
+import { useEmotion } from '@/ui/hooks/useEmotion';
+import {
+  convertServerFeedbackToFeedbackSections,
+  convertServerFeedbackToAiFeedback,
+  type ServerFeedbackResponse,
+} from '@/services/storage/feedbackConverter';
 
 const garamFont = localFont({
   src: '../../../assets/fonts/gaRamYeonGgoc.ttf',
 });
 
 export default function FeedbackStep() {
-  const { getLetterData, generateFeedback } = useLetter();
-  const { worryContent } = useRealLetter({ shouldSave: true }); // letterExercise와 동일한 옵션 사용
-  const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const { getLetterData, saveLetterExerciseReview, saveLetterData } = useLetter();
   const [letterData, setLetterData] = useState<Letter | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-
   const [isLoading, setIsLoading] = useState(true);
   const [dataLoaded, setDataLoaded] = useState(false);
   const extraRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
+  const { getEmotionByDate } = useEmotion();
   const [myLetter, setMyLetter] = useState('');
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // 편지 데이터 로드 및 피드백 생성 (한 번만 실행)
   useEffect(() => {
     if (dataLoaded) return;
 
-    const loadLetterDataAndGenerateFeedback = async () => {
+    const fetchFeedback = async () => {
+      setIsLoading(true);
+      setDataLoaded(true);
+
       try {
-        console.log('🔍 피드백 로드 시작');
+        const today = new Date().toISOString().split('T')[0];
 
-        // 중복 실행 방지
-        setDataLoaded(true);
+        const emotionData = await getEmotionByDate(today);
+        const currentLetterData = await getLetterData(today);
 
-        const existingLetter = await getLetterData(currentDate);
-        console.log('📋 기존 편지 데이터:', existingLetter);
-        console.log('🗂️ RealLetter worryContent:', worryContent);
-
-        // 추가: LetterStorage에서 직접 RealLetter 데이터 조회
-        const letterStorage = new LetterStorage();
-        const savedRealLetter = await letterStorage.getRealLetter(currentDate);
-        console.log('🗄️ 저장된 RealLetter 데이터:', savedRealLetter);
-
-        if (existingLetter?.feedbackSections || existingLetter?.aiFeedback) {
-          console.log('✅ 이미 피드백이 있음');
-          // 이미 피드백이 있는 경우
-          setLetterData(existingLetter);
-          setTimeout(() => {
-            setIsLoading(false);
-          }, 2000);
-        } else {
-          console.log('🔄 피드백 생성 필요');
-          // 피드백이 없는 경우 생성
-
-          let realLetterText = '';
-
-          // 1. useRealLetter에서 worryContent 사용
-          if (worryContent && worryContent.length > 0) {
-            realLetterText = worryContent.map((content) => content.text).join('\n\n');
-            console.log('📝 useRealLetter에서 가져온 텍스트:', realLetterText);
-          }
-          // 2. 저장된 RealLetter 데이터 사용 (fallback)
-          else if (savedRealLetter?.worryContent && savedRealLetter.worryContent.length > 0) {
-            realLetterText = savedRealLetter.worryContent
-              .map((content) => content.text)
-              .join('\n\n');
-            console.log('📝 localStorage에서 가져온 텍스트:', realLetterText);
-          }
-
-          if (realLetterText && existingLetter?.userResponse) {
-            console.log('💬 사용자 응답:', existingLetter.userResponse);
-
-            // RealLetter 기반으로 피드백 생성 (수정된 generateFeedback 사용)
-            const feedbackResult = await generateFeedback(
-              realLetterText,
-              existingLetter.userResponse,
-              currentDate
-            );
-
-            console.log('🎯 피드백 생성 결과:', feedbackResult);
-
-            if (feedbackResult?.success) {
-              console.log('✅ 피드백 생성 성공');
-              // 피드백 생성 후 다시 데이터 로드
-              const updatedLetter = await getLetterData(currentDate);
-              console.log('📄 업데이트된 편지 데이터:', updatedLetter);
-              setLetterData(updatedLetter);
-            } else {
-              console.log('❌ 피드백 생성 실패:', feedbackResult?.error);
-            }
-          } else {
-            console.log('⚠️ RealLetter 데이터나 사용자 응답 없음');
-            console.log('realLetterText 존재:', !!realLetterText);
-            console.log('userResponse 존재:', !!existingLetter?.userResponse);
-
-            // RealLetter 데이터나 사용자 응답이 없는 경우 기본 피드백 생성 시도
-            const feedbackResult = await generateFeedback(currentDate);
-            console.log('🔄 기본 피드백 생성 결과:', feedbackResult);
-            if (feedbackResult?.success) {
-              const updatedLetter = await getLetterData(currentDate);
-              setLetterData(updatedLetter);
-            }
-          }
-
-          // 최소 로딩 시간 보장 (사용자 경험을 위해)
-          setTimeout(() => {
-            setIsLoading(false);
-          }, 2000);
+        if (!emotionData) {
+          throw new Error('오늘의 감정 데이터를 찾을 수 없습니다.');
         }
-      } catch (error) {
-        console.error('❌ 피드백 로드/생성 실패:', error);
+        if (!currentLetterData) {
+          throw new Error('오늘의 편지 데이터를 찾을 수 없습니다.');
+        }
+
+        // 이미 피드백 데이터가 있는지 확인
+        if (currentLetterData.feedbackSections || currentLetterData.aiFeedback) {
+          console.log('✅ 기존 피드백 데이터 사용');
+          setLetterData(currentLetterData);
+
+          // 기존 리뷰 데이터가 있으면 텍스트 입력창에 설정
+          if (currentLetterData.review?.letterExercise) {
+            setMyLetter(currentLetterData.review.letterExercise);
+            console.log('✅ 기존 리뷰 데이터 로드됨');
+          }
+
+          return;
+        }
+
+        console.log('🔄 새로운 피드백 생성 시작');
+        setLetterData(currentLetterData);
+
+        const requestBody = {
+          step1_answer: emotionData.entries.step2?.answer || '',
+          step2_answer: emotionData.entries.step3?.answer || '',
+          step3Feelings: emotionData.entries.step4?.answer || '',
+          step4_answer: emotionData.entries.step5?.answer || '',
+          step5_answer: emotionData.entries.step6?.answer || '',
+          mock_letter: currentLetterData.realLetterData?.letterTitle || '',
+          letter_response: currentLetterData.userResponse || '',
+        };
+
+        const response = await fetch('/api/mock-letter/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+          throw new Error('피드백 생성에 실패했습니다.');
+        }
+
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          const serverFeedback = result.data as ServerFeedbackResponse;
+
+          // 서버 응답을 프론트엔드 구조로 변환
+          const feedbackSections = convertServerFeedbackToFeedbackSections(serverFeedback);
+          const aiFeedback = convertServerFeedbackToAiFeedback(serverFeedback);
+
+          const updatedLetterData = {
+            ...currentLetterData,
+            aiFeedback: aiFeedback,
+            feedbackSections: feedbackSections,
+          };
+
+          // 로컬스토리지에 피드백 데이터 저장
+          await saveLetterData(today, {
+            aiFeedback: aiFeedback,
+            feedbackSections: feedbackSections,
+          });
+
+          setLetterData(updatedLetterData);
+          console.log('✅ 새로운 피드백 생성 및 저장 완료');
+        }
+      } catch (err) {
+        console.error('피드백 처리 중 오류:', err);
+        setSaveError(err instanceof Error ? err.message : '피드백 처리에 실패했습니다.');
+      } finally {
         setTimeout(() => {
           setIsLoading(false);
-        }, 2000);
+        }, 1000);
       }
     };
 
-    loadLetterDataAndGenerateFeedback();
+    fetchFeedback();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentDate]); // worryContent 의존성 제거하여 중복 실행 방지
+  }, []); // 의존성 배열이 비어있어 한 번만 실행됩니다.
 
   const handleChevronClick = () => {
     setIsOpen(true);
@@ -177,6 +176,15 @@ export default function FeedbackStep() {
         }}
         ref={scrollContainerRef}
       >
+        {saveError && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+            role="alert"
+          >
+            <strong className="font-bold">오류:</strong>
+            <span className="block sm:inline"> {saveError}</span>
+          </div>
+        )}
         <h2 className="text-white text-md mb-0 w-full text-left">
           잠시, 이 편지를 함께 바라볼까요?
           <br />
@@ -290,14 +298,17 @@ export default function FeedbackStep() {
             )}
 
             <p className="text-white mb-6">
-              나와 타인의 이야기가 맞닿은 지금,
-              <br/>이 답장 편지가 나에게 왔다면 <br/>나는 어떤 표정으로 읽게 되었을까요?
+              내 마음과 타인의 이야기가 맞닿은 지금,
+              <br />이 답장 편지가 나에게 도착했다면 <br />
+              나는 어떤 표정으로 읽게 되었을까요?
             </p>
             <textarea
-              className={`w-full h-full min-h-[10vh] bg-[#FFFBEC] text-sm resize-none border-none outline-none overflow-y-auto break-keep rounded-xl p-3 transition-colors duration-200 whitespace-pre-line ${myLetter ? 'text-[#222]' : 'text-[#555]'}`}
+              className={`w-full h-full min-h-[10vh] bg-[#FFFBEC] text-sm resize-none border-none outline-none overflow-y-auto break-keep rounded-xl p-3 transition-colors duration-200 whitespace-pre-line ${
+                myLetter ? 'text-[#222]' : 'text-[#555]'
+              }`}
               placeholder={`꼭 적지 않아도 괜찮아요.\n한 번 생각해보는 것만으로도 충분하니까요.`}
               value={myLetter}
-              onChange={e => setMyLetter(e.target.value)}
+              onChange={(e) => setMyLetter(e.target.value)}
             />
           </div>
         </div>
@@ -320,24 +331,72 @@ export default function FeedbackStep() {
               계속 이어가볼까요?
             </p>
           </div>
-          <Link href="/letter-exercise/4">
-            <div className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="black"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
-          </Link>
+          <div
+            className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg cursor-pointer"
+            onClick={async () => {
+              try {
+                // 1. 사용자가 리뷰를 입력했을 때만 로컬스토리지에 저장
+                if (myLetter.trim()) {
+                  await saveLetterExerciseReview(myLetter);
+                  console.log('✅ 편지 연습 리뷰 저장됨');
+                }
+
+                // 2. 편지 연습 전체 내용을 백엔드에 저장
+                const today = new Date().toISOString().split('T')[0];
+                const emotionData = await getEmotionByDate(today);
+
+                if (!emotionData || !letterData) {
+                  throw new Error('필요한 데이터를 찾을 수 없습니다.');
+                }
+
+                const saveRequestBody = {
+                  userResponse: letterData.userResponse || '',
+                  feedback1:
+                    letterData.feedbackSections?.emotionConnection || letterData.aiFeedback || '',
+                  feedback2Title: letterData.feedbackSections?.empathyReflection?.[0] || '',
+                  feedback2Content: letterData.feedbackSections?.empathyReflection?.[1] || '',
+                  feedback3Title: letterData.feedbackSections?.improvementSuggestion?.[0] || '',
+                  feedback3Content: letterData.feedbackSections?.improvementSuggestion?.[1] || '',
+                  review: myLetter.trim() || null,
+                  selfempathyId: emotionData.selfEmpathyId,
+                };
+
+                const saveResponse = await fetch('/api/mock-letter/save', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(saveRequestBody),
+                });
+
+                if (!saveResponse.ok) {
+                  throw new Error('편지 연습 저장에 실패했습니다.');
+                }
+
+                const saveResult = await saveResponse.json();
+
+                if (saveResult.success) {
+                  console.log('✅ 편지 연습 전체 내용 저장 완료:', saveResult.data);
+                  // 저장 완료 후 다음 페이지로 이동
+                } else {
+                  throw new Error(saveResult.error || '편지 연습 저장에 실패했습니다.');
+                }
+              } catch (error) {
+                console.error('❌ 저장 실패:', error);
+                setSaveError(error instanceof Error ? error.message : '저장에 실패했습니다.');
+              } finally {
+                window.location.href = '/letter-exercise/4';
+              }
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="black"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
         </div>
         <Image
           src={letterExercisePostBox}
