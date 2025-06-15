@@ -10,6 +10,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,6 +38,7 @@ public class ReportDTO {
         private MockLetter mockLetter;
         private Long otherEmpathyId;
         private String otherEmpathyReview;
+        private List<String> highlights;
     }
 
 }
