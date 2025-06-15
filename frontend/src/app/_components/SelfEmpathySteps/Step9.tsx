@@ -24,9 +24,12 @@ export default function Step9() {
 
         // 이미 저장된 데이터가 있는지 확인
         const todayData = await getEmotionByDate(today);
-
         if (!todayData) {
           throw new Error('오늘의 감정 데이터를 찾을 수 없습니다.');
+        }
+        // 이미 있으면 저장 안하기
+        if (todayData.selfEmpathyId) {
+          return;
         }
 
         // 각 단계의 질문과 답변 가져오기
@@ -58,6 +61,7 @@ export default function Step9() {
         }
 
         const result = await response.json();
+        console.log('result', result);
 
         // localStorage에 mock-letters 저장
         if (result.success) {

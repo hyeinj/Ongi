@@ -7,9 +7,7 @@ import letterOpenedImg from '@/assets/images/letter-opened.png';
 import letterOpenedBgImg from '@/assets/images/letter-opened-bg.png';
 import LetterContent from './LetterContent';
 import Link from 'next/link';
-import { useEmotion } from '@/ui/hooks/useEmotion';
-import { useLetter } from '@/ui/hooks/useLetter';
-import { convertRawRealLetterDataContent } from '@/services/storage/converter';
+import { useSearchParams } from 'next/navigation';
 
 export default function LetterStep() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,57 +15,19 @@ export default function LetterStep() {
   const [showLetterContent, setShowLetterContent] = useState(false);
   const [animating, setAnimating] = useState(false);
   const [showFullContent, setShowFullContent] = useState(false);
-  const { getEmotionByDate } = useEmotion();
-  const { saveRealLetterWorryContent } = useLetter();
+
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    // 편지 데이터 미리 받아오기
-    const fetchLetterData = async () => {
-      try {
-        const today = new Date().toISOString().split('T')[0]; // 오늘 날짜 (YYYY-MM-DD)
-
-        // 로컬 스토리지에서 self-empathy-results 가져오기
-        const todayEmotion = await getEmotionByDate(today);
-        if (!todayEmotion) {
-          console.error('오늘의 감정 데이터를 찾을 수 없습니다.');
-          return;
-        }
-
-        if (!todayEmotion.selfEmpathyId) {
-          console.error("Today's self empathy result not found");
-          return;
-        }
-
-        const selfempathyId = todayEmotion.selfEmpathyId;
-
-        // API 요청 (get인데 바디에 넣어서 보냄)
-        const response = await fetch(`/api/mock-letter`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            selfempathyId: selfempathyId,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch letter data');
-        }
-
-        const result = await response.json();
-        console.log('result', result);
-        const { convertedContent } = convertRawRealLetterDataContent(result.data.worryContent);
-        if (result.success && convertedContent) {
-          await saveRealLetterWorryContent(convertedContent);
-        }
-      } catch (error) {
-        console.error('편지 데이터를 가져오는 중 오류가 발생했습니다:', error);
-      }
-    };
-
-    fetchLetterData();
-
+    const introStepShown = searchParams.get('introStepShown');
+    if (introStepShown === 'true') {
+      setIsOpen(true);
+      setScaleUp(true);
+      setShowLetterContent(true);
+      setAnimating(true);
+      setShowFullContent(true);
+      return;
+    }
     // 먼저 확대 애니메이션 시작
     const scaleTimer = setTimeout(() => {
       setScaleUp(true);
@@ -98,7 +58,7 @@ export default function LetterStep() {
     }, 1200);
 
     return () => clearTimeout(scaleTimer);
-  }, []);
+  }, [searchParams]);
 
   return (
     <div className="flex flex-col items-center justify-center h-full w-full">

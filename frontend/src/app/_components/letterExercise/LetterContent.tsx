@@ -6,6 +6,8 @@ import postboxIcon from '@/assets/images/postbox-icon.png';
 import { useLetter } from '@/ui/hooks/useLetter';
 import localFont from 'next/font/local';
 import { RealLetterData } from '@/core/entities/letter';
+import { convertRawRealLetterDataContent } from '@/services/storage/converter';
+import { useEmotion } from '@/ui/hooks/useEmotion';
 
 const garamFont = localFont({
   src: '../../../assets/fonts/gaRamYeonGgoc.ttf',
@@ -18,17 +20,125 @@ interface LetterContentProps {
 export default function LetterContent({ isVisible }: LetterContentProps) {
   const [fadeIn, setFadeIn] = useState(false);
   const [realLetterData, setRealLetterData] = useState<RealLetterData | null>(null);
-
-  // 실제 편지 데이터 가져오기 (letterExercise에서는 저장)
-  const { getRealLetter, isLoading, error } = useLetter();
+  const { getEmotionByDate } = useEmotion();
+  const { saveRealLetter, getLetterData } = useLetter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchRealLetterData = async () => {
-      const data = await getRealLetter();
-      setRealLetterData(data);
+    const fetchLetterData = async () => {
+      setIsLoading(true);
+      try {
+        const today = new Date().toISOString().split('T')[0]; // 오늘 날짜 (YYYY-MM-DD)
+
+        // 먼저 로컬스토리지에서 기존 편지 데이터 확인
+        const existingLetterData = await getLetterData(today);
+
+        if (
+          existingLetterData?.realLetterData?.worryContent &&
+          existingLetterData?.realLetterData?.answerContent &&
+          existingLetterData.realLetterData.worryContent.length > 0 &&
+          existingLetterData.realLetterData.answerContent.length > 0
+        ) {
+          console.log('✅ 기존 편지 데이터 사용');
+          setRealLetterData(existingLetterData.realLetterData);
+          return;
+        }
+
+        console.log('🔄 새로운 편지 데이터 생성 시작');
+
+        const todayEmotion = await getEmotionByDate(today);
+        if (!todayEmotion) {
+          console.error('오늘의 감정 데이터를 찾을 수 없습니다.');
+          return;
+        }
+
+        if (!todayEmotion.selfEmpathyId) {
+          console.error("Today's self empathy result not found");
+          return;
+        }
+
+        const selfempathyId = todayEmotion.selfEmpathyId;
+
+        // 1. Mock Letter API 요청 (worryContent)
+        const mockLetterResponse = await fetch(`/api/mock-letter`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            selfempathyId: selfempathyId,
+          }),
+        });
+
+        if (!mockLetterResponse.ok) {
+          throw new Error('Failed to fetch mock letter data');
+        }
+
+        const mockLetterResult = await mockLetterResponse.json();
+        console.log('Mock letter result:', mockLetterResult.data.letterContent);
+
+        const { convertedContent: worryContent } = convertRawRealLetterDataContent(
+          mockLetterResult.data.letterContent
+        );
+
+        // 2. Other Empathy API 요청 (answerContent)
+        const otherEmpathyResponse = await fetch(`/api/other-empathy`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            selfempathyId: selfempathyId,
+          }),
+        });
+
+        if (!otherEmpathyResponse.ok) {
+          throw new Error('Failed to fetch other empathy data');
+        }
+
+        const otherEmpathyResult = await otherEmpathyResponse.json();
+        console.log('Other empathy full result:', otherEmpathyResult);
+        console.log('Other empathy result data:', otherEmpathyResult.data);
+        console.log(
+          'Other empathy result responseContent:',
+          otherEmpathyResult.data?.data?.responseContent
+        );
+
+        const { convertedContent: answerContent } = convertRawRealLetterDataContent(
+          otherEmpathyResult.data?.data?.responseContent
+        );
+
+        // 3. 두 데이터 모두 저장
+        if (
+          mockLetterResult.success &&
+          otherEmpathyResult.success &&
+          worryContent &&
+          answerContent
+        ) {
+          await saveRealLetter({
+            title: mockLetterResult.data.letterTitle,
+            worryContent: worryContent,
+            answerContent: answerContent,
+          });
+          console.log('✅ 새로운 편지 데이터 생성 및 저장 완료');
+        }
+
+        setRealLetterData({
+          letterTitle: mockLetterResult.data.letterTitle,
+          worryContent: worryContent,
+          answerContent: answerContent,
+        });
+      } catch (error) {
+        console.error('편지 데이터를 가져오는 중 오류가 발생했습니다:', error);
+        setError('편지 데이터를 가져오는 중 오류가 발생했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
     };
-    fetchRealLetterData();
-  }, [getRealLetter]);
+    fetchLetterData();
+  }, []);
+
   useEffect(() => {
     if (isVisible) {
       setFadeIn(true);
@@ -80,7 +190,7 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
       >
         <div className="w-full flex justify-end pr-3">
           <div className="flex space-x-[-8px]">
-            <button className="py-1 px-4 rounded-t-lg text-sm bg-[#FFDB68] text-black font-medium z-10">
+            <button className="py-1 px-4 rounded-t-lg text-lg bg-[#FFDB68] text-gray-600 font-medium z-10">
               고민편지
             </button>
           </div>
@@ -104,7 +214,7 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
                 <p
                   id={`paragraph-${paragraph.id}`}
                   key={paragraph.id}
-                  className=" text-gray-700 cursor-text"
+                  className=" text-gray-600 cursor-text text-md"
                 >
                   {paragraph.text}
                 </p>

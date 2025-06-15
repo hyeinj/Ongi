@@ -34,10 +34,14 @@ interface UseLetterReturn {
   getLetterByDate: (date?: string) => Promise<Letter | null>;
   getTodayLetter: () => Promise<Letter | null>;
   getRealLetter: () => Promise<RealLetterData | null>;
-  saveRealLetterWorryContent: (worryContent: { id: string; text: string }[]) => Promise<boolean>;
-  saveRealLetterAnswerContent: (answerContent: { id: string; text: string }[]) => Promise<boolean>;
+  saveRealLetter: (data: {
+    title?: string;
+    worryContent?: { id: string; text: string }[];
+    answerContent?: { id: string; text: string }[];
+  }) => Promise<boolean>;
   saveLetterExerciseReview: (letterExerciseReview: string) => Promise<boolean>;
   saveOtherEmpathyReview: (otherEmpathyReview: string) => Promise<boolean>;
+  saveLetterData: (date: string, data: Partial<Letter>) => Promise<boolean>;
 }
 
 // 기존 인터페이스와 호환되는 편지 훅
@@ -111,12 +115,12 @@ export const useLetter = (): UseLetterReturn => {
 
           // 편지 데이터 가져오기
           const letterData = await letterStorage.getByDate(targetDate);
-          if (!letterData?.mockLetter || !letterData?.userResponse) {
+          if (!letterData?.realLetterData?.letterTitle || !letterData?.userResponse) {
             console.log('❌ 편지 데이터 없음');
             setError('편지 데이터가 없습니다.');
             return null;
           }
-          mockLetter = letterData.mockLetter;
+          mockLetter = letterData.realLetterData.letterTitle;
           userResponse = letterData.userResponse;
         }
 
@@ -316,12 +320,32 @@ export const useLetter = (): UseLetterReturn => {
     [letterStorage, handleError]
   );
 
-  const saveRealLetterWorryContent = useCallback(
-    async (worryContent: { id: string; text: string }[]): Promise<boolean> => {
+  const saveRealLetter = useCallback(
+    async (data: {
+      title?: string;
+      worryContent?: { id: string; text: string }[];
+      answerContent?: { id: string; text: string }[];
+    }): Promise<boolean> => {
+      const { title, worryContent, answerContent } = data;
+      if (!title && !worryContent && !answerContent) {
+        handleError(new Error('저장할 데이터가 없습니다.'));
+        return false;
+      }
+
       setIsLoading(true);
       setError(null);
+
       try {
-        await letterStorage.saveRealLetterWorryContent(getCurrentDate(), worryContent);
+        const date = getCurrentDate();
+        if (title) {
+          await letterStorage.saveRealLetterTitle(date, title);
+        }
+        if (worryContent) {
+          await letterStorage.saveRealLetterWorryContent(date, worryContent);
+        }
+        if (answerContent) {
+          await letterStorage.saveRealLetterAnswerContent(date, answerContent);
+        }
         return true;
       } catch (err) {
         handleError(err);
@@ -333,12 +357,13 @@ export const useLetter = (): UseLetterReturn => {
     [letterStorage, handleError]
   );
 
-  const saveRealLetterAnswerContent = useCallback(
-    async (answerContent: { id: string; text: string }[]): Promise<boolean> => {
+  const saveLetterData = useCallback(
+    async (date: string, data: Partial<Letter>): Promise<boolean> => {
       setIsLoading(true);
       setError(null);
+
       try {
-        await letterStorage.saveRealLetterAnswerContent(getCurrentDate(), answerContent);
+        await letterStorage.saveLetter(date, data);
         return true;
       } catch (err) {
         handleError(err);
@@ -364,7 +389,7 @@ export const useLetter = (): UseLetterReturn => {
     getRealLetter,
     saveLetterExerciseReview,
     saveOtherEmpathyReview,
-    saveRealLetterWorryContent,
-    saveRealLetterAnswerContent,
+    saveRealLetter,
+    saveLetterData,
   };
 };

@@ -11,7 +11,7 @@ export interface RawRealLetterData {
 // 텍스트를 문장 단위로 분할하는 헬퍼 메서드
 export function splitIntoSentences(text: string): string[] {
   // 먼저 줄바꿈을 기준으로 분할
-  const lines = text.split('\n').filter((line) => line.trim().length > 0);
+  const lines = text.split('/n').filter((line) => line.trim().length > 0);
 
   const sentences: string[] = [];
 

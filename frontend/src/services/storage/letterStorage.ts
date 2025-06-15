@@ -145,6 +145,23 @@ export class LetterStorage implements ILetterStorage {
     }
   }
 
+  async saveRealLetterTitle(date: string, letterTitle: string): Promise<void> {
+    try {
+      const allData = this.getAllLetters();
+      const existingLetter = allData[date];
+      await this.saveLetter(date, {
+        realLetterData: {
+          letterTitle: letterTitle,
+          worryContent: existingLetter?.realLetterData?.worryContent || [],
+          answerContent: existingLetter?.realLetterData?.answerContent || [],
+        },
+      });
+    } catch (error) {
+      console.error('RealLetterTitle 저장 실패:', error);
+      throw error;
+    }
+  }
+
   // RealLetter 데이터 조회
   async getRealLetter(date: string): Promise<RealLetterData | null> {
     try {

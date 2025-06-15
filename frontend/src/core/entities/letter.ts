@@ -10,7 +10,7 @@ export interface Letter {
     emotionConnection?: string; // 1. 감정 연결 피드백
     empathyReflection?: string[]; // 2. 공감 문장 반영 [원문, 위로문장]
     improvementSuggestion?: string[]; // 3. 개선 제안 [제목, 내용]
-    overallComment?: string; // 4. 전체 코멘트
+    finalMessage?: string; // 4. 최종 메시지
   };
   review?: {
     letterExercise: string;
