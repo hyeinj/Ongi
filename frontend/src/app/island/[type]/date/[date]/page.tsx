@@ -171,12 +171,12 @@ const LetterDetailPage = () => {
                         {letter?.feedbackSections?.emotionConnection ?? '첫번째 피드백이 없어요.'}
                     </p>
 
-                    <p className="text-lg text-amber-900 mt-4">그리고 편지 속에 이런 한 마디를 남기셨죠.</p>
+                    <p className="text-lg text-amber-900 mt-8">그리고 편지 속에 이런 한 마디를 남기셨죠.</p>
                     <p className="text-amber-800">&quot;{letter?.feedbackSections?.empathyReflection?.[0] }&quot;</p>
                     <p className="text-gray-700">{letter?.feedbackSections?.empathyReflection?.[1] ?? '두번째 피드백이 없어요.'}</p>
                     
                     
-                    <p className="text-lg text-amber-900 mt-4">마지막으로, 이런 공감을 해줄 수도 있었어요.</p>
+                    <p className="text-lg text-amber-900 mt-8">마지막으로, 이런 공감을 해줄 수도 있었어요.</p>
                     <p className="text-gray-700">{letter?.feedbackSections?.improvementSuggestion?.[0]}</p>
                     <p className="text-gray-700">{letter?.feedbackSections?.improvementSuggestion?.[1] ?? '세번째 피드백이 없어요.'}</p>
                     
