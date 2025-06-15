@@ -5,8 +5,15 @@ import { useEffect, useState } from "react";
 import { LetterStorage } from "@/services/storage/letterStorage";
 import { EmotionStorage } from "@/services/storage/emotionStorage";
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
 import postboxIcon from "@/assets/images/postbox-icon.png";
 import localFont from "next/font/local";
+import '@/styles/IslandLetter.css';
+import homepageMt from '@/assets/images/homepage-mountain.png';
+import star1 from '@/assets/images/star1.png';
+import star2 from '@/assets/images/star2.png';
+import star3 from '@/assets/images/star3.png';
+import arrow from '@/assets/icons/arrow.png';
 
 const garamFont = localFont({
   src: "../../../../../assets/fonts/gaRamYeonGgoc.ttf",
@@ -65,21 +72,22 @@ type RealLetterContentItem = {
 
 
 const LetterDetailPage = () => {
-    const { date } = useParams() as { date: string; type: string };
+    const router = useRouter();  
+    const { date, type } = useParams() as { date: string; type: string };
     const [letter, setLetter] = useState<LetterData | null>(null);
     const [emotion, setEmotion] = useState<EmotionData | null>(null);
 
     // 상태/탭
-    const [activeTab, setActiveTab] = useState<'self' | 'letter' | 'others'>('self');
-    const [contentTitle, setContentTitle] = useState<string>('하나, 이 날의 나는 이런 마음을 꺼내보았어요.');
-    const [toggleTitle, setToggleTitle] = useState<string>();
-    const [isToggled, setIsToggled] = useState(false); // 하단 토글 버튼 클릭 여부
-
     const tabTitles = {
         self: ['하나, 이 날의 나는 이런 마음을 꺼내보았어요.', '내 기록을 다시 읽어볼까요?'],
         letter: ['둘, 이 날의 나는 누군가의 마음에 답장을 보냈어요.', '내가 쓴 편지를 다시 읽어볼까요?'],
         others: ['셋, 이 문장이 이 날의 나에게 소중히 남았어요.', '온기우체부의 편지를 다시 읽어볼까요?'],
     };
+
+    const [activeTab, setActiveTab] = useState<'self' | 'letter' | 'others'>('self');
+    const [contentTitle, setContentTitle] = useState<string>('하나, 이 날의 나는 이런 마음을 꺼내보았어요.');
+    const [toggleTitle, setToggleTitle] = useState<string>(tabTitles['self'][1]);
+    const [isToggled, setIsToggled] = useState(false); // 하단 토글 버튼 클릭 여부
 
     const changeTab = (tab: 'self' | 'letter' | 'others') => {
         setActiveTab(tab);
@@ -112,9 +120,9 @@ const LetterDetailPage = () => {
   }
 
   return (
+  <div className="background">
     <div
-      className={`absolute inset-0 flex flex-col items-center justify-center w-full h-full ${garamFont.className}`}
-    >
+      className={`absolute inset-0 flex flex-col items-center justify-center w-full h-full ${garamFont.className}`}>
       <div className="relative w-full h-full flex flex-col items-center justify-center p-4">
         {/* 편지 탭 영역 */}
         <div className="w-full flex justify-end pr-3">
@@ -326,6 +334,19 @@ const LetterDetailPage = () => {
         </div>
       </div>
     </div> 
+  </div>
+
+  <button
+    className="back-button"
+    onClick={() => router.push(`/island/${type}`)}
+    style={{ position: 'absolute', top: '20px', left: '20px' }}
+  >
+    <Image src={arrow} alt="뒤로 가기" />
+  </button>
+  <Image className="element-1" alt="별똥별 1" src={star1} />
+  <Image className="element-2" alt="별똥별 2" src={star2} />
+  <Image className="element-3" alt="별똥별 3" src={star3} />
+  <Image className="mountain" alt="산" src={homepageMt} />
   </div>
   );
 };
