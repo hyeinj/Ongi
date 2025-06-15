@@ -26,7 +26,7 @@ public class OtherEmpathyController {
     }
 
     // 타인공감 - 실제 답변 편지 조회 API
-    @GetMapping
+    @PostMapping
     public ResponseDTO<?> getResponseLetter(@RequestBody MockLetterDTO.getMockLetterDTO request) {
         return otherEmpathyService.getResponseLetter(request);
     }
