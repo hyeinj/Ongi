@@ -1,6 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import LetterClosed from '@/app/_components/icons/Letter';
 import { useRouter } from 'next/navigation';
+import { getLetterEmotionStatuses, EmotionStatus } from '@/ui/hooks/useLetterEmotionStatus';
+import '@/styles/IslandPage.css'
 
 interface Props {
   letterDates: string[];
@@ -15,6 +17,35 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
   const randomAngles = useMemo(() => {
     return Array.from({ length: letterDates.length }, () => Math.random() * 20 - 10);
   }, [letterDates.length]);
+  const [popupCategory, setPopupCategory] = useState<string | null>(null); // 팝업 상태
+
+  // emotion으로 날짜가 있는지 확인 
+  const [emotionStatuses, setEmotionStatuses] = useState<Record<string, EmotionStatus>>({});
+
+  useEffect(() => {
+    const fetchStatuses = async () => {
+      const statusMap = await getLetterEmotionStatuses(letterDates, category);
+      setEmotionStatuses(statusMap);
+    };
+    fetchStatuses();
+  }, [letterDates, category]);
+
+  // 다른 섬으로 이동할 때 문구 맵핑 
+  const getCategoryLabel = (category: string) => {
+  switch (category) {
+    case 'self':
+      return '자아';
+    case 'growth':
+      return '성장';
+    case 'relate':
+      return '관계';
+    case 'routine':
+      return '루틴';
+    default:
+      return category;
+    }
+  };
+
 
   return (
     <div className="letters">
@@ -27,6 +58,20 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
                     + i; // 현재 줄의 i번째 편지 번호
 
           const date = letterDates[index];
+          const status = emotionStatuses[date]; // "match" | "mismatch" | "none"
+          let variant: "colored" | "white" | "dashed";
+          let emotion: "joy" | "peace" | "sadness" | "anger" | "anxiety" | undefined;
+
+          if (status?.type === "match") {
+            variant = "colored";
+            emotion = status.emotion;
+          } else if (status?.type === "mismatch") {
+            variant = "white";
+            // popupCategory = status.category; // const이므로 바뀔 수 없어서 밑에서 설정 
+          } else {
+            variant = "dashed";
+          }
+
           if (!date) return null;
 
           const angleGap = 21;
@@ -46,7 +91,7 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
               style={{
                 position: 'absolute',
                 left: `calc(43% + ${x}px)`,
-                top: `calc(190% + ${y}px)`,
+                top: `calc(198% + ${y}px)`,
                 transform: `rotate(${randomAngle}deg)`,
                 transformOrigin: 'center center',
               }}
@@ -56,14 +101,37 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
                 style={{
                   animation: 'letterFloat 4s ease-in-out infinite',
                 }}
-                onClick={() => router.push(`/island/${category}/date/${date}`)}
+                onClick={() => {
+                  if (!status || status.type === "none") return; // 클릭 막음
+                  if (status.type === "mismatch") {
+                    setPopupCategory(status.category); // 해당 섬 팝업 띄우기
+                    return;
+                  }
+                  router.push(`/island/${category}/date/${date}`); // match인 경우 정상 이동
+                }}
               >
-                <LetterClosed width={48} height={31} date={new Date(date).getDate()}/>
+                <LetterClosed width={48} height={31} 
+                date={new Date(date).getDate()} 
+                variant={variant}
+                emotion={emotion}/>
               </div>
             </div>
           );
         });
       })}
+
+      {/* 팝업: 편지 클릭 시 섬 다를 때 */}
+      {popupCategory && (
+        <div className="popup">
+          <p>
+            이 편지는 {getCategoryLabel(popupCategory)}섬에 있어요.
+          </p>
+          <div className="button-group">
+          <button className="button goButton" onClick={() => router.push(`/island/${popupCategory}`)}>{getCategoryLabel(popupCategory)}섬으로 가기</button>
+          <button className="button closeButton" onClick={() => setPopupCategory(null)}>닫기</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

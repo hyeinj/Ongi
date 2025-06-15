@@ -1,7 +1,9 @@
 // 편지 관련 타입들
 export interface Letter {
+  mockLetter?: string;
   userResponse: string;
-  aiFeedback: string;
+  aiFeedback?: string;
+  realLetterId?: string;
   highlightedParts: string[];
   // RealLetter 관련 필드 추가
   realLetterData?: RealLetterData;
