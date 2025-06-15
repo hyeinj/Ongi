@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import letterExercisePostBox from '@/assets/images/letter-exercise-post-box.png';
 import Image from 'next/image';
-import Link from 'next/link';
 import ChevronDown from '../icons/ChevronDown';
 import localFont from 'next/font/local';
 import letterExerciseBig from '@/assets/images/letter-exercise-bird.png';
@@ -332,37 +331,72 @@ export default function FeedbackStep() {
               계속 이어가볼까요?
             </p>
           </div>
-          <Link href="/letter-exercise/4">
-            <div
-              className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg"
-              onClick={async () => {
-                // 사용자가 리뷰를 입력했을 때만 저장
+          <div
+            className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg cursor-pointer"
+            onClick={async () => {
+              try {
+                // 1. 사용자가 리뷰를 입력했을 때만 로컬스토리지에 저장
                 if (myLetter.trim()) {
-                  try {
-                    await saveLetterExerciseReview(myLetter);
-                    console.log('✅ 편지 연습 리뷰 저장됨');
-                  } catch (error) {
-                    console.error('❌ 리뷰 저장 실패:', error);
-                  }
+                  await saveLetterExerciseReview(myLetter);
+                  console.log('✅ 편지 연습 리뷰 저장됨');
                 }
-              }}
+
+                // 2. 편지 연습 전체 내용을 백엔드에 저장
+                const today = new Date().toISOString().split('T')[0];
+                const emotionData = await getEmotionByDate(today);
+
+                if (!emotionData || !letterData) {
+                  throw new Error('필요한 데이터를 찾을 수 없습니다.');
+                }
+
+                const saveRequestBody = {
+                  userResponse: letterData.userResponse || '',
+                  feedback1:
+                    letterData.feedbackSections?.emotionConnection || letterData.aiFeedback || '',
+                  feedback2Title: letterData.feedbackSections?.empathyReflection?.[0] || '',
+                  feedback2Content: letterData.feedbackSections?.empathyReflection?.[1] || '',
+                  feedback3Title: letterData.feedbackSections?.improvementSuggestion?.[0] || '',
+                  feedback3Content: letterData.feedbackSections?.improvementSuggestion?.[1] || '',
+                  review: myLetter.trim() || null,
+                  selfempathyId: emotionData.selfEmpathyId,
+                };
+
+                const saveResponse = await fetch('/api/mock-letter/save', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(saveRequestBody),
+                });
+
+                if (!saveResponse.ok) {
+                  throw new Error('편지 연습 저장에 실패했습니다.');
+                }
+
+                const saveResult = await saveResponse.json();
+
+                if (saveResult.success) {
+                  console.log('✅ 편지 연습 전체 내용 저장 완료:', saveResult.data);
+                  // 저장 완료 후 다음 페이지로 이동
+                } else {
+                  throw new Error(saveResult.error || '편지 연습 저장에 실패했습니다.');
+                }
+              } catch (error) {
+                console.error('❌ 저장 실패:', error);
+                setSaveError(error instanceof Error ? error.message : '저장에 실패했습니다.');
+              } finally {
+                window.location.href = '/letter-exercise/4';
+              }
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="black"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="black"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
-          </Link>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
         </div>
         <Image
           src={letterExercisePostBox}
