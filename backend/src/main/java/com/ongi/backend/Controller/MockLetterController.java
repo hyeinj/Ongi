@@ -109,7 +109,7 @@ public class MockLetterController {
     }
 
     // 편지조회 API
-    @GetMapping
+    @PostMapping
     public ResponseDTO<?> getMockLetter(@RequestBody MockLetterDTO.getMockLetterDTO request) {
         return mockLetterService.getMockLetter(request);
     }
