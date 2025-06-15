@@ -6,21 +6,19 @@ import ChevronDown from '../icons/ChevronDown';
 import localFont from 'next/font/local';
 import letterExerciseBig from '@/assets/images/letter-exercise-bird.png';
 import { useLetter } from '@/ui/hooks/useLetter';
-import { useRealLetter } from '@/ui/hooks/useRealLetter';
 import { LetterStorage } from '@/services/storage/letterStorage';
-import { Letter } from '@/core/entities';
+import { Letter, RealLetterData } from '@/core/entities';
 
 const garamFont = localFont({
   src: '../../../assets/fonts/gaRamYeonGgoc.ttf',
 });
 
 export default function FeedbackStep() {
-  const { getLetterData, generateFeedback } = useLetter();
-  const { worryContent } = useRealLetter({ shouldSave: true }); // letterExercise와 동일한 옵션 사용
+  const { getLetterData, generateFeedback, getRealLetter, saveLetterExerciseReview } = useLetter();
   const [currentDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [letterData, setLetterData] = useState<Letter | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-
+  const [realLetterData, setRealLetterData] = useState<RealLetterData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [dataLoaded, setDataLoaded] = useState(false);
   const extraRef = useRef<HTMLDivElement>(null);
@@ -32,6 +30,11 @@ export default function FeedbackStep() {
   useEffect(() => {
     if (dataLoaded) return;
 
+    const fetchRealLetterData = async () => {
+      const data = await getRealLetter();
+      setRealLetterData(data);
+    };
+
     const loadLetterDataAndGenerateFeedback = async () => {
       try {
         console.log('🔍 피드백 로드 시작');
@@ -41,7 +44,7 @@ export default function FeedbackStep() {
 
         const existingLetter = await getLetterData(currentDate);
         console.log('📋 기존 편지 데이터:', existingLetter);
-        console.log('🗂️ RealLetter worryContent:', worryContent);
+        console.log('🗂️ RealLetter worryContent:', realLetterData?.worryContent);
 
         // 추가: LetterStorage에서 직접 RealLetter 데이터 조회
         const letterStorage = new LetterStorage();
@@ -62,8 +65,10 @@ export default function FeedbackStep() {
           let realLetterText = '';
 
           // 1. useRealLetter에서 worryContent 사용
-          if (worryContent && worryContent.length > 0) {
-            realLetterText = worryContent.map((content) => content.text).join('\n\n');
+          if (realLetterData?.worryContent && realLetterData.worryContent.length > 0) {
+            realLetterText = realLetterData.worryContent
+              .map((content) => content.text)
+              .join('\n\n');
             console.log('📝 useRealLetter에서 가져온 텍스트:', realLetterText);
           }
           // 2. 저장된 RealLetter 데이터 사용 (fallback)
@@ -122,7 +127,9 @@ export default function FeedbackStep() {
       }
     };
 
-    loadLetterDataAndGenerateFeedback();
+    fetchRealLetterData().then(() => {
+      loadLetterDataAndGenerateFeedback();
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentDate]); // worryContent 의존성 제거하여 중복 실행 방지
 
@@ -290,14 +297,17 @@ export default function FeedbackStep() {
             )}
 
             <p className="text-white mb-6">
-              나와 타인의 이야기가 맞닿은 지금,
-              <br/>이 답장 편지가 나에게 왔다면 <br/>나는 어떤 표정으로 읽게 되었을까요?
+              내 마음과 타인의 이야기가 맞닿은 지금,
+              <br />이 답장 편지가 나에게 도착했다면 <br />
+              나는 어떤 표정으로 읽게 되었을까요?
             </p>
             <textarea
-              className={`w-full h-full min-h-[10vh] bg-[#FFFBEC] text-sm resize-none border-none outline-none overflow-y-auto break-keep rounded-xl p-3 transition-colors duration-200 whitespace-pre-line ${myLetter ? 'text-[#222]' : 'text-[#555]'}`}
+              className={`w-full h-full min-h-[10vh] bg-[#FFFBEC] text-sm resize-none border-none outline-none overflow-y-auto break-keep rounded-xl p-3 transition-colors duration-200 whitespace-pre-line ${
+                myLetter ? 'text-[#222]' : 'text-[#555]'
+              }`}
               placeholder={`꼭 적지 않아도 괜찮아요.\n한 번 생각해보는 것만으로도 충분하니까요.`}
               value={myLetter}
-              onChange={e => setMyLetter(e.target.value)}
+              onChange={(e) => setMyLetter(e.target.value)}
             />
           </div>
         </div>
@@ -321,7 +331,20 @@ export default function FeedbackStep() {
             </p>
           </div>
           <Link href="/letter-exercise/4">
-            <div className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg">
+            <div
+              className="p-4.5 rounded-full bg-[#EEEEEE] active:bg-[#DEDEDE] shadow-lg"
+              onClick={async () => {
+                // 사용자가 리뷰를 입력했을 때만 저장
+                if (myLetter.trim()) {
+                  try {
+                    await saveLetterExerciseReview(myLetter);
+                    console.log('✅ 편지 연습 리뷰 저장됨');
+                  } catch (error) {
+                    console.error('❌ 리뷰 저장 실패:', error);
+                  }
+                }
+              }}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"

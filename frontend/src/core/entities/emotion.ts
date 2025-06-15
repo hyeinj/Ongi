@@ -15,9 +15,12 @@ export interface DailyEmotion {
   entries: StageEntries;
   category: Category;
   emotion: EmotionType;
-  aiFeedback?: string; //선택필드 
+  selfEmpathyId: string;
+  reportId: string;
+  island: string;
+  aiFeedback?: string; //선택필드
 }
 
 export interface Emotions {
   [date: string]: DailyEmotion;
-} 
+}

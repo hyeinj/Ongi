@@ -5,7 +5,6 @@ const EMOTION_STORAGE_KEY = 'emotion';
 
 // 감정 데이터 스토리지 서비스 (인터페이스 구현)
 export class EmotionStorage implements IEmotionStorage {
-  
   // 날짜별 감정 데이터 조회
   async getByDate(date: string): Promise<DailyEmotion | null> {
     try {
@@ -28,6 +27,9 @@ export class EmotionStorage implements IEmotionStorage {
           category: 'self',
           emotion: 'peace',
           aiFeedback: '',
+          selfEmpathyId: '',
+          reportId: '',
+          island: '',
         };
       }
 
@@ -69,6 +71,9 @@ export class EmotionStorage implements IEmotionStorage {
           entries: {},
           category,
           emotion,
+          selfEmpathyId: '',
+          reportId: '',
+          island: '',
         };
       } else {
         dailyEmotion.category = category;
@@ -78,6 +83,18 @@ export class EmotionStorage implements IEmotionStorage {
       this.saveEmotion(date, dailyEmotion);
     } catch (error) {
       console.error('카테고리/감정 업데이트 실패:', error);
+      throw error;
+    }
+  }
+
+  async saveData(date: string, data: Partial<DailyEmotion>): Promise<void> {
+    try {
+      const allData = this.getAllEmotions();
+      const existingData = allData[date];
+      allData[date] = { ...existingData, ...data };
+      localStorage.setItem(EMOTION_STORAGE_KEY, JSON.stringify(allData));
+    } catch (error) {
+      console.error('감정 데이터 저장 실패:', error);
       throw error;
     }
   }
@@ -115,4 +132,4 @@ export class EmotionStorage implements IEmotionStorage {
     allData[date] = emotion;
     localStorage.setItem(EMOTION_STORAGE_KEY, JSON.stringify(allData));
   }
-} 
+}

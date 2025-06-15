@@ -12,9 +12,7 @@ import { useEmotion } from '@/ui/hooks/useEmotion';
 export default function Step9() {
   const router = useRouter();
   const [saveError, setSaveError] = useState<string | null>(null);
-
-  // 클린 아키텍처를 통한 에러 상태 확인
-  const { error } = useEmotion();
+  const { getEmotionByDate, saveEmotionByDate, error } = useEmotion();
 
   // 페이지 진입 시 자동으로 데이터 저장
   useEffect(() => {
@@ -25,22 +23,7 @@ export default function Step9() {
         const today = new Date().toISOString().split('T')[0];
 
         // 이미 저장된 데이터가 있는지 확인
-        const mockLetters = localStorage.getItem('mock-letters');
-        const lettersData = mockLetters ? JSON.parse(mockLetters) : {};
-
-        if (lettersData[today]) {
-          // 이미 데이터가 있으면 API 호출하지 않음
-          return;
-        }
-
-        const storageData = localStorage.getItem('emotion');
-
-        if (!storageData) {
-          throw new Error('감정 데이터를 찾을 수 없습니다.');
-        }
-
-        const emotionStore = JSON.parse(storageData);
-        const todayData = emotionStore[today];
+        const todayData = await getEmotionByDate(today);
 
         if (!todayData) {
           throw new Error('오늘의 감정 데이터를 찾을 수 없습니다.');
@@ -86,8 +69,12 @@ export default function Step9() {
             island: result.data.island,
           };
 
-          lettersData[today] = dataToSave;
-          localStorage.setItem('mock-letters', JSON.stringify(lettersData));
+          todayData.selfEmpathyId = dataToSave.selfEmpathyId;
+          todayData.reportId = dataToSave.reportId;
+          todayData.category = dataToSave.category;
+          todayData.island = dataToSave.island;
+
+          await saveEmotionByDate(today, todayData);
         }
       } catch (err) {
         console.error('데이터 저장 중 오류:', err);
@@ -96,6 +83,7 @@ export default function Step9() {
     };
 
     saveAllData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 에러 상태 처리

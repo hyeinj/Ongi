@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import postboxIcon from '@/assets/images/postbox-icon.png';
-import { useRealLetter } from '@/ui/hooks/useRealLetter';
+import { useLetter } from '@/ui/hooks/useLetter';
 import localFont from 'next/font/local';
+import { RealLetterData } from '@/core/entities/letter';
 
 const garamFont = localFont({
   src: '../../../assets/fonts/gaRamYeonGgoc.ttf',
@@ -14,28 +15,20 @@ interface LetterContentProps {
   isVisible: boolean;
 }
 
-// 기존 인터페이스와 호환성을 위해 유지
-interface LetterParagraph {
-  id: string;
-  text: string;
-}
-
 export default function LetterContent({ isVisible }: LetterContentProps) {
   const [fadeIn, setFadeIn] = useState(false);
+  const [realLetterData, setRealLetterData] = useState<RealLetterData | null>(null);
 
   // 실제 편지 데이터 가져오기 (letterExercise에서는 저장)
-  const { worryContent, isLoading, error } = useRealLetter({ shouldSave: true });
+  const { getRealLetter, isLoading, error } = useLetter();
 
-  // worryContent를 기존 인터페이스 형태로 변환 (메모이제이션)
-  const letterContent: LetterParagraph[] = useMemo(() => {
-    if (!worryContent || worryContent.length === 0) return [];
-
-    return worryContent.map((paragraph, index) => ({
-      id: paragraph.id || `paragraph-${index}`,
-      text: paragraph.text,
-    }));
-  }, [worryContent]);
-
+  useEffect(() => {
+    const fetchRealLetterData = async () => {
+      const data = await getRealLetter();
+      setRealLetterData(data);
+    };
+    fetchRealLetterData();
+  }, [getRealLetter]);
   useEffect(() => {
     if (isVisible) {
       setFadeIn(true);
@@ -106,8 +99,8 @@ export default function LetterContent({ isVisible }: LetterContentProps) {
           </div>
 
           <div className="space-y-4 mt-6 transition-opacity duration-300 ease-in-out">
-            {letterContent.length > 0 ? (
-              letterContent.map((paragraph) => (
+            {realLetterData?.worryContent.length ?? 0 > 0 ? (
+              realLetterData?.worryContent.map((paragraph) => (
                 <p
                   id={`paragraph-${paragraph.id}`}
                   key={paragraph.id}
