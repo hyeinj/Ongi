@@ -4,6 +4,8 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LetterStorage } from "@/services/storage/letterStorage";
 import { EmotionStorage } from "@/services/storage/emotionStorage";
+import type { Letter } from "@/core/entities/letter";
+import type { DailyEmotion } from "@/core/entities/emotion";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import postboxIcon from "@/assets/images/postbox-icon.png";
@@ -20,62 +22,11 @@ const garamFont = localFont({
 });
 
 
-// 데이터
-// emotion 로컬스토리지
-type EmotionData = {
-  category: string;
-  emotion: string;
-  entries: {
-    step2?: EntryStep;
-    step3?: EntryStep;
-    step4?: EntryStep;
-    step5?: EntryStep;
-    step6?: EntryStep;
-  };
-  aiFeedback?: string;
-};
-
-type EntryStep = {
-  question: string;
-  answer: string;
-};
-
-// letters 로컬스토리지
-type LetterData = {
-  userResponse?: string;
-  feedbackSections?: FeedbackSections;
-  highlightedParts?: string[];
-  realLetterData?: RealLetterData;
-};
-
-type FeedbackSections = {
-  emotionConnection?: string;
-  empathyReflection?: string[];
-  improvementSuggestion?: string[];
-  overallComment?: string;
-};
-
-type RealLetterData = {
-  answerContent: RealLetterContentItem[];  
-  worryContent: RealLetterContentItem[];   
-  emotion: string;
-  category?: string;
-  selectedAt: string;
-};
-
-type RealLetterContentItem = {
-  id: string;
-  text: string;
-};
-
-
-
-
 const LetterDetailPage = () => {
     const router = useRouter();  
     const { date, type } = useParams() as { date: string; type: string };
-    const [letter, setLetter] = useState<LetterData | null>(null);
-    const [emotion, setEmotion] = useState<EmotionData | null>(null);
+    const [letter, setLetter] = useState<Letter | null>(null);
+    const [emotion, setEmotion] = useState<DailyEmotion | null>(null);
 
     // 상태/탭
     const tabTitles = {

@@ -25,7 +25,7 @@ export interface Letters {
 }
 
 export interface RealLetterData {
-  letterTitle: string;
+  letterTitle?: string;
   worryContent: Array<{ id: string; text: string }>;
   answerContent: Array<{ id: string; text: string }>;
 }

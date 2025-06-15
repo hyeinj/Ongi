@@ -5,7 +5,7 @@ const LETTER_STORAGE_KEY = 'letters';
 
 // RealLetter 데이터 타입
 interface RealLetterData {
-  letterTitle: string;
+  letterTitle?: string;
   worryContent: Array<{ id: string; text: string }>;
   answerContent: Array<{ id: string; text: string }>;
 }
