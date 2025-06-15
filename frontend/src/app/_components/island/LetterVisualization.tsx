@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import LetterClosed from '@/app/_components/icons/Letter';
 import { useRouter } from 'next/navigation';
+import { getLetterEmotionStatuses, EmotionStatus } from '@/ui/hooks/useLetterEmotionStatus';
 
 interface Props {
   letterDates: string[];
@@ -16,6 +17,17 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
     return Array.from({ length: letterDates.length }, () => Math.random() * 20 - 10);
   }, [letterDates.length]);
 
+  // emotion으로 날짜가 있는지 확인 
+  const [emotionStatuses, setEmotionStatuses] = useState<Record<string, EmotionStatus>>({});
+
+  useEffect(() => {
+    const fetchStatuses = async () => {
+      const statusMap = await getLetterEmotionStatuses(letterDates, category);
+      setEmotionStatuses(statusMap);
+    };
+    fetchStatuses();
+  }, [letterDates, category]);
+
   return (
     <div className="letters">
       {rowCounts.map((count, visualRowIndex) => {
@@ -27,6 +39,19 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
                     + i; // 현재 줄의 i번째 편지 번호
 
           const date = letterDates[index];
+          const status = emotionStatuses[date]; // "match" | "mismatch" | "none"
+          let variant: "colored" | "white" | "dashed";
+          let emotion: "joy" | "peace" | "sadness" | "anger" | "anxiety" | undefined;
+
+          if (status?.type === "match") {
+            variant = "colored";
+            emotion = status.emotion;
+          } else if (status?.type === "mismatch") {
+            variant = "white";
+          } else {
+            variant = "dashed";
+          }
+
           if (!date) return null;
 
           const angleGap = 21;
@@ -58,7 +83,10 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
                 }}
                 onClick={() => router.push(`/island/${category}/date/${date}`)}
               >
-                <LetterClosed width={48} height={31} date={new Date(date).getDate()}/>
+                <LetterClosed width={48} height={31} 
+                date={new Date(date).getDate()} 
+                variant={variant}
+                emotion={emotion}/>
               </div>
             </div>
           );

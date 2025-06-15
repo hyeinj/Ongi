@@ -452,7 +452,7 @@
           "answer": "가족의 존재가 제게 큰 힘이 된다는 걸 느꼈어요."
         }
       },
-      "category": "relationship",
+      "category": "relate",
       "emotion": "peace",
       "aiFeedback": "가족과의 대화에서 평화롭고 안정된 감정을 느끼셨군요. 가족 간의 소통은 일상의 큰 지지이자 위로가 됩니다. 앞으로도 이 편안함을 자주 경험하시길 바랍니다."
     },
@@ -485,7 +485,7 @@
           }
         ],
         "emotion": "peace",
-        "category": "relationship",
+        "category": "relate",
         "selectedAt": "2025-06-07T20:05:00.000Z"
       },
       "feedbackSections": {
@@ -662,7 +662,7 @@
           "answer": "이 순간을 오래 기억하고 싶어졌어요."
         }
       },
-      "category": "relationship",
+      "category": "relate",
       "emotion": "joy",
       "aiFeedback": "연인과의 즐거운 데이트가 당신에게 깊은 기쁨과 행복을 주었군요. 사랑하는 사람과의 시간은 삶의 큰 에너지입니다. 앞으로도 이 설렘을 자주 느끼시길 바랍니다."
     },
@@ -695,7 +695,7 @@
           }
         ],
         "emotion": "joy",
-        "category": "relationship",
+        "category": "relate",
         "selectedAt": "2025-06-10T19:40:00.000Z"
       },
       "feedbackSections": {
@@ -732,7 +732,7 @@
           "answer": "이 상황을 풀 방법을 찾고 싶어졌어요."
         }
       },
-      "category": "relationship",
+      "category": "relate",
       "emotion": "anger",
       "aiFeedback": "친구와의 갈등이 당신에게 분노와 상처를 주었군요. 소중한 관계에서의 다툼은 누구에게나 힘든 경험입니다. 대화를 통해 서로의 마음을 나눠보시길 응원합니다."
     },
@@ -765,7 +765,7 @@
           }
         ],
         "emotion": "anger",
-        "category": "relationship",
+        "category": "relate",
         "selectedAt": "2025-06-11T15:30:00.000Z"
       },
       "feedbackSections": {
@@ -1012,7 +1012,7 @@
           "answer": "이 마음을 오래 간직하고 싶어졌어요."
         }
       },
-      "category": "relationship",
+      "category": "relate",
       "emotion": "peace",
       "aiFeedback": "친구의 진심 어린 위로가 당신에게 평화와 안정을 주었군요. 이해와 공감은 어떤 말보다 큰 치유가 됩니다. 이 위로의 기억을 마음속에 오래 간직하시길 바랍니다."
     },
@@ -1045,7 +1045,7 @@
           }
         ],
         "emotion": "peace",
-        "category": "relationship",
+        "category": "relate",
         "selectedAt": "2025-06-15T22:15:00.000Z"
       },
       "feedbackSections": {
