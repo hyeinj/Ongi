@@ -23,10 +23,11 @@ import { useDateNavigator } from '@/ui/hooks/useDateNavigator';
 import LetterVisualization from '@/app/_components/island/LetterVisualization';
 import { useDominantEmotions } from "@/ui/hooks/useDominantEmotions";
 import { EmotionType } from "@/core/entities/emotion"
-
+import IslandTutorialOverlay from '@/app/_components/island/IslandTutorialOverlay';
 
 const IslandPage = () => {
   const { type } = useParams<{ type: string }>(); // type: 'relate', 'growth', ...
+  const [showTutorial, setShowTutorial] = useState(false);
 
   const islandTitleMap = {
     relate: '관계의 섬',
@@ -49,7 +50,19 @@ const IslandPage = () => {
   const [showCalendar, setShowCalendar] = useState(false); // 달력 토글 상태
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+    // 튜토리얼 표시 여부 확인
+    const hasSeenTutorial = localStorage.getItem(`island-${type}-tutorial`);
+    if (!hasSeenTutorial) {
+      setShowTutorial(true);
+    }
+  }, [type]);
+
+  const handleTutorialFinish = () => {
+    setShowTutorial(false);
+    // 튜토리얼을 봤다는 것을 로컬 스토리지에 저장
+    localStorage.setItem(`island-${type}-tutorial`, 'true');
+  };
+
   const {
     year,
     month,
@@ -110,6 +123,12 @@ const IslandPage = () => {
 
   return (
     <div className="island-page">
+      {showTutorial && (
+        <IslandTutorialOverlay 
+          onFinish={handleTutorialFinish}
+          type={type}
+        />
+      )}
       <div className="gradient-layer" style={gradientStyle} />
       <div className="background">
         {/* 상단 문구 */}
