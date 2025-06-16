@@ -303,7 +303,7 @@ export default function FeedbackStep() {
               나는 어떤 표정으로 읽게 되었을까요?
             </p>
             <textarea
-              className={`w-full h-full min-h-[10vh] bg-[#FFFBEC] text-sm resize-none border-none outline-none overflow-y-auto break-keep rounded-xl p-3 transition-colors duration-200 whitespace-pre-line ${
+              className={`w-full h-full min-h-[10vh] bg-[#FFFBEC] text-[16px] resize-none border-none outline-none overflow-y-auto break-keep rounded-xl p-3 transition-colors duration-200 whitespace-pre-line ${
                 myLetter ? 'text-[#222]' : 'text-[#555]'
               }`}
               placeholder={`꼭 적지 않아도 괜찮아요.\n한 번 생각해보는 것만으로도 충분하니까요.`}
