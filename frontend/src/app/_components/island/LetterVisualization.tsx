@@ -102,7 +102,9 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
               <div
                 className={`letter-box ${isTodayMatch ? 'letter-glow' : ''}`}
                 style={{
-                  animation: 'letterFloat 4s ease-in-out infinite',
+                  animation: isTodayMatch
+                  ? 'letterFloat 4s ease-in-out infinite, glowPulse 2.5s ease-in-out infinite'
+                  : 'letterFloat 4s ease-in-out infinite'
                 }}
                 onClick={() => {
                   if (!status || status.type === "none") return; // 클릭 막음
