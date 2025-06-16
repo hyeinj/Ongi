@@ -1,5 +1,5 @@
 // 감정 관련 타입들
-export type Category = 'self' | 'growth' | 'routine' | 'relationship';
+export type Category = 'self' | 'growth' | 'routine' | 'relate';
 export type EmotionType = 'joy' | 'sadness' | 'anger' | 'anxiety' | 'peace';
 
 export interface EmotionEntry {

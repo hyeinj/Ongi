@@ -27,7 +27,7 @@ function transformCategoryAndEmotion(
 
   // growth일 때 anxiety, sadness 이외 감정은 모두 self로 변환
   if (category === 'growth' && emotion !== 'anxiety' && emotion !== 'sadness') {
-    newCategory = 'relationship';
+    newCategory = 'relate';
   }
 
   // self일 때 joy이면 routine으로 변환
@@ -35,8 +35,8 @@ function transformCategoryAndEmotion(
     newCategory = 'routine';
   }
 
-  // self일 때 감정이 peace일 때 relationship이 아니면 모두 relationship으로 변환
-  if (emotion === 'peace' && category !== 'relationship' && category !== 'self') {
+  // self일 때 감정이 peace일 때 relate가 아니면 모두 relate로 변환
+  if (emotion === 'peace' && category !== 'relate' && category !== 'self') {
     newCategory = 'self';
   }
 

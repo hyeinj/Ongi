@@ -392,7 +392,7 @@ export async function generateNextQuestion(
 }
 
 interface EmotionAnalysisResponse {
-  category: 'self' | 'growth' | 'routine' | 'relationship';
+  category: 'self' | 'growth' | 'routine' | 'relate';
   emotion: 'joy' | 'sadness' | 'anger' | 'anxiety' | 'peace';
   success: boolean;
   error?: string;
@@ -431,7 +431,7 @@ export async function analyzeEmotionAndCategory(allAnswers: {
 - self: 자기 자신과 관련된 감정 (자아, 자존감, 개인적 고민)
 - growth: 성장과 발전과 관련된 감정 (학습, 도전, 개선)
 - routine: 일상과 루틴과 관련된 감정 (습관, 반복, 생활패턴)
-- relationship: 인간관계와 관련된 감정 (가족, 친구, 동료, 연인)
+- relate: 인간관계와 관련된 감정 (가족, 친구, 동료, 연인)
 
 감정 옵션:
 - joy: 기쁨, 행복, 만족감
@@ -472,7 +472,7 @@ JSON 형식으로만 응답해주세요.`,
       const result = JSON.parse(cleanContent.trim());
 
       // 유효성 검사
-      const validCategories = ['self', 'growth', 'routine', 'relationship'];
+      const validCategories = ['self', 'growth', 'routine', 'relate'];
       const validEmotions = ['joy', 'sadness', 'anger', 'anxiety', 'peace'];
 
       if (!validCategories.includes(result.category) || !validEmotions.includes(result.emotion)) {
@@ -503,7 +503,7 @@ JSON 형식으로만 응답해주세요.`,
  */
 export async function generateFinalCardText(
   allAnswers: { [stage: string]: string },
-  category: 'self' | 'growth' | 'routine' | 'relationship',
+  category: 'self' | 'growth' | 'routine' | 'relate',
   emotion: 'joy' | 'sadness' | 'anger' | 'anxiety' | 'peace'
 ): Promise<FinalTextResponse> {
   try {
@@ -521,7 +521,7 @@ export async function generateFinalCardText(
       self: '자기 자신과의 관계',
       growth: '성장과 발전',
       routine: '일상과 루틴',
-      relationship: '인간관계',
+      relate: '인간관계',
     };
 
     const emotionContext = {
@@ -550,7 +550,7 @@ export async function generateFinalCardText(
 
 1. 오늘 사용자가 어떤 상황에서 어떤 감정을 느꼈고, 왜 그런 감정을 느꼈는지를 요약해주세요.  
 2. 내면의 말이 따옴표 안에 나열되는 식의 표현은 피하고, 말과 말 사이의 흐름이나 감정의 전개를 함께 설명해주세요.
-   - 예: ‘처음에는 낯설었지만’, ‘그 말이 다른 말로 이어졌고’, ‘그러다 문득 이런 생각도 들었어요’ 등으로 하나의 정서 흐름으로 연결해주세요.
+   - 예: '처음에는 낯설었지만', '그 말이 다른 말로 이어졌고', '그러다 문득 이런 생각도 들었어요' 등으로 하나의 정서 흐름으로 연결해주세요.
 3. 사용자가 그 감정을 따라가며 떠올린 내면의 말들, 그리고 그 말들을 어떻게 받아들였는지 표현해주세요.  
    - 내면의 말이 조심스럽거나 익숙하지 않은 말이라면, 그 말에 다가가는 태도나 질문을 표현해주세요.  
    - 내면의 말이 긍정적이거나 힘이 되었거나 나를 지지해주는 말이라면, 그 말을 받아들이거나 따뜻하게 확인하는 마음을 표현해주세요.  
@@ -574,8 +574,8 @@ export async function generateFinalCardText(
 
 [예시]
 - 예시1:
-오늘 나는 친구와 만나 오랜만에 따뜻하고 편안한 시간을 보냈지만, 그 안에서도 어딘가 모를 긴장감이 함께 있었어요. 그 감정은 ‘이 순간을 잘 보내야 한다’는 마음에서 비롯된 걸지도 모르겠어요.
-그러다 문득, 내가 자주 하는 마음속 말을 떠올렸어요. “나는 항상 잘해야 해.” 이 말이 지금도 나를 붙잡고 있는 걸까, 조용히 스스로에게 물어보게 됐어요.
+오늘 나는 친구와 만나 오랜만에 따뜻하고 편안한 시간을 보냈지만, 그 안에서도 어딘가 모를 긴장감이 함께 있었어요. 그 감정은 '이 순간을 잘 보내야 한다'는 마음에서 비롯된 걸지도 모르겠어요.
+그러다 문득, 내가 자주 하는 마음속 말을 떠올렸어요. "나는 항상 잘해야 해." 이 말이 지금도 나를 붙잡고 있는 걸까, 조용히 스스로에게 물어보게 됐어요.
 오늘의 나는, 불안한 마음 속에서도 나를 이해하려고 애쓰고 있었어요. 그런 나를, 조금 더 믿어주고 싶어요.
 
 - 예시2:
@@ -584,7 +584,7 @@ export async function generateFinalCardText(
 오늘의 나는, 익숙하지 않았던 다정한 말들을 조용히 받아들이며 하루를 보냈어요.
 
 - 예시3:
-오늘 나는 발표를 마치고 나서 뿌듯하면서도 약간의 허탈함, 안도감이 함께 뒤섞인 기분이 들었어요. 아마 “끝냈으니 됐어”라는 내면의 말과 “더 잘했어야 하는 거 아냐?”라는 또 다른 말이 동시에 내 마음에 있었기 때문일 거예요.
+오늘 나는 발표를 마치고 나서 뿌듯하면서도 약간의 허탈함, 안도감이 함께 뒤섞인 기분이 들었어요. 아마 "끝냈으니 됐어"라는 내면의 말과 "더 잘했어야 하는 거 아냐?"라는 또 다른 말이 동시에 내 마음에 있었기 때문일 거예요.
 그 말들을 곧장 밀어내거나 따라가지 않고, 그냥 거기에 있는 말들로 받아들이려고 했어요.
 오늘의 나는, 내 안에서 반복되던 말들을 조용히 바라보며, 그 말들 너머의 나를 이해하려고 애쓰고 있었어요.
 
@@ -595,12 +595,12 @@ export async function generateFinalCardText(
 
 - 예시5:
 오늘 나는 뭔가를 하려고 했지만, 자꾸만 흐름이 끊겨서 집중하지 못했어요. 초조함과 답답함이 계속 쌓이면서도, 내내 '왜 이렇게 안 되지?'라는 생각을 떨칠 수 없었어요.
-마음속 어딘가에서는 “오늘은 무언가 해내야 하는 날이었어” 같은 말이 맴돌고 있었어요. 하지만 그 말에 너무 끌려가지 않으려 조심스레 한 발 물러서 보려고 했어요.
+마음속 어딘가에서는 "오늘은 무언가 해내야 하는 날이었어" 같은 말이 맴돌고 있었어요. 하지만 그 말에 너무 끌려가지 않으려 조심스레 한 발 물러서 보려고 했어요.
 오늘의 나는, 스스로에게 조용히 질문을 던지며 그 말의 무게를 바라보고 있었어요.
 
 - 예시6:
-오늘 나는 더운 날씨에 몸을 움직이며 작업하러 나갔어요. 지치는 순간이었지만, 햇볕 아래서 작은 활력이 느껴졌고, 그 순간이 의외로 힘이 되었어요. ‘이런 생기라면 다시 찾고 싶다’는 마음이 자연스럽게 올라왔어요.
-그 말은 낯설지 않았고, 오히려 내가 오래 잊고 있었던 감각처럼 느껴졌어요. “나는 이렇게 살아 있는 느낌을 느낄 수 있는 사람이야.” 그 말이 오늘 하루를 지탱해주는 말이 되었어요.
+오늘 나는 더운 날씨에 몸을 움직이며 작업하러 나갔어요. 지치는 순간이었지만, 햇볕 아래서 작은 활력이 느껴졌고, 그 순간이 의외로 힘이 되었어요. '이런 생기라면 다시 찾고 싶다'는 마음이 자연스럽게 올라왔어요.
+그 말은 낯설지 않았고, 오히려 내가 오래 잊고 있었던 감각처럼 느껴졌어요. "나는 이렇게 살아 있는 느낌을 느낄 수 있는 사람이야." 그 말이 오늘 하루를 지탱해주는 말이 되었어요.
 오늘의 나는, 내 안에서 올라온 건강한 목소리를 조용히 따라가며 나를 지지하고 있었어요.
 `,
           },
