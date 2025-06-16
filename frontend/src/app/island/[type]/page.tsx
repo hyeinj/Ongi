@@ -168,6 +168,9 @@ const IslandPage = () => {
             src={postoffice}
             onClick={handlePostOfficeClick}
         />
+        <div className='homeButtonText'>
+          홈으로
+        </div>
     </div>
   </div>
   );
