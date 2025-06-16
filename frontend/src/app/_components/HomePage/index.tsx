@@ -24,9 +24,9 @@ const HomePage: React.FC = () => {
 
   // 임시 데이터 - 나중에 백엔드에서 가져올 예정
   const letterCounts = {
-    self: 3,
+    self: 5,
     growth: 5,
-    routine: 2,
+    routine: 4,
     relate: 4,
   };
 
