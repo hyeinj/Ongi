@@ -85,6 +85,9 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
           const x = radius * Math.sin(rad);
           const y = -radius * Math.cos(rad) - rowIndex * 50;
 
+          const today = new Date().toISOString().split('T')[0];
+          const isTodayMatch = date === today && status?.type === 'match';
+
           return (
             <div
               key={date}
@@ -97,9 +100,11 @@ const LetterVisualization = ({ letterDates, total, category }: Props) => {
               }}
             >
               <div
-                className="letter-box"
+                className={`letter-box ${isTodayMatch ? 'letter-glow' : ''}`}
                 style={{
-                  animation: 'letterFloat 4s ease-in-out infinite',
+                  animation: isTodayMatch
+                  ? 'letterFloat 4s ease-in-out infinite, glowPulse 2.5s ease-in-out infinite'
+                  : 'letterFloat 4s ease-in-out infinite'
                 }}
                 onClick={() => {
                   if (!status || status.type === "none") return; // 클릭 막음

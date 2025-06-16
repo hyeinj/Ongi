@@ -54,10 +54,10 @@ export default function LetterClosed({
   emotion?: "joy" | "peace" | "sadness" | "anger" | "anxiety";
 }) {
   const emotionColors: Record<string, string> = {
-    joy: "#B0B062",
+    joy: "#FEE191",
     peace: "#62B067",
     sadness: "#4F69D2",
-    anger: "#BC4547",
+    anger: "rgba(218, 47, 47, 0.8)",
     anxiety: "#AB1EB7",
   };
 
@@ -67,7 +67,7 @@ export default function LetterClosed({
   variant === "dashed"
     ? "#CBA988"
     : variant === "colored"
-    ? "rgba(203, 169, 136, 0.8)"
+    ? "rgba(163, 132, 101, 0.8)"
     : "#CBA988";
   const strokeDasharray = variant === "dashed" ? "4 2" : "none";
 
@@ -85,7 +85,9 @@ export default function LetterClosed({
       {variant === "colored" && (
         <defs>
           <radialGradient id={gradientId} cx="50%" cy="50%" r="100%">
-            <stop offset="0%" stopColor={gradientColor} stopOpacity="0.7" />
+            <stop offset="0%" stopColor={gradientColor} stopOpacity="0.5" />
+            <stop offset="70%" stopColor={gradientColor} stopOpacity="0.4" />
+            <stop offset="90%" stopColor={gradientColor} stopOpacity="0.2" />
             <stop offset="100%" stopColor={gradientColor} stopOpacity="0" />
           </radialGradient>
         </defs>
