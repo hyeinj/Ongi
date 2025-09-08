@@ -1,10 +1,6 @@
 package com.ongi.backend.Controller;
 
-import com.ongi.backend.DTO.RealStoryDTO;
 import com.ongi.backend.DTO.ReportDTO;
-import com.ongi.backend.DTO.ResponseDTO;
-import com.ongi.backend.Entity.Report;
-import com.ongi.backend.Repository.ReportRepository;
 import com.ongi.backend.Service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

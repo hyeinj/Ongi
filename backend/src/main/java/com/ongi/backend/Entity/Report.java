@@ -20,14 +20,6 @@ public class Report {
     @JoinColumn(name = "selfempathy_id")
     private SelfEmpathy selfEmpathy;
 
-    @ManyToOne
-    @JoinColumn(name = "mockletter_id")
-    private MockLetter mockLetter;
-
-    @ManyToOne
-    @JoinColumn(name = "otherempathy_id")
-    private OtherEmpathy otherEmpathy;
-
     @Column(name = "island")
     private Integer island;
 
