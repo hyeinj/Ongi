@@ -3,6 +3,8 @@ package com.ongi.backend.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "self_empathy")
 @Data
@@ -52,4 +54,15 @@ public class SelfEmpathy {
 
     @Column(name = "emotion")
     private String emotion;
+
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();  // 저장 직전에 시간 설정
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
